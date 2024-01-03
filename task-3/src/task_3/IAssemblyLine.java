@@ -1,5 +1,10 @@
 package task_3;
 
 public interface IAssemblyLine {
-    IProduct assembleProduct(IProductPart part1, IProductPart part2, IProductPart part3);
+    /**
+     * Требуется реализовать метод сырого продукта в конечный продукт.
+     * @param product Сырой продукт.
+     * @return Готовый продукт.
+     */
+    IProduct assembleProduct(IProduct product);
 }
