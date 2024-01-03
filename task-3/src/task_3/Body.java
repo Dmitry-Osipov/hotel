@@ -2,7 +2,7 @@ package task_3;
 
 
 public class Body extends CarPart {
-    private Color color;
+    private final Color color;
 
     public Body(int serialNumber, Color color) {
         super(serialNumber);

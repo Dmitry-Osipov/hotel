@@ -3,7 +3,7 @@ package task_3;
 import java.util.*;
 
 public class AssemblyLine implements IAssemblyLine {
-    private static List<ILineStep> parts = new ArrayList<>();
+    private static final List<ILineStep> parts = new ArrayList<>();
 
     /**
      * Метод собирает продукт по частям.

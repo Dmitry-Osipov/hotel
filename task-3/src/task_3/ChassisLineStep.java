@@ -3,7 +3,7 @@ package task_3;
 import java.util.Random;
 
 public class ChassisLineStep implements ILineStep {
-    private static int randomSerialNumber = new Random().nextInt(10000);
+    private static final int randomSerialNumber = new Random().nextInt(10000);
 
     /**
      * Метод производит сборку шасси.

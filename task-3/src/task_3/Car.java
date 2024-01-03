@@ -6,7 +6,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Car implements IProduct {
-    private String vin;
+    private final String vin;
     private IProductPart body;
     private IProductPart chassis;
     private IProductPart engine;

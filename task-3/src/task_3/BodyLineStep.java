@@ -3,9 +3,9 @@ package task_3;
 import java.util.Random;
 
 public class BodyLineStep implements ILineStep {
-    private static Random random = new Random();
-    private static int randomSerialNumber = random.nextInt(10000);
-    private static Color[] colors = Color.values();
+    private static final Random random = new Random();
+    private static final int randomSerialNumber = random.nextInt(10000);
+    private static final Color[] colors = Color.values();
 
     /**
      * Метод проводит сборку кузова.

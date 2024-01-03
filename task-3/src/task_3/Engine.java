@@ -2,7 +2,7 @@ package task_3;
 
 
 public class Engine extends CarPart {
-    private double workingVolume;
+    private final double workingVolume;
 
     public Engine(int serialNumber, double workingVolume) {
         super(serialNumber);
