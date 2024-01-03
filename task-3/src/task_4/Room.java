@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class Room extends AbstractService {
+public class Room extends AbstractFavor implements AbstractRoom {
     private final int number;
     @Setter
     private RoomStatusTypes status = RoomStatusTypes.AVAILABLE;

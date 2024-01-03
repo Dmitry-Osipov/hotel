@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class Service extends AbstractService {
+public class Service extends AbstractFavor implements AbstractService {
     private final String name;
     @Setter
     private ServiceStatusTypes status = ServiceStatusTypes.UNPAID;

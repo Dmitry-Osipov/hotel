@@ -9,12 +9,12 @@ import java.util.List;
 
 @Getter
 @ToString
-public class Client {
+public class Client implements AbstractClient {
     private final int id;
     private final String fio;
     @Setter
     private String phoneNumber;
-    private final List<Room> occupiedRooms = new ArrayList<>();
+    private final List<AbstractRoom> occupiedRooms = new ArrayList<>();
 
     public Client(int id, String fio, String phoneNumber) {
         this.id = id;
@@ -22,5 +22,6 @@ public class Client {
         this.phoneNumber = phoneNumber;
     }
 
-    public boolean addRoom(Room room) { return occupiedRooms.add(room); }
+    @Override
+    public boolean addRoom(AbstractRoom room) { return occupiedRooms.add(room); }
 }
