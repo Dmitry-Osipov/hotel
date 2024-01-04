@@ -16,9 +16,9 @@ public class Factory {
         Color[] colors = Color.values();
         int cost = random.nextInt(150, 500);
         return switch (flowerType) {
-            case Lily -> new Lily(cost, colors[random.nextInt(colors.length)]);
-            case Rose -> new Rose(cost, colors[random.nextInt(colors.length)]);
-            case Carnation -> new Carnation(cost, colors[random.nextInt(colors.length)]);
+            case LILY -> new Lily(cost, colors[random.nextInt(colors.length)]);
+            case ROSE -> new Rose(cost, colors[random.nextInt(colors.length)]);
+            case CARNATION -> new Carnation(cost, colors[random.nextInt(colors.length)]);
         };
     }
 
@@ -29,9 +29,9 @@ public class Factory {
     private static Flower generateFlower() {
         int typeIndex = random.nextInt(3);
         return switch (typeIndex) {
-            case 0 -> generateFlower(FlowerType.Lily);
-            case 1 -> generateFlower(FlowerType.Rose);
-            case 2 -> generateFlower(FlowerType.Carnation);
+            case 0 -> generateFlower(FlowerType.LILY);
+            case 1 -> generateFlower(FlowerType.ROSE);
+            case 2 -> generateFlower(FlowerType.CARNATION);
             default -> null;
         };
     }
@@ -44,9 +44,13 @@ public class Factory {
     public static List<Flower> generateFlowers(int count) {
         ArrayList<Flower> flowers = new ArrayList<>();
 
-        if (count <= 0) return flowers;
+        if (count <= 0) {
+            return flowers;
+        }
 
-        for (int i = 0; i < count; i++) flowers.add(generateFlower());
+        for (int i = 0; i < count; i++) {
+            flowers.add(generateFlower());
+        }
         return flowers;
     }
 }

@@ -10,9 +10,13 @@ public class Calculator {
      */
     public static int calcCostBouquet(List<Flower> bouquet) {
         int count = 0;
-        if (bouquet.isEmpty()) return count;
+        if (bouquet.isEmpty()) {
+            return count;
+        }
 
-        for (Flower flower : bouquet) count += flower.getCost();
+        for (Flower flower : bouquet) {
+            count += flower.getCost();
+        }
         return count;
     }
 }
