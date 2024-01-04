@@ -10,5 +10,7 @@ public class ChassisLineStep implements ILineStep {
      * @return Шасси автомобиля.
      */
     @Override
-    public IProductPart buildProductPart() { return new Chassis(randomSerialNumber); }
+    public IProductPart buildProductPart() {
+        return new Chassis(randomSerialNumber);
+    }
 }

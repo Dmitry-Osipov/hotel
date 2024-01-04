@@ -12,5 +12,7 @@ public class EngineLineStep implements ILineStep {
      * @return Двигатель автомобиля.
      */
     @Override
-    public IProductPart buildProductPart() { return new Engine(randomSerialNumber, randomWorkingVolume); }
+    public IProductPart buildProductPart() {
+        return new Engine(randomSerialNumber, randomWorkingVolume);
+    }
 }
