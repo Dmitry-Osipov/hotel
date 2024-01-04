@@ -18,14 +18,14 @@ public class AssemblyLine implements IAssemblyLine {
      */
     @Override
     public IProduct assembleProduct(IProduct product) {
-        System.out.println("Начинаем сборку автомобиля...\n");
+        System.out.println("Начинаем сборку продукта...\n");
 
         product.installFirstPart(parts.get(0).buildProductPart());
         product.installSecondPart(parts.get(1).buildProductPart());
         product.installThirdPart(parts.get(2).buildProductPart());
         parts.clear();
 
-        System.out.println("Сборка автомобиля окончена!\n");
+        System.out.println("Сборка продукта окончена!\n");
         return product;
     }
 }
