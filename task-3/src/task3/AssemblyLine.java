@@ -21,9 +21,12 @@ public class AssemblyLine implements IAssemblyLine {
         product.installSecondPart(parts.get(1).buildProductPart());
         parts.add(new EngineLineStep());
         product.installThirdPart(parts.get(2).buildProductPart());
+
         for (ILineStep part : parts) {
             part.buildProductPart();
         }
+
+        parts.clear();
         System.out.println("Сборка автомобиля окончена!\n");
         return product;
     }
