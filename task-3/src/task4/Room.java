@@ -13,8 +13,7 @@ public class Room extends AbstractFavor implements AbstractRoom {
     private final List<AbstractClient> visitingClients = new ArrayList<>();
     @Setter
     private RoomStatusTypes status = RoomStatusTypes.AVAILABLE;
-    @Setter
-    private List<AbstractClient> clientsNowInRoom = new ArrayList<>();
+    private final List<AbstractClient> clientsNowInRoom = new ArrayList<>();
 
     public Room(int id, int number, int capacity, int price) {
         super(id, price);
