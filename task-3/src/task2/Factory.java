@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Factory {
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     /**
      * Служебный метод генерирует цветок по переданному типу.
