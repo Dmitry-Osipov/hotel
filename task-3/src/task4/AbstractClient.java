@@ -2,9 +2,8 @@ package task4;
 
 public interface AbstractClient {
     /**
-     * Метод добавляет комнату в список посещаемых этим клиентом.
-     * @param room Комната, которую посетил клиента.
-     * @return true, если комнату удалось добавить, иначе false.
+     * Метод получения номера телефона.
+     * @return Номер телефона.
      */
-    boolean addRoom(AbstractRoom room);
+    String getPhoneNumber();
 }

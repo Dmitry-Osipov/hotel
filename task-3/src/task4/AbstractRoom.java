@@ -1,5 +1,7 @@
 package task4;
 
+import java.util.List;
+
 public interface AbstractRoom {
     /**
      * Метод установки нового статуса команты.
@@ -12,4 +14,16 @@ public interface AbstractRoom {
      * @return Статус комнаты.
      */
     RoomStatusTypes getStatus();
+
+    /**
+     * Метод получения вместимости комнаты.
+     * @return Вместимость комнаты.
+     */
+    int getCapacity();
+
+    /**
+     * Метод получения текущих клиентов комнаты.
+     * @return Список клиентов.
+     */
+    List<AbstractClient> getClientsNowInRoom();
 }

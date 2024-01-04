@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -18,26 +19,39 @@ public class Hotel {
      * @param room Новая комната.
      * @return true, если комната была добавлена, иначе false.
      */
-    public boolean addRoom(AbstractRoom room) { return rooms.add(room); }
+    public boolean addRoom(AbstractRoom room) {
+        return rooms.add(room);
+    }
 
     /**
      * Метод добавляет новую услугу в список всех услуг отеля.
      * @param service Новая услуга.
      * @return true, если услуга была добавлена, иначе false.
      */
-    public boolean addService(AbstractService service) { return services.add(service); }
+    public boolean addService(AbstractService service) {
+        return services.add(service);
+    }
 
     /**
      * Метод заселяет клиента в определённую комнату.
-     * @param client Клиент, которому потребовалось забронировать комнату.
+     * @param clients Клиенты, которым потребовалось забронировать комнату.
      * @param room Комната для бронирования.
      * @return true, если заселение прошло успешно, иначе false.
      */
-    public boolean checkIn(AbstractClient client, AbstractRoom room) {
-        clients.add(client);
-        if (!rooms.contains(room) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) return false;
+    public boolean checkIn(AbstractRoom room, AbstractClient ...clients) {
+        int clientsLength = clients.length;
+        if (clientsLength < 1 || room.getCapacity() < clientsLength) {
+            return false;
+        }
+
+        if (!rooms.contains(room) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
+            return false;
+        }
+
+        List<AbstractClient> guests = List.of(clients);
+        this.clients.addAll(guests);
+        room.getClientsNowInRoom().addAll(guests);
         room.setStatus(RoomStatusTypes.OCCUPIED);
-        client.addRoom(room);
         return true;
     }
 
@@ -46,9 +60,23 @@ public class Hotel {
      * @param room Комната, из которой требуется выселить клиента,
      * @return true, если выселить удалось, иначе false.
      */
-    public boolean evict(AbstractRoom room) {
-        if (!rooms.contains(room) || !room.getStatus().equals(RoomStatusTypes.OCCUPIED)) return false;
-        room.setStatus(RoomStatusTypes.AVAILABLE);
+    public boolean evict(AbstractRoom room, AbstractClient ...clients) {
+        int clientsLength = clients.length;
+        if (clientsLength < 1 || room.getCapacity() < clientsLength) {
+            return false;
+        }
+
+        if (!rooms.contains(room) || !room.getStatus().equals(RoomStatusTypes.OCCUPIED)) {
+            return false;
+        }
+
+        for (AbstractClient client : clients) {
+            room.getClientsNowInRoom().remove(client);
+        }
+
+        if (room.getClientsNowInRoom().isEmpty()) {
+            room.setStatus(RoomStatusTypes.AVAILABLE);
+        }
         return true;
     }
 }
