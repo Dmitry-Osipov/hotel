@@ -34,8 +34,8 @@ public class Hotel {
 
     /**
      * Метод заселяет клиента в определённую комнату.
+     * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
-     * @param room Комната для бронирования.
      * @return true, если заселение прошло успешно, иначе false.
      */
     public boolean checkIn(AbstractRoom room, AbstractClient ...clients) {
@@ -56,9 +56,10 @@ public class Hotel {
     }
 
     /**
-     * Метод выселения из комнаты.
-     * @param room Комната, из которой требуется выселить клиента,
-     * @return true, если выселить удалось, иначе false.
+     * * Метод выселения из комнаты.
+     * @param room Комната, из которой требуется выселить клиентов.
+     * @param clients Клиенты, которых требуется выселить.
+     * @return true, если выселение прошло успешно, иначе false.
      */
     public boolean evict(AbstractRoom room, AbstractClient ...clients) {
         int clientsLength = clients.length;
