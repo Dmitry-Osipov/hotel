@@ -1,6 +1,8 @@
 package task3;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssemblyLine implements IAssemblyLine {
     private static final List<ILineStep> parts = new ArrayList<>();
@@ -19,7 +21,9 @@ public class AssemblyLine implements IAssemblyLine {
         product.installSecondPart(parts.get(1).buildProductPart());
         parts.add(new EngineLineStep());
         product.installThirdPart(parts.get(2).buildProductPart());
-        for (ILineStep part : parts) part.buildProductPart();
+        for (ILineStep part : parts) {
+            part.buildProductPart();
+        }
         System.out.println("Сборка автомобиля окончена!\n");
         return product;
     }
