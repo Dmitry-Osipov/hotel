@@ -49,6 +49,7 @@ public class Hotel {
 
         List<AbstractClient> guests = List.of(clients);
         this.clients.addAll(guests);
+        room.getVisitingClients().addAll(guests);
         room.getClientsNowInRoom().addAll(guests);
         room.setStatus(RoomStatusTypes.OCCUPIED);
         return true;
@@ -72,6 +73,20 @@ public class Hotel {
         if (room.getClientsNowInRoom().isEmpty()) {
             room.setStatus(RoomStatusTypes.AVAILABLE);
         }
+        return true;
+    }
+
+    /**
+     * Метод позволяет оценить комнату.
+     * @param room Комната, которую требуется оценить.
+     * @param stars Оценка (должна быть в пределах от 1 до 5 включительно).
+     * @return true, если оценка была добавлена, иначе false.
+     */
+    public boolean addStarsToRoom(AbstractRoom room, int stars) {
+        if (stars < 1 || 5 < stars) {
+            return false;
+        }
+        room.setStars(room.getStars() + stars);
         return true;
     }
 

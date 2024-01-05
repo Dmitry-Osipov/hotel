@@ -6,4 +6,6 @@ public interface AbstractClient {
      * @return Номер телефона.
      */
     String getPhoneNumber();
+
+    String getFio();
 }

@@ -28,4 +28,34 @@ public interface AbstractRoom {
      * @return Список клиентов.
      */
     List<AbstractClient> getClientsNowInRoom();
+
+    /**
+     * Метод добавления новых звёзд комнате.
+     * @param stars Количество звёзд.
+     */
+    void setStars(int stars);
+
+    /**
+     * Метод получения количества звёзд комнаты.
+     * @return Количество звёзд.
+     */
+    int getStars();
+
+    /**
+     * Метод устанавливает новую цену на комнату.
+     * @param price Новая цена.
+     */
+    void setPrice(int price);
+
+    /**
+     * Метож получения цены комнаты.
+     * @return Цена.
+     */
+    int getPrice();
+
+    /**
+     * Метод получения истории посещения комнаты.
+     * @return Список клиентов, заезжавших в комнату.
+     */
+    List<AbstractClient> getVisitingClients();
 }
