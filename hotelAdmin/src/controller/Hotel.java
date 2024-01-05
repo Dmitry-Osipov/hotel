@@ -37,18 +37,13 @@ public class Hotel {
     }
 
     /**
-     * Метод заселяет клиента в определённую комнату.
+     * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
      * @return true, если заселение прошло успешно, иначе false.
      */
     public boolean checkIn(AbstractRoom room, AbstractClient ...clients) {
-        int clientsLength = clients.length;
-        if (clientsLength < 1 || room.getCapacity() < clientsLength) {
-            return false;
-        }
-
-        if (!rooms.contains(room) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
+        if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
             return false;
         }
 
@@ -66,12 +61,7 @@ public class Hotel {
      * @return true, если выселение прошло успешно, иначе false.
      */
     public boolean evict(AbstractRoom room, AbstractClient ...clients) {
-        int clientsLength = clients.length;
-        if (clientsLength < 1 || room.getCapacity() < clientsLength) {
-            return false;
-        }
-
-        if (!rooms.contains(room) || !room.getStatus().equals(RoomStatusTypes.OCCUPIED)) {
+        if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.OCCUPIED)) {
             return false;
         }
 
@@ -83,5 +73,16 @@ public class Hotel {
             room.setStatus(RoomStatusTypes.AVAILABLE);
         }
         return true;
+    }
+
+    /**
+     * Служебный метод проверяет валидность поступивших данных о комнате и количестве клиентов.
+     * @param room Комната.
+     * @param clients Список клиентов.
+     * @return true, если проверка пройдена успешно, иначе false.
+     */
+    private boolean isValidRoomAndClientsData(AbstractRoom room, AbstractClient[] clients) {
+        int clientsLength = clients.length;
+        return 1 <= clientsLength && clientsLength <= room.getCapacity() && rooms.contains(room);
     }
 }
