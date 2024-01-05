@@ -1,7 +1,9 @@
-package task4;
+package room;
 
+import person.AbstractClient;
 import lombok.Getter;
 import lombok.Setter;
+import service.AbstractFavor;
 
 import java.util.ArrayList;
 import java.util.List;

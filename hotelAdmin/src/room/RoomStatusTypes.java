@@ -1,4 +1,4 @@
-package task4;
+package room;
 
 public enum RoomStatusTypes {
     OCCUPIED,

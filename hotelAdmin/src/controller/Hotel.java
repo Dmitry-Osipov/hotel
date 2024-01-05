@@ -1,7 +1,11 @@
-package task4;
+package controller;
 
+import person.AbstractClient;
 import lombok.Getter;
 import lombok.ToString;
+import room.AbstractRoom;
+import room.RoomStatusTypes;
+import service.AbstractService;
 
 import java.util.HashSet;
 import java.util.List;

@@ -1,4 +1,6 @@
-package task4;
+package room;
+
+import person.AbstractClient;
 
 import java.util.List;
 

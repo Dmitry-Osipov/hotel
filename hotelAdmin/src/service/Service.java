@@ -1,4 +1,4 @@
-package task4;
+package service;
 
 import lombok.Getter;
 import lombok.Setter;

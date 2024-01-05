@@ -1,4 +1,11 @@
-package task4;
+package test;
+
+import person.Client;
+import room.Room;
+import room.RoomStatusTypes;
+import service.Service;
+import service.ServiceStatusTypes;
+import controller.Hotel;
 
 public class Test {
     public static void main(String[] args) {

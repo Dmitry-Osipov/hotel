@@ -1,4 +1,4 @@
-package task4;
+package service;
 
 public interface AbstractService {
     /**

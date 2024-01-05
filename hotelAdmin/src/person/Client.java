@@ -1,4 +1,4 @@
-package task4;
+package person;
 
 import lombok.Getter;
 import lombok.Setter;

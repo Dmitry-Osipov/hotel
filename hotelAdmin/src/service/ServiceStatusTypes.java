@@ -1,4 +1,4 @@
-package task4;
+package service;
 
 public enum ServiceStatusTypes {
     UNPAID,
