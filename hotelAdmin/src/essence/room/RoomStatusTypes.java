@@ -1,4 +1,4 @@
-package room;
+package essence.room;
 
 public enum RoomStatusTypes {
     OCCUPIED,

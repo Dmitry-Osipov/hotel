@@ -1,71 +1,95 @@
 package test;
 
-import controller.Hotel;
-import person.Client;
-import room.Room;
-import service.Service;
-import view.HotelInfo;
+import essence.person.Client;
+import essence.room.Room;
+import essence.service.Service;
+import repository.ClientRepository;
+import repository.RoomRepository;
+import repository.ServiceRepository;
+import service.ClientService;
+import service.RoomService;
+import service.ServiceService;
+
+import java.time.LocalDateTime;
 
 public class TestHotel {
     public static void main(String[] args) {
-        Hotel hotel = new Hotel();
-        Room room = new Room(1, 110, 2, 200);
-        Room newRoom = new Room(2, 111, 5, 4000);
-        Room room1 = new Room(3, 112, 1, 3000);
-        Service service = new Service(1, "Завтрак в номер", 2000);
-        Client client = new Client(1, "Pavlov Pavel Pavlovich", "8-902-902-98-11");
-        Client newClient = new Client(2, "Dmitrov Dmitry Dmitrievich", "8-953-180-00-61");
-        System.out.println("Hotel: " + hotel);
-        hotel.addRoom(room);
-        hotel.addRoom(room);
-        hotel.addRoom(newRoom);
-        hotel.addRoom(room1);
-        System.out.println("Hotel rooms: " + hotel.getRooms());
-        hotel.addService(service);
-        hotel.addService(service);
-        System.out.println("Hotel services: " + hotel.getServices());
-        System.out.println(hotel.checkIn(room, client, newClient));
-        System.out.println("Hotel clients: " + hotel.getClients());
-        System.out.println("Вместимость: " + room.getCapacity() + ". Сейчас в комнате: " +
-                room.getClientsNowInRoom().size());
-        if (hotel.checkIn(room, client)) {
-            System.out.println("Поселили в заполненную комнату");
-        } else {
-            System.out.println("Не удалось поселить в заполненную комнату");
-        }
-        hotel.evict(room, newClient);
-        System.out.println("Room status: " + room.getStatus());
-        System.out.println("Вместимость: " + room.getCapacity() + ". Сейчас в комнате: " +
-                room.getClientsNowInRoom().size());
-        if (hotel.checkIn(newRoom)) {
-            System.out.println("Поселили без клиентов");
-        } else {
-            System.out.println("Не удалось поселить без клиентов");
-        }
-        hotel.evict(room, client);
-        System.out.println("Room status: " + room.getStatus());
-        System.out.println("Now in room: " + room.getClientsNowInRoom());
-        System.out.println("Hotel rooms: " + hotel.getRooms());
-        hotel.addStarsToRoom(room, 5);
-        System.out.println(room);
-        System.out.println(hotel.addStarsToRoom(room, 10));
-        hotel.addStarsToRoom(newRoom, 2);
-        hotel.checkIn(room, client);
+        ClientRepository clients = new ClientRepository();
+        ClientService cs = new ClientService(clients);
+        Client client1 = new Client(1, "Osipov Dmitry Romanovich", "8-902-902-98-11");
+        String result = cs.addClient(client1) ? "Удалось добавить клиента" : "Не удалось добавить клиента";
+        System.out.println(result);
+        System.out.println("Количество клиентов: " + cs.countClients());
 
-        HotelInfo info = new HotelInfo(hotel);
-        System.out.println("DESC stars: " + info.roomsByStars());
-        System.out.println("ASC price: " + info.roomsByPrice());
-        System.out.println("ASC capacity: " + info.roomsByCapacity());
-        System.out.println("DESC stars available: " + info.availableRoomsByStars());
-        System.out.println("ASC price available: " + info.availableRoomsByPrice());
-        System.out.println("ASC capacity available: " + info.availableRoomsByCapacity());
-        System.out.println("Всего свободных комнат: " + info.countAvailableRooms());
-        System.out.println("Всего клиентов: " + info.countClients());
-        System.out.println("Стоимость номера id=1: " + info.getFavorPrice(room));
-        System.out.println("Стоимость номера id=2: " + info.getFavorPrice(newRoom));
-        System.out.println("Стоимость номера id=3: " + info.getFavorPrice(room1));
-        System.out.println("Стоимость услуги: " + info.getFavorPrice(service));
-        System.out.println("Последние 3 клиента номера: " + info.getRoomClients(room));
-        System.out.println("Полная о номере: " + info.getRoomInfo(room));
+        RoomRepository rooms = new RoomRepository();
+        RoomService rs = new RoomService(rooms);
+        Room room1 = new Room(1, 110, 2, 1000);
+        result = room1.getPrice() == room1.getMIN_PRICE() ? "Установлена цена по умолчанию" : "Автопроверка дала сбой";
+        System.out.println(result);
+        Room room2 = new Room(2, 111, 5, 3000);
+        rs.addRoom(room1);
+        result = rs.addRoom(room2) ? "Комната успешно добавлена" : "Комната не была добавлена";
+        System.out.println(result);
+
+        result = rs.checkIn(room1, client1) ? "Удалось заселить" : "Не удалось заселить";
+        System.out.println(result);
+        result = rs.checkIn(room1) ? "Удалось заселить в пустую комнату" : "Не удалось заселить в пустую комнату";
+        System.out.println(result);
+        result = rs.evict(room1, client1) ? "Удалось выселить" : "Не удалось выселить";
+        System.out.println(result);
+        result = rs.evict(room1)? "Удалось выселить без клиентов" : "Не удалось выселить без клиентов";
+        System.out.println(result);
+        result = rs.addStarsToRoom(room1, 4) ? "Удалось поставить оценку" : "Не удалось поставить оценку";
+        System.out.println(result);
+        result = rs.addStarsToRoom(room1, 7) ? "Удалось поставить неверную оценку" :
+                "Не удалось поставить неверную оценку";
+        System.out.println(result);
+        System.out.println(rs.roomsByStars());
+        System.out.println(rs.roomsByCapacity());
+        System.out.println(rs.roomsByPrice());
+        rs.checkIn(room1, client1);
+        System.out.println(rs.availableRoomsByStars());
+        System.out.println(rs.availableRoomsByCapacity());
+        System.out.println(rs.availableRoomsByPrice());
+        System.out.println("Количество свободных комнат: " + rs.countAvailableRooms());
+        rs.evict(room1, client1);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+        rs.checkIn(room2, client1);
+
+        System.out.println("История комнаты 1: ");
+        rs.getRoomClients(room1);
+        System.out.println("История комнаты 2: ");
+        rs.getRoomClients(room2);
+        System.out.println(rs.getRoomInfo(room2));
+        System.out.println("Комнаты клиента по номерам: " + rs.getClientRoomsByNumbers(client1));
+        System.out.println("Комнаты клиента по времени: " + rs.getClientRoomsByCheckOutTime(client1));
+        for (int i = 0; i < 2; i++) {
+            System.out.println(rs.roomsByStars().get(i).getCheckOutTime());
+        }
+        System.out.println("Комнаты, которые свободны по времени: " + rs.getAvailableRoomsByTime(
+                LocalDateTime.of(2024, 1, 8, 21, 0)));
+        System.out.println("Цена комнаты: " + rs.getFavorPrice(room1));
+
+        ServiceRepository serviceRepository = new ServiceRepository();
+        ServiceService ss = new ServiceService(serviceRepository);
+        Service service1 = new Service(1, "Погладить вещи", 4000);
+        Service service2 = new Service(2, "Поменять номер", 200);
+        ss.addService(service2);
+        result = ss.addService(service1) ? "Удалось добавить услугу" : "Не удалось добавить услугу";
+        System.out.println(result);
+        result = ss.provideService(client1, service1) ? "Удалось оказать услугу" : "Не удалось оказать услугу";
+        System.out.println(result);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+        ss.provideService(client1, service2);
+        System.out.println("Услуги по цене: " + ss.getClientServicesByPrice(client1));
+        System.out.println("Услуги по времени: " + ss.getClientServicesByTime(client1));
     }
 }

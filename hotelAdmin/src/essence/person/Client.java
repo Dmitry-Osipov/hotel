@@ -1,8 +1,10 @@
-package person;
+package essence.person;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
 
 @Getter
 @ToString
@@ -11,6 +13,10 @@ public class Client implements AbstractClient, Comparable<AbstractClient> {
     private final String fio;
     @Setter
     private String phoneNumber;
+    @Setter
+    private LocalDateTime checkInTime;
+    @Setter
+    private LocalDateTime checkOutTime;
 
     public Client(int id, String fio, String phoneNumber) {
         this.id = id;

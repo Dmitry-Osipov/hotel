@@ -1,6 +1,6 @@
 package comparators;
 
-import person.AbstractClient;
+import essence.person.AbstractClient;
 
 import java.util.Comparator;
 

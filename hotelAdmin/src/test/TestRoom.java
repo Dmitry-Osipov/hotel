@@ -2,8 +2,8 @@ package test;
 
 import comparators.RoomCapacityComparator;
 import comparators.RoomPriceComparator;
-import room.Room;
-import room.RoomStatusTypes;
+import essence.room.Room;
+import essence.room.RoomStatusTypes;
 
 import java.util.TreeSet;
 

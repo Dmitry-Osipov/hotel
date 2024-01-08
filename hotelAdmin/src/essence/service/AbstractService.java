@@ -1,4 +1,9 @@
-package service;
+package essence.service;
+
+import essence.person.AbstractClient;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface AbstractService {
     /**
@@ -12,4 +17,12 @@ public interface AbstractService {
      * @return Статус.
      */
     ServiceStatusTypes getStatus();
+
+    void setServiceTime(LocalDateTime serviceTime);
+
+    LocalDateTime getServiceTime();
+
+    List<AbstractClient> getBeneficiaries();
+
+    int getPrice();
 }

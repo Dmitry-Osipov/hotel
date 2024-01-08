@@ -1,7 +1,7 @@
 package test;
 
-import service.Service;
-import service.ServiceStatusTypes;
+import essence.service.Service;
+import essence.service.ServiceStatusTypes;
 
 public class TestService {
     public static void main(String[] args) {

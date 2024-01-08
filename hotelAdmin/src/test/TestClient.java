@@ -1,7 +1,7 @@
 package test;
 
 import comparators.ClientPhoneComparator;
-import person.Client;
+import essence.person.Client;
 
 import java.util.ArrayList;
 import java.util.List;

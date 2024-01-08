@@ -1,10 +1,11 @@
-package room;
+package essence.room;
 
 import lombok.Getter;
 import lombok.Setter;
-import person.AbstractClient;
-import service.AbstractFavor;
+import essence.person.AbstractClient;
+import essence.service.AbstractFavor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,15 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
     private final int number;
     private final int capacity;
     private final List<AbstractClient> visitingClients = new ArrayList<>();
-    @Setter
-    private RoomStatusTypes status = RoomStatusTypes.AVAILABLE;
     private final List<AbstractClient> clientsNowInRoom = new ArrayList<>();
     @Setter
+    private RoomStatusTypes status = RoomStatusTypes.AVAILABLE;
+    @Setter
     private int stars;
+    @Setter
+    private LocalDateTime checkInTime;
+    @Setter
+    private LocalDateTime checkOutTime;
 
     public Room(int id, int number, int capacity, int price) {
         super(id, price);
@@ -32,12 +37,14 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
 
     public String allInfo() {
         return "Room{" +
-                "id=" + getId() +
-                "stars=" + stars +
+                "id=" + getId() + "; " +
+                "stars=" + stars + "; " +
                 "number=" + number + "; " +
                 "capacity=" + capacity + "; " +
                 "price=" + getPrice() + "; " +
                 "status=" + status + "; " +
+                "check-in time=" + checkInTime + "; " +
+                "check-out time=" + checkOutTime + "; " +
                 "clientsNowInRoom=" + clientsNowInRoom + "; " +
                 "visitingClients=" + visitingClients +
                 '}';

@@ -1,6 +1,6 @@
 package comparators;
 
-import room.AbstractRoom;
+import essence.room.AbstractRoom;
 
 import java.util.Comparator;
 

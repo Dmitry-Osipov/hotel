@@ -1,7 +1,8 @@
-package room;
+package essence.room;
 
-import person.AbstractClient;
+import essence.person.AbstractClient;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AbstractRoom {
@@ -58,4 +59,14 @@ public interface AbstractRoom {
      * @return Список клиентов, заезжавших в комнату.
      */
     List<AbstractClient> getVisitingClients();
+
+    void setCheckInTime(LocalDateTime checkInTime);
+
+    LocalDateTime getCheckInTime();
+
+    void setCheckOutTime(LocalDateTime checkOutTime);
+
+    LocalDateTime getCheckOutTime();
+
+    int getNumber();
 }
