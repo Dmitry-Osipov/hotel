@@ -3,6 +3,8 @@ package service;
 import essence.person.AbstractClient;
 import repository.ClientRepository;
 
+import java.util.List;
+
 /**
  * Класс отвечает за обработку данных по клиентам.
  */
@@ -20,6 +22,14 @@ public class ClientService {
      */
     public boolean addClient(AbstractClient client) {
         return clientRepository.getClients().add(client);
+    }
+
+    /**
+     * Метод формирует список клиентов отеля.
+     * @return Список.
+     */
+    public List<AbstractClient> getClients() {
+        return clientRepository.getClients().stream().toList();
     }
 
     /**

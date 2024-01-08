@@ -20,6 +20,7 @@ public class TestHotel {
         String result = cs.addClient(client1) ? "Удалось добавить клиента" : "Не удалось добавить клиента";
         System.out.println(result);
         System.out.println("Количество клиентов: " + cs.countClients());
+        System.out.println("Все клиенты: " + cs.getClients());
 
         RoomRepository rooms = new RoomRepository();
         RoomService rs = new RoomService(rooms);
