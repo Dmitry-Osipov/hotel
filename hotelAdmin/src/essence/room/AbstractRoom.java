@@ -60,13 +60,33 @@ public interface AbstractRoom {
      */
     List<AbstractClient> getVisitingClients();
 
+    /**
+     * Метод установки времени заселения в комнату.
+     * @param checkInTime Время заселения.
+     */
     void setCheckInTime(LocalDateTime checkInTime);
 
+    /**
+     * Метод получения времени заселения в комнату.
+     * @return Время заселения.
+     */
     LocalDateTime getCheckInTime();
 
+    /**
+     * Метод установки времени выселения из комнаты.
+     * @param checkOutTime Время выселения.
+     */
     void setCheckOutTime(LocalDateTime checkOutTime);
 
+    /**
+     * Метод получения времени выселения из комнаты.
+     * @return Время выселения.
+     */
     LocalDateTime getCheckOutTime();
 
+    /**
+     * Метод получения номера комнаты.
+     * @return Номер комнаты.
+     */
     int getNumber();
 }

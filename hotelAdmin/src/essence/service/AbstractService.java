@@ -13,16 +13,32 @@ public interface AbstractService {
     void setStatus(ServiceStatusTypes status);
 
     /**
-     * Метод получает статус исполнения услуги.
+     * Метод получения статуса исполнения услуги.
      * @return Статус.
      */
     ServiceStatusTypes getStatus();
 
+    /**
+     * Метод установки времени оказания услуги.
+     * @param serviceTime Время оказания услуги.
+     */
     void setServiceTime(LocalDateTime serviceTime);
 
+    /**
+     * Метод получения времени окзания услуги.
+     * @return Время оказания услуги.
+     */
     LocalDateTime getServiceTime();
 
+    /**
+     * Метод получения списка клиентов, которым была оказана услуга.
+     * @return Список клиентов.
+     */
     List<AbstractClient> getBeneficiaries();
 
+    /**
+     * Метод получения цены услуги.
+     * @return Цена.
+     */
     int getPrice();
 }

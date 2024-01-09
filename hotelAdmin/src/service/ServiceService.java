@@ -6,6 +6,7 @@ import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
 import repository.ServiceRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,6 +41,7 @@ public class ServiceService extends AbstractFavorService {
         }
 
         service.getBeneficiaries().add(client);
+        service.setServiceTime(LocalDateTime.now());
         service.setStatus(ServiceStatusTypes.RENDERED);
         return true;
     }
