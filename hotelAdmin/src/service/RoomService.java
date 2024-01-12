@@ -100,8 +100,8 @@ public class RoomService extends AbstractFavorService {
     public List<AbstractRoom> roomsByStars() {
         return roomRepository.getRooms()
                 .stream()
-                .toList()
-                .reversed();
+                .sorted()
+                .toList();
     }
 
     /**
@@ -132,8 +132,8 @@ public class RoomService extends AbstractFavorService {
      */
     public List<AbstractRoom> availableRoomsByStars() {
         return filteredStreamAvailableRooms()
-                .toList()
-                .reversed();
+                .sorted()
+                .toList();
     }
 
     /**

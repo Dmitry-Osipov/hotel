@@ -52,7 +52,7 @@ public class ServiceService extends AbstractFavorService {
      * @return Список услуг.
      */
     public List<AbstractService> getClientServicesByPrice(AbstractClient client) {
-        return streamClientServices(client).toList().reversed();
+        return streamClientServices(client).sorted().toList();
     }
 
     /**
