@@ -68,10 +68,11 @@ public class TestHotel {
         rs.checkIn(room2, client1);
 
         System.out.println("История комнаты 1: ");
-        rs.getRoomClients(room1);
+        rs.getRoomLastClients(room1, 2);
         System.out.println("История комнаты 2: ");
-        rs.getRoomClients(room2);
-        System.out.println(rs.getRoomInfo(room2));
+        rs.getRoomLastClients(room2, 3);
+        rs.getRoomLastClients(room2, -1);
+        System.out.println("Полная информация о комнате 2: " + rs.getRoomInfo(room2));
         System.out.println("Комнаты клиента по номерам: " + rs.getClientRoomsByNumbers(client1));
         System.out.println("Комнаты клиента по времени: " + rs.getClientRoomsByCheckOutTime(client1));
         for (int i = 0; i < 2; i++) {

@@ -165,16 +165,27 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
-     * Метод формирует список из 3-х последних клиентов комнаты.
+     * Метод формирует список из нескольких последних клиентов комнаты.
      * @param room Комната, которую требуется проверить.
-     * @return Список из 3-х последних клиентов.
+     * @param count Количество людей, которых нужно вывести.
+     * @return Список из нескольких последних клиентов.
      */
-    public List<AbstractClient> getRoomClients(AbstractRoom room) {
-        streamVisitingClientsLimit(room, 3)
+    public List<AbstractClient> getRoomLastClients(AbstractRoom room, int count) {
+        if (count < 1) {
+            System.out.println("Полученное количество менее 1. Выводим последнего клиента комнаты:");
+            count = 1;
+        }
+
+        if (count > streamVisitingClientsLimit(room, count).count()) {
+            System.out.println("Введено количество, которое больше объёма списка. " +
+                    "Выводим всех последних клиентов комнаты:");
+        }
+
+        streamVisitingClientsLimit(room, count)
                 .forEachOrdered(client -> System.out.println("Клиент: " + client.getFio() +
                         " был в номере с: " + client.getCheckInTime() + " по: " + client.getCheckOutTime()));
 
-        return streamVisitingClientsLimit(room, 3).toList();
+        return streamVisitingClientsLimit(room, count).toList();
     }
 
     /**
