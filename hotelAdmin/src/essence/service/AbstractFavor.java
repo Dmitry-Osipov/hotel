@@ -1,4 +1,4 @@
-package task4;
+package essence.service;
 
 import lombok.Getter;
 
@@ -27,5 +27,7 @@ public abstract class AbstractFavor {
      * @param price Новая цена.
      * @return true, если новая цена больше старой и если новая цена больше минимальной цены, иначе false.
      */
-    private boolean checkPrice(int price) { return this.price < price && MIN_PRICE < price; }
+    private boolean checkPrice(int price) {
+        return this.price < price && MIN_PRICE < price;
+    }
 }

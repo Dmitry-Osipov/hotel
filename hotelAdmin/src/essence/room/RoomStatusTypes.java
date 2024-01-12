@@ -1,4 +1,4 @@
-package task4;
+package essence.room;
 
 public enum RoomStatusTypes {
     OCCUPIED,

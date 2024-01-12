@@ -1,4 +1,4 @@
-package task4;
+package essence.service;
 
 public enum ServiceStatusTypes {
     UNPAID,
