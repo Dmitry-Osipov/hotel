@@ -10,15 +10,15 @@ import java.util.List;
 
 @Getter
 public class Service extends AbstractFavor implements AbstractService, Comparable<AbstractService> {
-    private final String name;
-    private final List<AbstractClient> beneficiaries = new ArrayList<>();
+    private final ServiceNames name;
+    private static int count = 1;
     @Setter
     private ServiceStatusTypes status = ServiceStatusTypes.UNPAID;
     @Setter
     private LocalDateTime serviceTime;
 
-    public Service(int id, String name, int price) {
-        super(id, price);
+    public Service(ServiceNames name, int price) {
+        super(count++, price);
         this.name = name;
     }
 

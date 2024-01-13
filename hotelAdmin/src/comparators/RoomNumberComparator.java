@@ -1,12 +1,13 @@
 package comparators;
 
+import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 
 import java.util.Comparator;
 
-public class RoomNumberComparator implements Comparator<AbstractRoom> {
+public class RoomNumberComparator implements Comparator<RoomReservation> {
     @Override
-    public int compare(AbstractRoom o1, AbstractRoom o2) {
-        return Integer.compare(o1.getNumber(), o2.getNumber());
+    public int compare(RoomReservation o1, RoomReservation o2) {
+        return Integer.compare(o1.getRoom().getNumber(), o2.getRoom().getNumber());
     }
 }

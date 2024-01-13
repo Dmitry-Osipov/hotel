@@ -5,10 +5,12 @@ import comparators.RoomCheckOutTimeComparator;
 import comparators.RoomNumberComparator;
 import comparators.RoomPriceComparator;
 import essence.person.AbstractClient;
+import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
-import repository.RoomRepository;
+import repository.room.RoomRepository;
+import repository.room.RoomReservationRepository;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -20,9 +22,11 @@ import java.util.stream.Stream;
  */
 public class RoomService extends AbstractFavorService {
     private final RoomRepository roomRepository;
+    private final RoomReservationRepository reservationRepository;
 
-    public RoomService(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository, RoomReservationRepository reservationRepository) {
         this.roomRepository = roomRepository;
+        this.reservationRepository = reservationRepository;
     }
 
     /**
@@ -47,8 +51,7 @@ public class RoomService extends AbstractFavorService {
 
         List<AbstractClient> guests = List.of(clients);
         LocalDateTime now = LocalDateTime.now();
-        room.getVisitingClients().addAll(guests);
-        room.getClientsNowInRoom().addAll(guests);
+        reservationRepository.getReservations().add(new RoomReservation(room, now, now.plusHours(22), guests));
         room.setStatus(RoomStatusTypes.OCCUPIED);
         room.setCheckInTime(now);
         guests.forEach(client -> client.setCheckInTime(now));
@@ -81,15 +84,14 @@ public class RoomService extends AbstractFavorService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        for (AbstractClient client : clients) {
-            room.getClientsNowInRoom().remove(client);
+        List.of(clients).forEach(client -> getReservationByRoom(room).forEach(reservation -> {
             client.setCheckOutTime(now);
-        }
+        }));
 
-        if (room.getClientsNowInRoom().isEmpty()) {
-            room.setStatus(RoomStatusTypes.AVAILABLE);
-            room.setCheckOutTime(now);
-        }
+        room.setStatus(RoomStatusTypes.AVAILABLE);
+        room.setCheckOutTime(now);
+        getReservationByRoom(room).forEach(reservation -> reservation.setCheckOutTime(now));
+
         return true;
     }
 
@@ -230,17 +232,29 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
+     * Служебный метод предназначен для снижения дублирования кода создания стрима, отфильтрованного по сравнению комнат.
+     * @param room Комната.
+     * @return Стрим, содержащий список резерваций. Содержит только резерв, который содержит эту комнату.
+     */
+    private Stream<RoomReservation> getReservationByRoom(AbstractRoom room) {
+        return reservationRepository.getReservations()
+                .stream()
+                .filter(reservation -> reservation.getRoom().equals(room));
+    }
+
+    /**
      * Служебный метод предназначен для устранения дублирования кода. Метод формирует список последних комнат, которые
      * посетил клиент.
      * @param comparator Компаратор, по которому сортируется список.
      * @param client Клиент.
      * @return Список комнат.
      */
-    private List<AbstractRoom> getFilteredClientRooms(Comparator<AbstractRoom> comparator, AbstractClient client) {
-        return roomRepository.getRooms()
+    private List<AbstractRoom> getFilteredClientRooms(Comparator<RoomReservation> comparator, AbstractClient client) {
+        return reservationRepository.getReservations()
                 .stream()
-                .filter(room -> room.getVisitingClients().contains(client))
+                .filter(reservation -> reservation.getClients().contains(client))
                 .sorted(comparator)
+                .map(RoomReservation::getRoom)
                 .toList();
     }
 
@@ -261,8 +275,10 @@ public class RoomService extends AbstractFavorService {
      * @return Стрим списка клиентов, которые последними снимали комнату.
      */
     private Stream<AbstractClient> streamVisitingClientsLimit(AbstractRoom room, int limit) {
-        return room.getVisitingClients().reversed()
+        return reservationRepository.getReservations()
                 .stream()
+                .filter(reservation -> reservation.getRoom().equals(room))
+                .flatMap(reservation -> reservation.getClients().stream())
                 .limit(limit);
     }
 

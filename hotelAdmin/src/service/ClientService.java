@@ -1,7 +1,7 @@
 package service;
 
 import essence.person.AbstractClient;
-import repository.ClientRepository;
+import repository.client.ClientRepository;
 
 import java.util.List;
 

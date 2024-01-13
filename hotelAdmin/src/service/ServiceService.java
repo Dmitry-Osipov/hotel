@@ -2,9 +2,11 @@ package service;
 
 import comparators.ServiceTimeComparator;
 import essence.person.AbstractClient;
+import essence.provided.ProvidedService;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
-import repository.ServiceRepository;
+import repository.service.ProvidedServicesRepository;
+import repository.service.ServiceRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,9 +17,11 @@ import java.util.stream.Stream;
  */
 public class ServiceService extends AbstractFavorService {
     private final ServiceRepository serviceRepository;
+    private final ProvidedServicesRepository providedServicesRepository;
 
-    public ServiceService(ServiceRepository serviceRepository) {
+    public ServiceService(ServiceRepository serviceRepository, ProvidedServicesRepository providedServicesRepository) {
         this.serviceRepository = serviceRepository;
+        this.providedServicesRepository = providedServicesRepository;
     }
 
     /**
@@ -40,8 +44,9 @@ public class ServiceService extends AbstractFavorService {
             return false;
         }
 
-        service.getBeneficiaries().add(client);
-        service.setServiceTime(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        providedServicesRepository.getServices().add(new ProvidedService(service, now, client));
+        service.setServiceTime(now);
         service.setStatus(ServiceStatusTypes.RENDERED);
         return true;
     }
@@ -71,9 +76,10 @@ public class ServiceService extends AbstractFavorService {
      * @return Отфильтрованный стрим.
      */
     private Stream<AbstractService> streamClientServices(AbstractClient client) {
-        return serviceRepository.getServices()
+        return providedServicesRepository.getServices()
                 .stream()
                 .filter(service -> service.getBeneficiaries().contains(client)
-                        && service.getStatus() == ServiceStatusTypes.RENDERED);
+                        && service.getService().getStatus() == ServiceStatusTypes.RENDERED)
+                .map(ProvidedService::getService);
     }
 }

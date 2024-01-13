@@ -25,12 +25,6 @@ public interface AbstractRoom {
     int getCapacity();
 
     /**
-     * Метод получения текущих клиентов комнаты.
-     * @return Список клиентов.
-     */
-    List<AbstractClient> getClientsNowInRoom();
-
-    /**
      * Метод добавления новых звёзд комнате.
      * @param stars Количество звёзд.
      */
@@ -53,12 +47,6 @@ public interface AbstractRoom {
      * @return Цена.
      */
     int getPrice();
-
-    /**
-     * Метод получения истории посещения комнаты.
-     * @return Список клиентов, заезжавших в комнату.
-     */
-    List<AbstractClient> getVisitingClients();
 
     /**
      * Метод установки времени заселения в комнату.

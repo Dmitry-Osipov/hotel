@@ -31,12 +31,6 @@ public interface AbstractService {
     LocalDateTime getServiceTime();
 
     /**
-     * Метод получения списка клиентов, которым была оказана услуга.
-     * @return Список клиентов.
-     */
-    List<AbstractClient> getBeneficiaries();
-
-    /**
      * Метод получения цены услуги.
      * @return Цена.
      */

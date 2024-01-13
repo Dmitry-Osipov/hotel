@@ -1,4 +1,4 @@
-package repository;
+package repository.service;
 
 import lombok.Getter;
 import lombok.ToString;
