@@ -20,6 +20,7 @@ public class TestHotel {
         ClientRepository clients = new ClientRepository();
         ClientService cs = new ClientService(clients);
         Client client1 = new Client("Osipov Dmitry Romanovich", "8-902-902-98-11");
+        Client client2 = new Client("Musofranova Nadezhda Sergeevna", "8-961-120-09-91");
         String result = cs.addClient(client1) ? "Удалось добавить клиента" : "Не удалось добавить клиента";
         System.out.println(result);
         System.out.println("Количество клиентов: " + cs.countClients());
@@ -74,13 +75,14 @@ public class TestHotel {
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        rs.checkIn(room2, client1);
+        rs.checkIn(room2, client1, client2);
 
         System.out.println("История комнаты 1: ");
-        rs.getRoomLastClients(room1, 2);
+        System.out.println(rs.getRoomLastClients(room1, 2));
         System.out.println("История комнаты 2: ");
-        rs.getRoomLastClients(room2, 3);
-        rs.getRoomLastClients(room2, -1);
+        System.out.println(rs.getRoomLastClients(room2, 3));
+        System.out.println("История комнаты 2: ");
+        System.out.println(rs.getRoomLastClients(room2, -1));
         System.out.println("Полная информация о комнате 2: " + rs.getRoomInfo(room2));
         System.out.println("Комнаты клиента по номерам: " + rs.getClientRoomsByNumbers(client1));
         System.out.println("Комнаты клиента по времени: " + rs.getClientRoomsByCheckOutTime(client1));

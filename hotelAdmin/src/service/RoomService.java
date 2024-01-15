@@ -84,9 +84,9 @@ public class RoomService extends AbstractFavorService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        List.of(clients).forEach(client -> getReservationByRoom(room).forEach(reservation -> {
-            client.setCheckOutTime(now);
-        }));
+        List.of(clients).forEach(client -> getReservationByRoom(room).forEach(reservation ->
+            client.setCheckOutTime(now)
+        ));
 
         room.setStatus(RoomStatusTypes.AVAILABLE);
         room.setCheckOutTime(now);
@@ -182,10 +182,6 @@ public class RoomService extends AbstractFavorService {
             System.out.println("Введено количество, которое больше объёма списка. " +
                     "Выводим всех последних клиентов комнаты:");
         }
-
-        streamVisitingClientsLimit(room, count)
-                .forEachOrdered(client -> System.out.println("Клиент: " + client.getFio() +
-                        " был в номере с: " + client.getCheckInTime() + " по: " + client.getCheckOutTime()));
 
         return streamVisitingClientsLimit(room, count).toList();
     }
