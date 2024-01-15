@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Arrays;
-
 @Setter
 @Getter
 @ToString
@@ -31,6 +29,6 @@ public class Menu {
         if (index >= 0 && index <= menuItems.length-1 && menuItems[index].getNextMenu() != null) {
             return menuItems[index].getNextMenu();
         }
-        return new Menu("Главное меню", mainMenuItems);  //TODO: ВОзвращает текущие айтемы
+        return new Menu("Главное меню", mainMenuItems);  //TODO: Возвращает текущие айтемы, а не главное меню
     }
 }
