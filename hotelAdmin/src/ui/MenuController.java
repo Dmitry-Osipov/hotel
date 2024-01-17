@@ -32,8 +32,8 @@ public class MenuController {
     public void run() {
         while (true) {
             navigator.printMenu();
-            int choice = getUserInput();
-            if (choice == -1) {
+            int choice = getUserInput() - 1;
+            if (choice == -2) {
                 exit();
                 break;
             }

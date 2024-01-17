@@ -13,8 +13,10 @@ import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,17 +52,19 @@ public class Builder {
                     System.out.println("\nВведите номер, вместимость и цену комнаты через пробел: ");
                     String[] userInput = getUserInput().split(" ");
 
-                    System.out.println("\n" + roomService.addRoom(new Room(
+                    String result = roomService.addRoom(new Room(
                             Integer.parseInt(userInput[0]),
                             Integer.parseInt(userInput[1]),
-                            Integer.parseInt(userInput[2]))));
+                            Integer.parseInt(userInput[2]))) ? "Удалось добавить комнату"
+                            : "Не удалось добавить комнату";
+                    System.out.println("\n" + result);
                 },
                 null);
 
         MenuItem getPrice = new MenuItem("Вывести стоимость комнаты",
                 () -> {
                     Room room = (Room) getRoomByInput();
-                    System.out.println("\n" + roomService.getFavorPrice(room));
+                    System.out.println("\nСтоимость комнаты - " + roomService.getFavorPrice(room));
                 },
                 null);
 
@@ -71,68 +75,95 @@ public class Builder {
                     System.out.println("\nВведите количесто звёзд (от 1 до 5): ");
                     int stars = getUserIntegerInput();
 
-                    System.out.println("\n" + roomService.addStarsToRoom(room, stars));
+                    String result = roomService.addStarsToRoom(room, stars) ? "Добавление звёзд прошло успешно" :
+                            "Введено недопустимое количество звёзд";
+                    System.out.println("\n" + result);
                 },
                 null);
 
         MenuItem checkIn = new MenuItem("Заселить клиентов в комнату",
                 () -> {
                     AbstractRoom room = getRoomByInput();
-                    AbstractClient[] clients = getManyClientsByInput();
+                    AbstractClient[] guests = convertListToArray(getManyClientsByInput(), AbstractClient.class);
 
-                    System.out.println("\n" + roomService.checkIn(room, clients));
+                    String result = roomService.checkIn(room, guests) ? "Заселение прошло успешно" :
+                            "Заселить не удалось";
+                    System.out.println("\n" + result);
                 },
                 null);
 
         MenuItem evict = new MenuItem("Выселить клиентов из комнаты",
                 () -> {
                     AbstractRoom room = getRoomByInput();
-                    AbstractClient[] clients = getManyClientsByInput();
+                    AbstractClient[] guests = convertListToArray(getManyClientsByInput(), AbstractClient.class);
 
-                    System.out.println("\n" + roomService.evict(room, clients));
+                    String result = roomService.evict(room, guests) ? "Выселение прошло успешно" :
+                            "Выселить не удалось";
+                    System.out.println("\n" + result);
                 },
                 null);
 
         MenuItem roomsByStars = new MenuItem("Вывести список всех комнат, отсортированных по убыванию звёзд",
-                () -> printRooms(roomService.roomsByStars()),
+                () -> {
+                    System.out.println("\nСписок всех комнат по убыванию звёзд: ");
+                    printRooms(roomService.roomsByStars());
+                },
                 null);
 
         MenuItem roomsByPrice = new MenuItem("Высети список всех комнат, отсортированных по возрастанию цены",
-                () -> printRooms(roomService.roomsByPrice()),
+                () -> {
+                    System.out.println("\nСписок всех комнат по возрастанию цены: ");
+                    printRooms(roomService.roomsByPrice());
+                },
                 null);
 
         MenuItem roomsByCapacity = new MenuItem(
                 "Вывести список всех комнат, отсортированных по возрастанию вместимости",
-                () -> printRooms(roomService.roomsByCapacity()),
+                () -> {
+                    System.out.println("\nСписок всех комнат по возрастанию вместимости: ");
+                    printRooms(roomService.roomsByCapacity());
+                },
                 null);
 
         MenuItem availableRoomsByStars = new MenuItem(
                 "Вывести список свободных комнат, отсортированных по убыванию звёзд",
-                () -> printRooms(roomService.availableRoomsByStars()),
+                () -> {
+                    System.out.println("\nСписок свобожных комнат по убыванию звёзд: ");
+                    printRooms(roomService.availableRoomsByStars());
+                },
                 null);
 
         MenuItem availableRoomsByPrice = new MenuItem(
                 "Вывести список свободных комнат, отсортированных по возрастанию цены",
-                () -> printRooms(roomService.availableRoomsByPrice()),
+                () -> {
+                    System.out.println("\nСписок свободных комнат по возрастанию цены: ");
+                    printRooms(roomService.availableRoomsByPrice());
+                },
                 null);
 
         MenuItem availableRoomsByCapacity = new MenuItem(
                 "Вывести список свобожынх комнат, отсортированных по возрастанию вместимости",
-                () -> printRooms(roomService.availableRoomsByCapacity()),
+                () -> {
+                    System.out.println("\nСписок свободных комнат по возрастанию вместимости: ");
+                    printRooms(roomService.availableRoomsByCapacity());
+                },
                 null);
 
         MenuItem countAvailableRooms = new MenuItem("Вывести количество свободных комнат",
-                () -> System.out.println("\n" + roomService.countAvailableRooms()),
+                () -> System.out.println("\nКоличество свободных комнат - " + roomService.countAvailableRooms()),
                 null);
 
         MenuItem getRoomLastClients = new MenuItem("Вывести список последних клиентов комнаты",
                 () -> {
                     AbstractRoom room = getRoomByInput();
+
                     System.out.println("\nВведите количество последних клиентов: ");
                     int count = getUserIntegerInput();
+
                     List<AbstractClient> clients = roomService.getRoomLastClients(room, count);
+                    System.out.println("\nПоследние клиенты комнаты: ");
                     for (int i = 0; i < clients.size(); i++) {
-                        System.out.println(i + ". " + clients.get(i));
+                        System.out.println(i+1 + ". " + clients.get(i));
                     }
                 },
                 null);
@@ -140,7 +171,7 @@ public class Builder {
         MenuItem getRoomInfo = new MenuItem("Вывести полную информацию о комнате",
                 () -> {
                     AbstractRoom room = getRoomByInput();
-                    System.out.println("\n" + roomService.getRoomInfo((Room) room));
+                    System.out.println("\nПолная информация о комнате - " + roomService.getRoomInfo((Room) room));
                 },
                 null);
 
@@ -148,6 +179,7 @@ public class Builder {
                 "Вывести список всех комнат клиента, отстортированных по возрастанию номера комнаты",
                 () -> {
                     AbstractClient client = getClientByInput();
+                    System.out.println("\nСписок всех комнат клиента по возрастанию номера: ");
                     printRooms(roomService.getClientRoomsByNumbers(client));
                 },
                 null);
@@ -156,6 +188,7 @@ public class Builder {
                 "Вывести список всех комнат клиента, отсортированных по убыванию времени выезда",
                 () -> {
                     AbstractClient client = getClientByInput();
+                    System.out.println("\nСписок всех комнат клиента по убыванию времени выезда: ");
                     printRooms(roomService.getClientRoomsByCheckOutTime(client));
                 },
                 null);
@@ -164,6 +197,7 @@ public class Builder {
                 () -> {
                     System.out.println("\nВведите год, месяц, день, час и минуты через пробел: ");
                     String[] dateTime = getUserInput().split(" ");
+                    System.out.println("\nСвободные комнаты с " + Arrays.toString(dateTime) + ": ");
                     printRooms(roomService.getAvailableRoomsByTime(
                             LocalDateTime.of(
                                     Integer.parseInt(dateTime[0]),
@@ -187,26 +221,31 @@ public class Builder {
                     System.out.println("\nВыберите название услуги: ");
                     ServiceNames[] names = ServiceNames.values();
                     for (int i = 0; i < names.length; i++) {
-                        System.out.println(i + ". " + names[i]);
+                        System.out.println(i+1 + ". " + names[i]);
                     }
-                    ServiceNames name = names[getUserIntegerInput()];
+                    ServiceNames name = names[getUserIntegerInput() - 1];
 
                     System.out.println("\nВведите стоимость услуги: ");
                     int cost = getUserIntegerInput();
 
-                    System.out.println(serviceService.addService(new Service(name, cost)));
+                    String result = serviceService.addService(new Service(name, cost)) ? "Удалось добавить услугу" :
+                            "Не удалось добавить услугу";
+                    System.out.println("\n" + result);
                 },
                 null);
 
         MenuItem getPrice = new MenuItem("Вывести стоимость услуги",
                 () -> {
                     Service service = (Service) getServiceByInput();
-                    System.out.println("\n" + serviceService.getFavorPrice(service));
+                    System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
                 },
                 null);
 
         MenuItem getServices = new MenuItem("Вывести список всех услуг",
-                () -> printServices(serviceService.getServices()),
+                () -> {
+                    System.out.println("\nСписок всех услуг: ");
+                    printServices(serviceService.getServices());
+                },
                 null);
 
         MenuItem provideService = new MenuItem("Провести услугу клиенту",
@@ -214,7 +253,9 @@ public class Builder {
                     AbstractClient client = getClientByInput();
                     AbstractService service = getServiceByInput();
 
-                    System.out.println(serviceService.provideService(client, service));
+                    String result = serviceService.provideService(client, service) ? "Удалось провести услугу" :
+                            "Не удалось провести услугу";
+                    System.out.println("\n" + result);
                 },
                 null);
 
@@ -222,6 +263,7 @@ public class Builder {
                 "Вывести список услуг, оказанных клиенту и отсортированных по возрастанию цены",
                 () -> {
                     AbstractClient client = getClientByInput();
+                    System.out.println("\nСписок услуг, оказанных клиенту, по возрастанию цены: ");
                     printServices(serviceService.getClientServicesByPrice(client));
                 },
                 null);
@@ -230,6 +272,7 @@ public class Builder {
                 "Вывести список услуг, оказанных клиенту и отсортированных по убыванию времени оказания",
                 () -> {
                     AbstractClient client = getClientByInput();
+                    System.out.println("Список услуг, оказанных клиенту, по убыванию времени оказания: ");
                     printServices(serviceService.getClientServicesByTime(client));
                 },
                 null);
@@ -247,7 +290,9 @@ public class Builder {
                     System.out.println("\nВведите номер телефона клиента: ");
                     String phone = getUserInput();
 
-                    System.out.println(clientService.addClient(new Client(name, phone)));
+                    String result = clientService.addClient(new Client(name, phone)) ? "Удалось добавить клиента" :
+                            "Не удалось добавить клиента";
+                    System.out.println("\n" + result);
                 },
                 null);
 
@@ -255,15 +300,15 @@ public class Builder {
                 () -> {
                     List<AbstractClient> clients = clientService.getClients();
 
-                    System.out.println();
+                    System.out.println("\nСписок всех клиентов: ");
                     for (int i = 0; i < clients.size(); i++) {
-                        System.out.println(i + ". " + clients.get(i));
+                        System.out.println(i+1 + ". " + clients.get(i));
                     }
                 },
                 null);
 
         MenuItem countClients = new MenuItem("Вывести количество клиентов",
-                () -> System.out.println("\n" + clientService.countClients()),
+                () -> System.out.println("\nКоличество клиентов - " + clientService.countClients()),
                 null);
 
         return new Menu("Управление клиентами", new MenuItem[]{addClient, getClients, countClients});
@@ -281,15 +326,15 @@ public class Builder {
         System.out.println("\nВыберите комнату: ");
         List<AbstractRoom> rooms = roomService.roomsByStars();
         for (int i = 0; i < rooms.size(); i++) {
-            System.out.println(i + ". " + rooms.get(i));
+            System.out.println(i+1 + ". " + rooms.get(i));
         }
-        return rooms.get(getUserIntegerInput());
+        return rooms.get(getUserIntegerInput() - 1);
     }
 
     private List<AbstractClient> getClients() {
         List<AbstractClient> clients = clientService.getClients();
         for (int i = 0; i < clients.size(); i++) {
-            System.out.println(i + ". " + clients.get(i));
+            System.out.println(i+1 + ". " + clients.get(i));
         }
 
         return clients;
@@ -299,29 +344,29 @@ public class Builder {
         System.out.println("\nВыберите клиента: ");
         List<AbstractClient> clients = getClients();
 
-        return clients.get(getUserIntegerInput());
+        return clients.get(getUserIntegerInput() - 1);
     }
 
-    private AbstractClient[] getManyClientsByInput() {
-        System.out.println("\nВыберите клиентов (для выхода введите -1): ");
+    private List<AbstractClient> getManyClientsByInput() {
+        System.out.println("\nСписок всех клиентов: ");
         List<AbstractClient> clients = getClients();
 
         List<AbstractClient> guests = new ArrayList<>(2);
         while (true) {
-            int choice = getUserIntegerInput();
-            if (choice == -1) {
+            System.out.println("\nВыберите клиента (для выхода введите -1): ");
+            int choice = getUserIntegerInput() - 1;
+            if (choice == -2) {
                 break;
             }
             guests.add(clients.get(choice));
         }
 
-        return (AbstractClient[]) guests.toArray();
+        return guests;
     }
 
     private void printRooms(List<AbstractRoom> rooms) {
-        System.out.println();
         for (int i = 0; i < rooms.size(); i++) {
-            System.out.println(i + ". " + rooms.get(i));
+            System.out.println(i+1 + ". " + rooms.get(i));
         }
     }
 
@@ -329,16 +374,20 @@ public class Builder {
         System.out.println("\nВыберите услугу: ");
         List<AbstractService> services = serviceService.getServices();
         for (int i = 0; i < services.size(); i++) {
-            System.out.println(i + ". " + services.get(i));
+            System.out.println(i+1 + ". " + services.get(i));
         }
 
-        return services.get(getUserIntegerInput());
+        return services.get(getUserIntegerInput() - 1);
     }
 
     private void printServices(List<AbstractService> services) {
-        System.out.println();
         for (int i = 0; i < services.size(); i++) {
-            System.out.println(i + ". " + services.get(i));
+            System.out.println(i+1 + ". " + services.get(i));
         }
+    }
+
+    private <T> T[] convertListToArray (List<T> list, Class<T> elementType) {
+        T[] array = (T[]) Array.newInstance(elementType, list.size());
+        return list.toArray(array);
     }
 }
