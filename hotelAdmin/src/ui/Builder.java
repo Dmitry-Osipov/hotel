@@ -20,6 +20,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Класс отвечает за формирование меню.
+ */
 @Getter
 @ToString
 public class Builder {
@@ -28,16 +31,29 @@ public class Builder {
     private final ServiceService serviceService;
     private final ClientService clientService;
 
+    /**
+     * Класс отвечает за формирование меню.
+     * @param roomService Сервис управления комнатами.
+     * @param serviceService Сервис управления услугами.
+     * @param clientService Сервис управления клиентами.
+     */
     public Builder(RoomService roomService, ServiceService serviceService, ClientService clientService) {
         this.roomService = roomService;
         this.serviceService = serviceService;
         this.clientService = clientService;
     }
 
+    /**
+     * Метод формирует меню.
+     */
     public void buildMenu() {
         rootMenu = buildMainMenu();
     }
 
+    /**
+     * Служебный метод предназначен для формирования главного меню.
+     * @return Главное меню.
+     */
     private Menu buildMainMenu() {
         MenuItem roomsMenu = new MenuItem("Управление комнатами", null, buildRoomsMenu());
         MenuItem serviceMenu = new MenuItem("Управление услугами", null, buildServicesMenu());
@@ -46,6 +62,10 @@ public class Builder {
         return new Menu("Главное меню", new MenuItem[]{roomsMenu, serviceMenu, clientMenu});
     }
 
+    /**
+     * Служебный метод предназначен для формирования меню управления команатами.
+     * @return Меню управления команатами.
+     */
     private Menu buildRoomsMenu() {
         MenuItem addRoom = new MenuItem("Добавить комнату",
                 () -> {
@@ -215,6 +235,10 @@ public class Builder {
                 getClientRoomsByCheckOutTime, getAvailableRoomsByTime});
     }
 
+    /**
+     * Служебный метод предназначен для формирования меню услуг.
+     * @return Меню услуг.
+     */
     private Menu buildServicesMenu() {
         MenuItem addService = new MenuItem("Добавить услугу",
                 () -> {
@@ -281,6 +305,10 @@ public class Builder {
                 getClientServicesByPrice, getClientServicesByTime});
     }
 
+    /**
+     * Служебный метод предназначен для формирования меню управления клиентами.
+     * @return Меню управления клиентами.
+     */
     private Menu buildClientsMenu() {
         MenuItem addClient = new MenuItem("Добавить клиента",
                 () -> {
@@ -314,14 +342,27 @@ public class Builder {
         return new Menu("Управление клиентами", new MenuItem[]{addClient, getClients, countClients});
     }
 
+    /**
+     * Служебный метод предназначен для устранения дублирования кода.
+     * @return Полная строка, введённая пользователем.
+     */
     private String getUserInput() {
         return new Scanner(System.in).nextLine();
     }
 
+    /**
+     * Служебный метод предназначен для устранения дублирования кода.
+     * @return Первое число, которое введёт пользователь.
+     */
     private int getUserIntegerInput() {
         return new Scanner(System.in).nextInt();
     }
 
+    /**
+     * Служебный метод предназначен для устранения дублирования кода. Метод выводит в консоль все комнаты,
+     * отсортированные в порядке убывания звёзд. Пользователю требуется выбрать какой-либо из номеров.
+     * @return Номер.
+     */
     private AbstractRoom getRoomByInput() {
         System.out.println("\nВыберите комнату: ");
         List<AbstractRoom> rooms = roomService.roomsByStars();
@@ -331,6 +372,10 @@ public class Builder {
         return rooms.get(getUserIntegerInput() - 1);
     }
 
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль всех клиентов.
+     * @return Список клиентов.
+     */
     private List<AbstractClient> getClients() {
         List<AbstractClient> clients = clientService.getClients();
         for (int i = 0; i < clients.size(); i++) {
@@ -340,6 +385,10 @@ public class Builder {
         return clients;
     }
 
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Пользователю требуется выбрать какого-либо клиента.
+     * @return Клиент.
+     */
     private AbstractClient getClientByInput() {
         System.out.println("\nВыберите клиента: ");
         List<AbstractClient> clients = getClients();
@@ -347,6 +396,11 @@ public class Builder {
         return clients.get(getUserIntegerInput() - 1);
     }
 
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Пользователю требуется выбрать одного или несколько
+     * клиентов.
+     * @return Список клиентов.
+     */
     private List<AbstractClient> getManyClientsByInput() {
         System.out.println("\nСписок всех клиентов: ");
         List<AbstractClient> clients = getClients();
@@ -364,28 +418,45 @@ public class Builder {
         return guests;
     }
 
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль список комнат.
+     * @param rooms Список комнат.
+     */
     private void printRooms(List<AbstractRoom> rooms) {
         for (int i = 0; i < rooms.size(); i++) {
             System.out.println(i+1 + ". " + rooms.get(i));
         }
     }
 
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Пользователю требуется выбрать услугу.
+     * @return Услуга.
+     */
     private AbstractService getServiceByInput() {
         System.out.println("\nВыберите услугу: ");
         List<AbstractService> services = serviceService.getServices();
-        for (int i = 0; i < services.size(); i++) {
-            System.out.println(i+1 + ". " + services.get(i));
-        }
+        printServices(services);
 
         return services.get(getUserIntegerInput() - 1);
     }
 
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль список услуг.
+     * @param services Список услуг.
+     */
     private void printServices(List<AbstractService> services) {
         for (int i = 0; i < services.size(); i++) {
             System.out.println(i+1 + ". " + services.get(i));
         }
     }
 
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Метод конвертирует список в массив.
+     * @param list Список.
+     * @param elementType Класс, с которым требуется вернуть массив.
+     * @return Массив.
+     * @param <T> Дженерик.
+     */
     private <T> T[] convertListToArray (List<T> list, Class<T> elementType) {
         T[] array = (T[]) Array.newInstance(elementType, list.size());
         return list.toArray(array);

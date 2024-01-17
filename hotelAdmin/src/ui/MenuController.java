@@ -13,12 +13,18 @@ import service.ServiceService;
 
 import java.util.Scanner;
 
+/**
+ * Класс отвечает за работу UI.
+ */
 @Getter
 @ToString
 public class MenuController {
     private final Builder builder;
     private final Navigator navigator;
 
+    /**
+     * Класс отвечает за работу UI.
+     */
     public MenuController() {
         builder = new Builder(
                 new RoomService(new RoomRepository(), new RoomReservationRepository()),
@@ -29,6 +35,9 @@ public class MenuController {
         navigator = new Navigator(builder.getRootMenu());
     }
 
+    /**
+     * Метод запускает приложение отеля.
+     */
     public void run() {
         while (true) {
             navigator.printMenu();
@@ -41,6 +50,10 @@ public class MenuController {
         }
     }
 
+    /**
+     * Служебный метод запрашивает у пользователя число, проверяет валидность поступивших данных от пользователя.
+     * @return Число.
+     */
     private int getUserInput() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\nВыберите действие (для выхода введите -1): ");
@@ -52,6 +65,9 @@ public class MenuController {
         return scanner.nextInt();
     }
 
+    /**
+     * Служебный метод производит user-friendly выход из программы.
+     */
     private void exit() {
         System.out.println("\nВыход из программы...");
     }
