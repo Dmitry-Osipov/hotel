@@ -2,18 +2,31 @@ package ui;
 
 import lombok.Getter;
 import lombok.ToString;
+import repository.client.ClientRepository;
+import repository.room.RoomRepository;
+import repository.room.RoomReservationRepository;
+import repository.service.ProvidedServicesRepository;
+import repository.service.ServiceRepository;
+import service.ClientService;
+import service.RoomService;
+import service.ServiceService;
 
 import java.util.Scanner;
 
 @Getter
 @ToString
 public class MenuController {
-    private Builder builder;
-    private Navigator navigator;
+    private final Builder builder;
+    private final Navigator navigator;
 
-    public MenuController(Builder builder, Navigator navigator) {
-        this.builder = builder;
-        this.navigator = navigator;
+    public MenuController() {
+        builder = new Builder(
+                new RoomService(new RoomRepository(), new RoomReservationRepository()),
+                new ServiceService(new ServiceRepository(), new ProvidedServicesRepository()),
+                new ClientService(new ClientRepository()));
+
+        builder.buildMenu();
+        navigator = new Navigator(builder.getRootMenu());
     }
 
     public void run() {
@@ -30,9 +43,9 @@ public class MenuController {
 
     private int getUserInput() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Выберите действие (для выхода введите -1): ");
+        System.out.println("\nВыберите действие (для выхода введите -1): ");
         while (!scanner.hasNextInt()) {
-            System.out.println("Некорректный ввод. Повторите: ");
+            System.out.println("\nНекорректный ввод. Повторите: ");
             scanner.next();
         }
 
@@ -40,6 +53,6 @@ public class MenuController {
     }
 
     private void exit() {
-        System.out.println("Выход из программы.");
+        System.out.println("\nВыход из программы...");
     }
 }

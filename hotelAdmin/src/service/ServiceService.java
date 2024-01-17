@@ -70,6 +70,14 @@ public class ServiceService extends AbstractFavorService {
     }
 
     /**
+     * Метод возвращает список всех услуг.
+     * @return Список услуг.
+     */
+    public List<AbstractService> getServices() {
+        return serviceRepository.getServices().stream().toList();
+    }
+
+    /**
      * Слежубный метод предназначен для устранения дублирования кода. Метод фильтрует стрим от списка услуг по
      * содержанию конкретного клиента в списке.
      * @param client Клиент.
