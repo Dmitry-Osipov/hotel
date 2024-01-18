@@ -65,8 +65,8 @@ public class Builder {
     }
 
     /**
-     * Служебный метод предназначен для формирования меню управления команатами.
-     * @return Меню управления команатами.
+     * Служебный метод предназначен для формирования меню управления комнатами.
+     * @return Меню управления комнатами.
      */
     private Menu buildRoomsMenu() {
         MenuItem addRoom = new MenuItem("Добавить комнату",
@@ -105,7 +105,7 @@ public class Builder {
 
                     String result;
                     if (room != null) {
-                        System.out.println("\nВведите количесто звёзд (от 1 до 5): ");
+                        System.out.println("\nВведите количество звёзд (от 1 до 5): ");
                         int stars = getUserIntegerInput();
 
                         result = roomService.addStarsToRoom(room, stars) ? "Добавление звёзд прошло успешно" :
@@ -167,7 +167,7 @@ public class Builder {
                 },
                 null);
 
-        MenuItem roomsByPrice = new MenuItem("Высети список всех комнат, отсортированных по возрастанию цены",
+        MenuItem roomsByPrice = new MenuItem("Вывести список всех комнат, отсортированных по возрастанию цены",
                 () -> {
                     System.out.println("\nСписок всех комнат по возрастанию цены: ");
                     printRooms(roomService.roomsByPrice());
@@ -199,7 +199,7 @@ public class Builder {
                 null);
 
         MenuItem availableRoomsByCapacity = new MenuItem(
-                "Вывести список свобожынх комнат, отсортированных по возрастанию вместимости",
+                "Вывести список свободных комнат, отсортированных по возрастанию вместимости",
                 () -> {
                     System.out.println("\nСписок свободных комнат по возрастанию вместимости: ");
                     printRooms(roomService.availableRoomsByCapacity());
@@ -241,7 +241,7 @@ public class Builder {
                 null);
 
         MenuItem getClientRoomsByNumbers = new MenuItem(
-                "Вывести список всех комнат клиента, отстортированных по возрастанию номера комнаты",
+                "Вывести список всех комнат клиента, отсортированных по возрастанию номера комнаты",
                 () -> {
                     AbstractClient client = getClientByInput();
                     if (client == null) {
@@ -390,7 +390,7 @@ public class Builder {
                     System.out.println("\nВведите ФИО клиента: ");
                     String name = getUserInput();
 
-                    System.out.println("\nВведите номер телефона клиента: ");
+                    System.out.println("\nВведите номер телефона клиента в формате +7(xxx)-xxx-xx-xx: ");
                     String phone = getUserInput();
                     while (!PhoneNumberValidator.validatePhoneNumber(phone)) {
                         System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
