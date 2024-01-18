@@ -10,6 +10,7 @@ import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
+import ui.utils.SimilarMessages;
 
 import java.util.Scanner;
 
@@ -58,7 +59,7 @@ public class MenuController {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\nВыберите действие (для выхода введите -1): ");
         while (!scanner.hasNextInt()) {
-            System.out.println("\nНекорректный ввод. Повторите: ");
+            System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
             scanner.next();
         }
 

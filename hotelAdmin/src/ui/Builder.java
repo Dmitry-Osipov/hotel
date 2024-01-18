@@ -12,6 +12,8 @@ import lombok.ToString;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
+import ui.utils.PhoneNumberValidator;
+import ui.utils.SimilarMessages;
 
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
@@ -71,12 +73,16 @@ public class Builder {
                 () -> {
                     System.out.println("\nВведите номер, вместимость и цену комнаты через пробел: ");
                     String[] userInput = getUserInput().split(" ");
+                    while (userInput.length != 3 || !isArrayOfDigits(userInput)) {
+                        System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
+                        userInput = getUserInput().split(" ");
+                    }
 
                     String result = roomService.addRoom(new Room(
                             Integer.parseInt(userInput[0]),
                             Integer.parseInt(userInput[1]),
-                            Integer.parseInt(userInput[2]))) ? "Удалось добавить комнату"
-                            : "Не удалось добавить комнату";
+                            Integer.parseInt(userInput[2]))
+                    ) ? "Удалось добавить комнату" : "Не удалось добавить комнату";
                     System.out.println("\n" + result);
                 },
                 null);
@@ -84,7 +90,12 @@ public class Builder {
         MenuItem getPrice = new MenuItem("Вывести стоимость комнаты",
                 () -> {
                     Room room = (Room) getRoomByInput();
-                    System.out.println("\nСтоимость комнаты - " + roomService.getFavorPrice(room));
+
+                    if (room != null) {
+                        System.out.println("\nСтоимость комнаты - " + roomService.getFavorPrice(room));
+                    } else {
+                        System.out.println("\n" + SimilarMessages.NO_ROOMS);
+                    }
                 },
                 null);
 
@@ -92,11 +103,17 @@ public class Builder {
                 () -> {
                     AbstractRoom room = getRoomByInput();
 
-                    System.out.println("\nВведите количесто звёзд (от 1 до 5): ");
-                    int stars = getUserIntegerInput();
+                    String result;
+                    if (room != null) {
+                        System.out.println("\nВведите количесто звёзд (от 1 до 5): ");
+                        int stars = getUserIntegerInput();
 
-                    String result = roomService.addStarsToRoom(room, stars) ? "Добавление звёзд прошло успешно" :
-                            "Введено недопустимое количество звёзд";
+                        result = roomService.addStarsToRoom(room, stars) ? "Добавление звёзд прошло успешно" :
+                                "Введено недопустимое количество звёзд";
+                    } else {
+                        result = SimilarMessages.NO_ROOMS;
+                    }
+
                     System.out.println("\n" + result);
                 },
                 null);
@@ -104,10 +121,20 @@ public class Builder {
         MenuItem checkIn = new MenuItem("Заселить клиентов в комнату",
                 () -> {
                     AbstractRoom room = getRoomByInput();
-                    AbstractClient[] guests = convertListToArray(getManyClientsByInput(), AbstractClient.class);
 
-                    String result = roomService.checkIn(room, guests) ? "Заселение прошло успешно" :
-                            "Заселить не удалось";
+                    String result;
+                    if (room != null) {
+                        List<AbstractClient> guests = getManyClientsByInput();
+                        if (guests == null) {
+                            result = SimilarMessages.NO_CLIENTS;
+                        } else {
+                            AbstractClient[] clients = convertListToArray(guests, AbstractClient.class);
+                            result = roomService.checkIn(room, clients) ? "Заселение прошло успешно" :
+                                    "Заселить не удалось";
+                        }
+                    } else {
+                        result = SimilarMessages.NO_ROOMS;
+                    }
                     System.out.println("\n" + result);
                 },
                 null);
@@ -115,10 +142,20 @@ public class Builder {
         MenuItem evict = new MenuItem("Выселить клиентов из комнаты",
                 () -> {
                     AbstractRoom room = getRoomByInput();
-                    AbstractClient[] guests = convertListToArray(getManyClientsByInput(), AbstractClient.class);
 
-                    String result = roomService.evict(room, guests) ? "Выселение прошло успешно" :
-                            "Выселить не удалось";
+                    String result;
+                    if (room != null) {
+                        List<AbstractClient> guests = getManyClientsByInput();
+                        if (guests == null) {
+                            result = SimilarMessages.NO_CLIENTS;
+                        } else {
+                            AbstractClient[] clients = convertListToArray(guests, AbstractClient.class);
+                            result = roomService.evict(room, clients) ? "Выселение прошло успешно" :
+                                    "Выселить не удалось";
+                        }
+                    } else {
+                        result = SimilarMessages.NO_ROOMS;
+                    }
                     System.out.println("\n" + result);
                 },
                 null);
@@ -148,7 +185,7 @@ public class Builder {
         MenuItem availableRoomsByStars = new MenuItem(
                 "Вывести список свободных комнат, отсортированных по убыванию звёзд",
                 () -> {
-                    System.out.println("\nСписок свобожных комнат по убыванию звёзд: ");
+                    System.out.println("\nСписок свободных комнат по убыванию звёзд: ");
                     printRooms(roomService.availableRoomsByStars());
                 },
                 null);
@@ -177,13 +214,17 @@ public class Builder {
                 () -> {
                     AbstractRoom room = getRoomByInput();
 
-                    System.out.println("\nВведите количество последних клиентов: ");
-                    int count = getUserIntegerInput();
+                    if (room != null) {
+                        System.out.println("\nВведите количество последних клиентов: ");
+                        int count = getUserIntegerInput();
 
-                    List<AbstractClient> clients = roomService.getRoomLastClients(room, count);
-                    System.out.println("\nПоследние клиенты комнаты: ");
-                    for (int i = 0; i < clients.size(); i++) {
-                        System.out.println(i+1 + ". " + clients.get(i));
+                        List<AbstractClient> clients = roomService.getRoomLastClients(room, count);
+                        System.out.println("\nПоследние клиенты комнаты: ");
+                        for (int i = 0; i < clients.size(); i++) {
+                            System.out.println(i + 1 + ". " + clients.get(i));
+                        }
+                    } else {
+                        System.out.println("\n" + SimilarMessages.NO_ROOMS);
                     }
                 },
                 null);
@@ -191,7 +232,11 @@ public class Builder {
         MenuItem getRoomInfo = new MenuItem("Вывести полную информацию о комнате",
                 () -> {
                     AbstractRoom room = getRoomByInput();
-                    System.out.println("\nПолная информация о комнате - " + roomService.getRoomInfo((Room) room));
+                    if (room != null) {
+                        System.out.println("\nПолная информация о комнате - " + roomService.getRoomInfo((Room) room));
+                    } else {
+                        System.out.println("\n" + SimilarMessages.NO_ROOMS);
+                    }
                 },
                 null);
 
@@ -199,8 +244,12 @@ public class Builder {
                 "Вывести список всех комнат клиента, отстортированных по возрастанию номера комнаты",
                 () -> {
                     AbstractClient client = getClientByInput();
-                    System.out.println("\nСписок всех комнат клиента по возрастанию номера: ");
-                    printRooms(roomService.getClientRoomsByNumbers(client));
+                    if (client == null) {
+                        System.out.println("\n" + SimilarMessages.NO_CLIENTS);
+                    } else {
+                        System.out.println("\nСписок всех комнат клиента по возрастанию номера: ");
+                        printRooms(roomService.getClientRoomsByNumbers(client));
+                    }
                 },
                 null);
 
@@ -208,8 +257,12 @@ public class Builder {
                 "Вывести список всех комнат клиента, отсортированных по убыванию времени выезда",
                 () -> {
                     AbstractClient client = getClientByInput();
+                    if (client == null) {
+                        System.out.println("\n" + SimilarMessages.NO_CLIENTS);
+                    } else {
                     System.out.println("\nСписок всех комнат клиента по убыванию времени выезда: ");
                     printRooms(roomService.getClientRoomsByCheckOutTime(client));
+                    }
                 },
                 null);
 
@@ -217,6 +270,11 @@ public class Builder {
                 () -> {
                     System.out.println("\nВведите год, месяц, день, час и минуты через пробел: ");
                     String[] dateTime = getUserInput().split(" ");
+                    while (dateTime.length != 5 || !isArrayOfDigits(dateTime)) {
+                        System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
+                        dateTime = getUserInput().split(" ");
+                    }
+
                     System.out.println("\nСвободные комнаты с " + Arrays.toString(dateTime) + ": ");
                     printRooms(roomService.getAvailableRoomsByTime(
                             LocalDateTime.of(
@@ -261,7 +319,11 @@ public class Builder {
         MenuItem getPrice = new MenuItem("Вывести стоимость услуги",
                 () -> {
                     Service service = (Service) getServiceByInput();
-                    System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
+                    if (service == null) {
+                        System.out.println("\n" + SimilarMessages.NO_SERVICES);
+                    } else {
+                        System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
+                    }
                 },
                 null);
 
@@ -276,10 +338,15 @@ public class Builder {
                 () -> {
                     AbstractClient client = getClientByInput();
                     AbstractService service = getServiceByInput();
-
-                    String result = serviceService.provideService(client, service) ? "Удалось провести услугу" :
-                            "Не удалось провести услугу";
-                    System.out.println("\n" + result);
+                    if (client == null) {
+                        System.out.println("\n" + SimilarMessages.NO_CLIENTS);
+                    } else if (service == null) {
+                        System.out.println("\n" + SimilarMessages.NO_SERVICES);
+                    } else {
+                        String result = serviceService.provideService(client, service) ? "Удалось провести услугу" :
+                                "Не удалось провести услугу";
+                        System.out.println("\n" + result);
+                    }
                 },
                 null);
 
@@ -287,8 +354,12 @@ public class Builder {
                 "Вывести список услуг, оказанных клиенту и отсортированных по возрастанию цены",
                 () -> {
                     AbstractClient client = getClientByInput();
-                    System.out.println("\nСписок услуг, оказанных клиенту, по возрастанию цены: ");
-                    printServices(serviceService.getClientServicesByPrice(client));
+                    if (client == null) {
+                        System.out.println("\n" + SimilarMessages.NO_CLIENTS);
+                    } else {
+                        System.out.println("\nСписок услуг, оказанных клиенту, по возрастанию цены: ");
+                        printServices(serviceService.getClientServicesByPrice(client));
+                    }
                 },
                 null);
 
@@ -296,8 +367,12 @@ public class Builder {
                 "Вывести список услуг, оказанных клиенту и отсортированных по убыванию времени оказания",
                 () -> {
                     AbstractClient client = getClientByInput();
-                    System.out.println("Список услуг, оказанных клиенту, по убыванию времени оказания: ");
-                    printServices(serviceService.getClientServicesByTime(client));
+                    if (client == null) {
+                        System.out.println("\n" + SimilarMessages.NO_CLIENTS);
+                    } else {
+                        System.out.println("Список услуг, оказанных клиенту, по убыванию времени оказания: ");
+                        printServices(serviceService.getClientServicesByTime(client));
+                    }
                 },
                 null);
 
@@ -317,6 +392,10 @@ public class Builder {
 
                     System.out.println("\nВведите номер телефона клиента: ");
                     String phone = getUserInput();
+                    while (!PhoneNumberValidator.validatePhoneNumber(phone)) {
+                        System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
+                        phone = getUserInput();
+                    }
 
                     String result = clientService.addClient(new Client(name, phone)) ? "Удалось добавить клиента" :
                             "Не удалось добавить клиента";
@@ -327,10 +406,13 @@ public class Builder {
         MenuItem getClients = new MenuItem("Вывести список всех клиентов",
                 () -> {
                     List<AbstractClient> clients = clientService.getClients();
-
-                    System.out.println("\nСписок всех клиентов: ");
-                    for (int i = 0; i < clients.size(); i++) {
-                        System.out.println(i+1 + ". " + clients.get(i));
+                    if (clients.isEmpty()) {
+                        System.out.println("\n" + SimilarMessages.NO_CLIENTS);
+                    } else {
+                        System.out.println("\nСписок всех клиентов: ");
+                        for (int i = 0; i < clients.size(); i++) {
+                            System.out.println(i + 1 + ". " + clients.get(i));
+                        }
                     }
                 },
                 null);
@@ -351,21 +433,32 @@ public class Builder {
     }
 
     /**
-     * Служебный метод предназначен для устранения дублирования кода.
+     * Служебный метод предназначен для устранения дублирования кода. Метод запрашивает у пользователя число, проверяя
+     * число на валидность.
      * @return Первое число, которое введёт пользователь.
      */
     private int getUserIntegerInput() {
-        return new Scanner(System.in).nextInt();
+        Scanner scanner = new Scanner(System.in);
+        while (!scanner.hasNextInt()) {
+            System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
+            scanner.next();
+        }
+
+        return scanner.nextInt();
     }
 
     /**
      * Служебный метод предназначен для устранения дублирования кода. Метод выводит в консоль все комнаты,
      * отсортированные в порядке убывания звёзд. Пользователю требуется выбрать какой-либо из номеров.
-     * @return Номер.
+     * @return Номер или null, если список комнат пуст.
      */
     private AbstractRoom getRoomByInput() {
-        System.out.println("\nВыберите комнату: ");
         List<AbstractRoom> rooms = roomService.roomsByStars();
+        if (rooms.isEmpty()) {
+            return null;
+        }
+
+        System.out.println("\nВыберите комнату: ");
         for (int i = 0; i < rooms.size(); i++) {
             System.out.println(i+1 + ". " + rooms.get(i));
         }
@@ -374,10 +467,14 @@ public class Builder {
 
     /**
      * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль всех клиентов.
-     * @return Список клиентов.
+     * @return Список клиентов или null, если список клиентов пуст.
      */
     private List<AbstractClient> getClients() {
         List<AbstractClient> clients = clientService.getClients();
+        if (clients.isEmpty()) {
+            return null;
+        }
+
         for (int i = 0; i < clients.size(); i++) {
             System.out.println(i+1 + ". " + clients.get(i));
         }
@@ -387,11 +484,15 @@ public class Builder {
 
     /**
      * Служебный метод предназначен для снижения дублирования кода. Пользователю требуется выбрать какого-либо клиента.
-     * @return Клиент.
+     * @return Клиент или null, если список клиентов пуст.
      */
     private AbstractClient getClientByInput() {
         System.out.println("\nВыберите клиента: ");
         List<AbstractClient> clients = getClients();
+        if (clients == null) {
+            return null;
+        }
+
 
         return clients.get(getUserIntegerInput() - 1);
     }
@@ -399,11 +500,14 @@ public class Builder {
     /**
      * Служебный метод предназначен для снижения дублирования кода. Пользователю требуется выбрать одного или несколько
      * клиентов.
-     * @return Список клиентов.
+     * @return Список клиентов или null, если список клиентов пуст.
      */
     private List<AbstractClient> getManyClientsByInput() {
         System.out.println("\nСписок всех клиентов: ");
         List<AbstractClient> clients = getClients();
+        if (clients == null) {
+            return null;
+        }
 
         List<AbstractClient> guests = new ArrayList<>(2);
         while (true) {
@@ -419,34 +523,48 @@ public class Builder {
     }
 
     /**
-     * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль список комнат.
+     * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль список комнат или сообщение
+     * об отсутствии комнат.
      * @param rooms Список комнат.
      */
     private void printRooms(List<AbstractRoom> rooms) {
-        for (int i = 0; i < rooms.size(); i++) {
-            System.out.println(i+1 + ". " + rooms.get(i));
+        if (rooms.isEmpty()) {
+            System.out.println("\n" + SimilarMessages.NO_ROOMS);
+        } else {
+            for (int i = 0; i < rooms.size(); i++) {
+                System.out.println(i + 1 + ". " + rooms.get(i));
+            }
         }
     }
 
     /**
      * Служебный метод предназначен для снижения дублирования кода. Пользователю требуется выбрать услугу.
-     * @return Услуга.
+     * @return Услуга или null, если список услуг пуст.
      */
     private AbstractService getServiceByInput() {
-        System.out.println("\nВыберите услугу: ");
         List<AbstractService> services = serviceService.getServices();
+        if(services.isEmpty()) {
+            return null;
+        }
+
+        System.out.println("\nВыберите услугу: ");
         printServices(services);
 
         return services.get(getUserIntegerInput() - 1);
     }
 
     /**
-     * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль список услуг.
+     * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль список услуг или сообщение
+     * про отсутствие услуг.
      * @param services Список услуг.
      */
     private void printServices(List<AbstractService> services) {
-        for (int i = 0; i < services.size(); i++) {
-            System.out.println(i+1 + ". " + services.get(i));
+        if (services.isEmpty()) {
+            System.out.println("\n" + SimilarMessages.NO_SERVICES);
+        } else {
+            for (int i = 0; i < services.size(); i++) {
+                System.out.println(i + 1 + ". " + services.get(i));
+            }
         }
     }
 
@@ -455,10 +573,27 @@ public class Builder {
      * @param list Список.
      * @param elementType Класс, с которым требуется вернуть массив.
      * @return Массив.
-     * @param <T> Дженерик.
      */
     private <T> T[] convertListToArray (List<T> list, Class<T> elementType) {
         T[] array = (T[]) Array.newInstance(elementType, list.size());
         return list.toArray(array);
+    }
+
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Метод проверяет, являются ли все элемента списка
+     * числами.
+     * @param array Массив строк.
+     * @return true, если все элементы массива являются числами, иначе false.
+     */
+    private boolean isArrayOfDigits(String[] array) {
+        for (String str : array) {
+            for (int i = 0; i < str.length(); i++) {
+                if (!Character.isDigit(str.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
