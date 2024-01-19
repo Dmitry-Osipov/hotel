@@ -390,7 +390,7 @@ public class Builder {
                     System.out.println("\nВведите ФИО клиента: ");
                     String name = getUserInput();
 
-                    System.out.println("\nВведите номер телефона клиента в формате +7(xxx)-xxx-xx-xx: ");
+                    System.out.println("\nВведите номер телефона клиента в формате +7(xxx)xxx-xx-xx: ");
                     String phone = getUserInput();
                     while (!PhoneNumberValidator.validatePhoneNumber(phone)) {
                         System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);

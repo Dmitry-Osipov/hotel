@@ -2,6 +2,7 @@ package ui;
 
 import lombok.Getter;
 import lombok.ToString;
+import ui.utils.SimilarMessages;
 
 /**
  * Класс отвечает за навигацию по меню.
@@ -36,8 +37,12 @@ public class Navigator {
      * @param index Индекс меню/действия, к которому произойдёт переход.
      */
     public void navigate(Integer index) {
-        currentMenu.getMenuItems()[index].doAction();
-        currentMenu = getNextMenu(index);
+        if (index < 0 || currentMenu.getMenuItems().length <= index) {
+            System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
+        } else {
+            currentMenu.getMenuItems()[index].doAction();
+            currentMenu = getNextMenu(index);
+        }
     }
 
     /**
@@ -46,8 +51,7 @@ public class Navigator {
      * @return Следующее меню, если оно есть, иначе главное меню.
      */
     private Menu getNextMenu(Integer index) {
-        if (index >= 0 && index <= currentMenu.getMenuItems().length-1
-                && currentMenu.getMenuItems()[index].nextMenu() != null) {
+        if (currentMenu.getMenuItems()[index].nextMenu() != null) {
             return currentMenu.getMenuItems()[index].nextMenu();
         }
 
