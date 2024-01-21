@@ -28,9 +28,10 @@ public class MenuController {
      */
     public MenuController() {
         builder = new Builder(
-                new RoomService(new RoomRepository(), new RoomReservationRepository()),
-                new ServiceService(new ServiceRepository(), new ProvidedServicesRepository()),
-                new ClientService(new ClientRepository()));
+                new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance()),
+                new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance()),
+                new ClientService(ClientRepository.getInstance())
+        );
 
         builder.buildMenu();
         navigator = new Navigator(builder.getRootMenu());

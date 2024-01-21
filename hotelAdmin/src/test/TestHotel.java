@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 public class TestHotel {
     public static void main(String[] args) {
-        ClientRepository clients = new ClientRepository();
+        ClientRepository clients = ClientRepository.getInstance();
         ClientService cs = new ClientService(clients);
         Client client1 = new Client("Osipov Dmitry Romanovich", "8-902-902-98-11");
         Client client2 = new Client("Musofranova Nadezhda Sergeevna", "8-961-120-09-91");
@@ -26,8 +26,8 @@ public class TestHotel {
         System.out.println("Количество клиентов: " + cs.countClients());
         System.out.println("Все клиенты: " + cs.getClients());
 
-        RoomReservationRepository reservations = new RoomReservationRepository();
-        RoomRepository rooms = new RoomRepository();
+        RoomReservationRepository reservations = RoomReservationRepository.getInstance();
+        RoomRepository rooms = RoomRepository.getInstance();
         RoomService rs = new RoomService(rooms, reservations);
         Room room1 = new Room(110, 2, 1000);
         result = room1.getPrice() == room1.getMIN_PRICE() ? "Установлена цена по умолчанию" : "Автопроверка дала сбой";
@@ -93,8 +93,8 @@ public class TestHotel {
                 LocalDateTime.of(2024, 1, 8, 21, 0)));
         System.out.println("Цена комнаты: " + rs.getFavorPrice(room1));
 
-        ProvidedServicesRepository providedServicesRepository = new ProvidedServicesRepository();
-        ServiceRepository serviceRepository = new ServiceRepository();
+        ProvidedServicesRepository providedServicesRepository = ProvidedServicesRepository.getInstance();
+        ServiceRepository serviceRepository = ServiceRepository.getInstance();
         ServiceService ss = new ServiceService(serviceRepository, providedServicesRepository);
         Service service1 = new Service(ServiceNames.CLEANING, 4000);
         Service service2 = new Service(ServiceNames.BREAKFAST, 2000);
