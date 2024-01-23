@@ -2,7 +2,7 @@ package ui;
 
 import lombok.Getter;
 import lombok.ToString;
-import ui.utils.SimilarMessages;
+import ui.utils.ErrorMessages;
 
 /**
  * Класс отвечает за навигацию по меню.
@@ -38,7 +38,7 @@ public class Navigator {
      */
     public void navigate(Integer index) {
         if (index < 0 || currentMenu.getMenuItems().length <= index) {
-            System.out.println("\n" + SimilarMessages.INCORRECT_INPUT);
+            System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
         } else {
             currentMenu.getMenuItems()[index].doAction();
             currentMenu = getNextMenu(index);

@@ -1,5 +1,7 @@
 package ui;
 
+import ui.actions.IAction;
+
 /**
  * Класс подменю.
  * @param title Заголовок.
