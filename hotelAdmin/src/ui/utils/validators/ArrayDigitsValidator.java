@@ -15,10 +15,10 @@ public final class ArrayDigitsValidator {
      */
     public static boolean isArrayOfDigits(String[] array) {
         for (String str : array) {
-            for (int i = 0; i < str.length(); i++) {
-                if (!Character.isDigit(str.charAt(i))) {
-                    return false;
-                }
+            try {
+                Integer.parseInt(str);
+            } catch (NumberFormatException e) {
+                return false;
             }
         }
 
