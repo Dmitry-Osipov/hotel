@@ -1,8 +1,10 @@
 package essence.person;
 
+import essence.Identifiable;
+
 import java.time.LocalDateTime;
 
-public interface AbstractClient {
+public interface AbstractClient extends Identifiable {
     /**
      * Метод получения номера телефона.
      * @return Номер телефона.
@@ -38,4 +40,10 @@ public interface AbstractClient {
      * @return Время выселения.
      */
     LocalDateTime getCheckOutTime();
+
+    /**
+     * Метод установления нового имени клиента.
+     * @param fio Новое имя клиента.
+     */
+    void setFio(String fio);
 }

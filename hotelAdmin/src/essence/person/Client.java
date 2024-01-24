@@ -5,13 +5,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @ToString
 public class Client implements AbstractClient, Comparable<AbstractClient> {
     private final int id;
-    private final String fio;
-    private static int count = 1;
+    @Setter
+    private String fio;
     @Setter
     private String phoneNumber;
     @Setter
@@ -19,10 +20,33 @@ public class Client implements AbstractClient, Comparable<AbstractClient> {
     @Setter
     private LocalDateTime checkOutTime;
 
-    public Client(String fio, String phoneNumber) {
-        this.id = count++;
+    public Client(int id, String fio, String phoneNumber) {
+        this.id = id;
         this.fio = fio;
         this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Client client = (Client) obj;
+        return id == client.id
+                && Objects.equals(fio, client.fio)
+                && Objects.equals(phoneNumber, client.phoneNumber)
+                && Objects.equals(checkInTime, client.checkInTime)
+                && Objects.equals(checkOutTime, client.checkOutTime);
     }
 
     @Override

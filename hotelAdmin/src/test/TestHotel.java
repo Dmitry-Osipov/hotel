@@ -19,8 +19,8 @@ public class TestHotel {
     public static void main(String[] args) {
         ClientRepository clients = ClientRepository.getInstance();
         ClientService cs = new ClientService(clients);
-        Client client1 = new Client("Osipov Dmitry Romanovich", "8-902-902-98-11");
-        Client client2 = new Client("Musofranova Nadezhda Sergeevna", "8-961-120-09-91");
+        Client client1 = new Client(1, "Osipov Dmitry Romanovich", "8-902-902-98-11");
+        Client client2 = new Client(2, "Musofranova Nadezhda Sergeevna", "8-961-120-09-91");
         String result = cs.addClient(client1) ? "Удалось добавить клиента" : "Не удалось добавить клиента";
         System.out.println(result);
         System.out.println("Количество клиентов: " + cs.countClients());
@@ -29,12 +29,12 @@ public class TestHotel {
         RoomReservationRepository reservations = RoomReservationRepository.getInstance();
         RoomRepository rooms = RoomRepository.getInstance();
         RoomService rs = new RoomService(rooms, reservations);
-        Room room1 = new Room(110, 2, 1000);
+        Room room1 = new Room(1, 110, 2, 1000);
         result = room1.getPrice() == room1.getMIN_PRICE() ? "Установлена цена по умолчанию" : "Автопроверка дала сбой";
         System.out.println(result);
-        Room room2 = new Room(111, 5, 3000);
-        Room room3 = new Room(112, 2, 9000);
-        Room room4 = new Room(113, 3, 15000);
+        Room room2 = new Room(2, 111, 5, 3000);
+        Room room3 = new Room(3, 112, 2, 9000);
+        Room room4 = new Room(4, 113, 3, 15000);
         rs.addRoom(room4);
         rs.addRoom(room3);
         rs.addStarsToRoom(room4, 5);
@@ -96,10 +96,10 @@ public class TestHotel {
         ProvidedServicesRepository providedServicesRepository = ProvidedServicesRepository.getInstance();
         ServiceRepository serviceRepository = ServiceRepository.getInstance();
         ServiceService ss = new ServiceService(serviceRepository, providedServicesRepository);
-        Service service1 = new Service(ServiceNames.CLEANING, 4000);
-        Service service2 = new Service(ServiceNames.BREAKFAST, 2000);
-        Service service3 = new Service(ServiceNames.CONFERENCE, 4000);
-        Service service4 = new Service(ServiceNames.EXCURSION, 7000);
+        Service service1 = new Service(1, ServiceNames.CLEANING, 4000);
+        Service service2 = new Service(2, ServiceNames.BREAKFAST, 2000);
+        Service service3 = new Service(3, ServiceNames.CONFERENCE, 4000);
+        Service service4 = new Service(4, ServiceNames.EXCURSION, 7000);
         ss.addService(service3);
         ss.addService(service4);
         ss.addService(service2);

@@ -1,5 +1,6 @@
 package essence.reservation;
 
+import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Getter
 @ToString
-public class RoomReservation {
+public class RoomReservation implements Identifiable {
     private final int id;
     private final List<AbstractClient> clients = new ArrayList<>();
     private static int count = 1;

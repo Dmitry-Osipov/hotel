@@ -1,8 +1,10 @@
 package service;
 
 import essence.person.AbstractClient;
+import essence.person.Client;
 import repository.client.ClientRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -38,5 +40,27 @@ public class ClientService {
      */
     public int countClients() {
         return clientRepository.getClients().size();
+    }
+
+    /**
+     * Метод обновляет данные по клиенту.
+     * @param id ID клиента, по которому будет проходить идентификация клиента.
+     * @param fio Новое имя клиента.
+     * @param checkInTime Новое время въезда.
+     * @param checkOutTime Новое время выезда.
+     * @return true, если удалось обновить данные, иначе false.
+     */
+    public boolean updateClient(int id, String fio, LocalDateTime checkInTime, LocalDateTime checkOutTime) {
+        for (AbstractClient client : clientRepository.getClients()) {
+            if (client.getId() == id) {
+                client.setFio(fio);
+                client.setCheckInTime(checkInTime);
+                client.setCheckOutTime(checkOutTime);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }

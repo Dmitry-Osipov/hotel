@@ -39,6 +39,37 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
+     * Метод обновляет данные по комнате.
+     * @param id ID комнаты, по которому будет проходить идентификация.
+     * @param number Новый номер комнаты.
+     * @param capacity Новая вместимость комнаты.
+     * @param status Новый статус комнаты.
+     * @param price Новая цена комнаты.
+     * @param stars Новое количество звёзд комнаты.
+     * @param checkInTime Новое время въезда.
+     * @param checkOutTime Новое время выезда.
+     * @return true, если обновить удалось, иначе false.
+     */
+    public boolean updateRoom(int id, int number, int capacity, RoomStatusTypes status, int price, int stars,
+                              LocalDateTime checkInTime, LocalDateTime checkOutTime) {
+        for (AbstractRoom room : roomRepository.getRooms()) {
+            if (room.getId() == id) {
+                room.setNumber(number);
+                room.setCapacity(capacity);
+                room.setStatus(status);
+                room.setPrice(price);
+                room.setStars(stars);
+                room.setCheckInTime(checkInTime);
+                room.setCheckOutTime(checkOutTime);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.

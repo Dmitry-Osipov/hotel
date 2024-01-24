@@ -6,6 +6,7 @@ import ui.actions.IAction;
 import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
 import ui.utils.validators.ArrayDigitsValidator;
+import ui.utils.validators.UniqueIdValidator;
 
 /**
  * Класс предоставляет логику выполнения действияпо добавлению новой комнаты.
@@ -28,9 +29,10 @@ public class AddRoomAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nВведите номер, вместимость и цену комнаты через пробел: ");
+        System.out.println("\nВведите id, номер, вместимость и цену комнаты через пробел: ");
         String[] userInput = InputHandler.getUserInput().split(" ");
-        while (userInput.length != 3 || !ArrayDigitsValidator.isArrayOfDigits(userInput)) {
+        while (userInput.length != 4 || !ArrayDigitsValidator.isArrayOfDigits(userInput)
+                || !UniqueIdValidator.validateUniqueId(roomService.roomsByStars(), Integer.parseInt(userInput[0]))) {
             System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
             userInput = InputHandler.getUserInput().split(" ");
         }
@@ -38,7 +40,8 @@ public class AddRoomAction implements IAction {
         String result = roomService.addRoom(new Room(
                 Integer.parseInt(userInput[0]),
                 Integer.parseInt(userInput[1]),
-                Integer.parseInt(userInput[2]))) ? "Удалось добавить комнату" : "Не удалось добавить комнату";
+                Integer.parseInt(userInput[2]),
+                Integer.parseInt(userInput[3]))) ? "Удалось добавить комнату" : "Не удалось добавить комнату";
         System.out.println("\n" + result);
     }
 }

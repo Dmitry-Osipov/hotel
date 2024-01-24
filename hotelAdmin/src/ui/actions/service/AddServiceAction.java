@@ -5,6 +5,7 @@ import essence.service.ServiceNames;
 import service.ServiceService;
 import ui.actions.IAction;
 import ui.utils.InputHandler;
+import ui.utils.validators.UniqueIdValidator;
 
 /**
  * Класс предоставляет логику выполнения действия по добавлению новой услуги в отель.
@@ -27,6 +28,13 @@ public class AddServiceAction implements IAction {
      */
     @Override
     public void execute() {
+        System.out.println("\nВведите уникальное ID услуги: ");
+        int id = InputHandler.getUserIntegerInput();
+        while (!UniqueIdValidator.validateUniqueId(serviceService.getServices(), id)) {
+            System.out.println("\nID услуги должно быть уникальным. Повторите: ");
+            id = InputHandler.getUserIntegerInput();
+        }
+
         System.out.println("\nВыберите название услуги: ");
         ServiceNames[] names = ServiceNames.values();
         for (int i = 0; i < names.length; i++) {
@@ -37,7 +45,7 @@ public class AddServiceAction implements IAction {
         System.out.println("\nВведите стоимость услуги: ");
         int cost = InputHandler.getUserIntegerInput();
 
-        String result = serviceService.addService(new Service(name, cost)) ? "Удалось добавить услугу" :
+        String result = serviceService.addService(new Service(id, name, cost)) ? "Удалось добавить услугу" :
                 "Не удалось добавить услугу";
         System.out.println("\n" + result);
     }

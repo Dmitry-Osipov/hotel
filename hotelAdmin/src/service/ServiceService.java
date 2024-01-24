@@ -4,6 +4,7 @@ import comparators.ServiceTimeComparator;
 import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
+import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
 import repository.service.ProvidedServicesRepository;
 import repository.service.ServiceRepository;
@@ -31,6 +32,28 @@ public class ServiceService extends AbstractFavorService {
      */
     public boolean addService(AbstractService service) {
         return serviceRepository.getServices().add(service);
+    }
+
+    /**
+     * Метод обновления данных услуги. Валидация услуги происходит по её ID.
+     * @param id ID услуги.
+     * @param name Новое название услуги.
+     * @param status Новый статус услуги.
+     * @param serviceTime Новое время оказания услуги.
+     * @return true, если удалось обновить данные, иначе false.
+     */
+    public boolean updateService(int id, ServiceNames name, ServiceStatusTypes status, LocalDateTime serviceTime) {
+        for (AbstractService service : serviceRepository.getServices()) {
+            if (service.getId() == id) {
+                service.setName(name);
+                service.setStatus(status);
+                service.setServiceTime(serviceTime);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

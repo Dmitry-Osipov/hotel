@@ -1,5 +1,6 @@
 package essence.provided;
 
+import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.service.AbstractService;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class ProvidedService {
+public class ProvidedService implements Identifiable {
     private final int id;
     private static int count = 1;
     private final List<AbstractClient> beneficiaries = new ArrayList<>();

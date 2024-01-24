@@ -1,37 +1,26 @@
 package essence.room;
 
+import essence.service.AbstractFavor;
 import lombok.Getter;
 import lombok.Setter;
-import essence.person.AbstractClient;
-import essence.service.AbstractFavor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
+@Setter
 @Getter
 public class Room extends AbstractFavor implements AbstractRoom, Comparable<AbstractRoom> {
-    private final int number;
-    private final int capacity;
-    private static int count = 1;
-    @Setter
+    private int number;
+    private int capacity;
     private RoomStatusTypes status = RoomStatusTypes.AVAILABLE;
-    @Setter
     private int stars;
-    @Setter
     private LocalDateTime checkInTime;
-    @Setter
     private LocalDateTime checkOutTime;
 
-    public Room(int number, int capacity, int price) {
-        super(count++, price);
+    public Room(int id, int number, int capacity, int price) {
+        super(id, price);
         this.number = number;
         this.capacity = capacity;
-    }
-
-    @Override
-    public int compareTo(AbstractRoom o) {
-        return o.getStars() - stars;
     }
 
     public String allInfo() {
@@ -45,6 +34,37 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
                 "check-in time=" + checkInTime + "; " +
                 "check-out time=" + checkOutTime + "; " +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Room room = (Room) obj;
+        return getId() == room.getId()
+                && getPrice() == room.getPrice()
+                && number == room.number
+                && capacity == room.capacity
+                && stars == room.stars
+                && Objects.equals(checkInTime, room.checkInTime)
+                && Objects.equals(checkOutTime, room.checkOutTime)
+                && status == room.status;
+    }
+
+    @Override
+    public int compareTo(AbstractRoom o) {
+        return o.getStars() - stars;
     }
 
     @Override
