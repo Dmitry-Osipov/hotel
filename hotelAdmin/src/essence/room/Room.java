@@ -13,8 +13,7 @@ import java.util.List;
 public class Room extends AbstractFavor implements AbstractRoom, Comparable<AbstractRoom> {
     private final int number;
     private final int capacity;
-    private final List<AbstractClient> visitingClients = new ArrayList<>();
-    private final List<AbstractClient> clientsNowInRoom = new ArrayList<>();
+    private static int count = 1;
     @Setter
     private RoomStatusTypes status = RoomStatusTypes.AVAILABLE;
     @Setter
@@ -24,8 +23,8 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
     @Setter
     private LocalDateTime checkOutTime;
 
-    public Room(int id, int number, int capacity, int price) {
-        super(id, price);
+    public Room(int number, int capacity, int price) {
+        super(count++, price);
         this.number = number;
         this.capacity = capacity;
     }
@@ -45,8 +44,6 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
                 "status=" + status + "; " +
                 "check-in time=" + checkInTime + "; " +
                 "check-out time=" + checkOutTime + "; " +
-                "clientsNowInRoom=" + clientsNowInRoom + "; " +
-                "visitingClients=" + visitingClients +
                 '}';
     }
 

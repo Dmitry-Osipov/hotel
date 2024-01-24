@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class Client implements AbstractClient, Comparable<AbstractClient> {
     private final int id;
     private final String fio;
+    private static int count = 1;
     @Setter
     private String phoneNumber;
     @Setter
@@ -18,8 +19,8 @@ public class Client implements AbstractClient, Comparable<AbstractClient> {
     @Setter
     private LocalDateTime checkOutTime;
 
-    public Client(int id, String fio, String phoneNumber) {
-        this.id = id;
+    public Client(String fio, String phoneNumber) {
+        this.id = count++;
         this.fio = fio;
         this.phoneNumber = phoneNumber;
     }

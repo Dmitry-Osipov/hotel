@@ -3,9 +3,12 @@ package test;
 import essence.person.Client;
 import essence.room.Room;
 import essence.service.Service;
-import repository.ClientRepository;
-import repository.RoomRepository;
-import repository.ServiceRepository;
+import essence.service.ServiceNames;
+import repository.client.ClientRepository;
+import repository.room.RoomRepository;
+import repository.room.RoomReservationRepository;
+import repository.service.ProvidedServicesRepository;
+import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -14,22 +17,24 @@ import java.time.LocalDateTime;
 
 public class TestHotel {
     public static void main(String[] args) {
-        ClientRepository clients = new ClientRepository();
+        ClientRepository clients = ClientRepository.getInstance();
         ClientService cs = new ClientService(clients);
-        Client client1 = new Client(1, "Osipov Dmitry Romanovich", "8-902-902-98-11");
+        Client client1 = new Client("Osipov Dmitry Romanovich", "8-902-902-98-11");
+        Client client2 = new Client("Musofranova Nadezhda Sergeevna", "8-961-120-09-91");
         String result = cs.addClient(client1) ? "Удалось добавить клиента" : "Не удалось добавить клиента";
         System.out.println(result);
         System.out.println("Количество клиентов: " + cs.countClients());
         System.out.println("Все клиенты: " + cs.getClients());
 
-        RoomRepository rooms = new RoomRepository();
-        RoomService rs = new RoomService(rooms);
-        Room room1 = new Room(1, 110, 2, 1000);
+        RoomReservationRepository reservations = RoomReservationRepository.getInstance();
+        RoomRepository rooms = RoomRepository.getInstance();
+        RoomService rs = new RoomService(rooms, reservations);
+        Room room1 = new Room(110, 2, 1000);
         result = room1.getPrice() == room1.getMIN_PRICE() ? "Установлена цена по умолчанию" : "Автопроверка дала сбой";
         System.out.println(result);
-        Room room2 = new Room(2, 111, 5, 3000);
-        Room room3 = new Room(3, 112, 2, 9000);
-        Room room4 = new Room(4, 113, 3, 15000);
+        Room room2 = new Room(111, 5, 3000);
+        Room room3 = new Room(112, 2, 9000);
+        Room room4 = new Room(113, 3, 15000);
         rs.addRoom(room4);
         rs.addRoom(room3);
         rs.addStarsToRoom(room4, 5);
@@ -40,6 +45,11 @@ public class TestHotel {
 
         result = rs.checkIn(room1, client1) ? "Удалось заселить" : "Не удалось заселить";
         System.out.println(result);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
         result = rs.checkIn(room1) ? "Удалось заселить в пустую комнату" : "Не удалось заселить в пустую комнату";
         System.out.println(result);
         result = rs.evict(room1, client1) ? "Удалось выселить" : "Не удалось выселить";
@@ -65,13 +75,14 @@ public class TestHotel {
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        rs.checkIn(room2, client1);
+        rs.checkIn(room2, client1, client2);
 
         System.out.println("История комнаты 1: ");
-        rs.getRoomLastClients(room1, 2);
+        System.out.println(rs.getRoomLastClients(room1, 2));
         System.out.println("История комнаты 2: ");
-        rs.getRoomLastClients(room2, 3);
-        rs.getRoomLastClients(room2, -1);
+        System.out.println(rs.getRoomLastClients(room2, 3));
+        System.out.println("История комнаты 2: ");
+        System.out.println(rs.getRoomLastClients(room2, -1));
         System.out.println("Полная информация о комнате 2: " + rs.getRoomInfo(room2));
         System.out.println("Комнаты клиента по номерам: " + rs.getClientRoomsByNumbers(client1));
         System.out.println("Комнаты клиента по времени: " + rs.getClientRoomsByCheckOutTime(client1));
@@ -82,12 +93,13 @@ public class TestHotel {
                 LocalDateTime.of(2024, 1, 8, 21, 0)));
         System.out.println("Цена комнаты: " + rs.getFavorPrice(room1));
 
-        ServiceRepository serviceRepository = new ServiceRepository();
-        ServiceService ss = new ServiceService(serviceRepository);
-        Service service1 = new Service(1, "Погладить вещи", 4000);
-        Service service2 = new Service(2, "Поменять номер", 2000);
-        Service service3 = new Service(3, "Постирать вещи", 4000);
-        Service service4 = new Service(4, "Принести завтрак", 7000);
+        ProvidedServicesRepository providedServicesRepository = ProvidedServicesRepository.getInstance();
+        ServiceRepository serviceRepository = ServiceRepository.getInstance();
+        ServiceService ss = new ServiceService(serviceRepository, providedServicesRepository);
+        Service service1 = new Service(ServiceNames.CLEANING, 4000);
+        Service service2 = new Service(ServiceNames.BREAKFAST, 2000);
+        Service service3 = new Service(ServiceNames.CONFERENCE, 4000);
+        Service service4 = new Service(ServiceNames.EXCURSION, 7000);
         ss.addService(service3);
         ss.addService(service4);
         ss.addService(service2);
