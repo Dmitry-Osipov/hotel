@@ -1,7 +1,5 @@
 package ui.actions.room;
 
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
 import service.RoomService;
 import ui.actions.IAction;
 import ui.utils.printers.RoomsPrinter;
@@ -10,6 +8,16 @@ import ui.utils.printers.RoomsPrinter;
  * Класс предоставляет логику выполнения действия по выводу списка всех комнат по возрастанию вместимости.
  */
 public class GetRoomsByCapacityAction implements IAction {
+    private final RoomService roomService;
+
+    /**
+     * Класс предоставляет логику выполнения действия по выводу списка всех комнат по возрастанию вместимости.
+     * @param roomService Класс обработки данных по комнатам.
+     */
+    public GetRoomsByCapacityAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
+
     /**
      * Метод выполняет действие по выводу списка всех комнат по возрастанию вместимости. При выполнении действия
      * выводится список всех комнат отеля, упорядоченный по возрастанию вместимости. Если в отеле отсутствуют комнаты,
@@ -18,7 +26,6 @@ public class GetRoomsByCapacityAction implements IAction {
     @Override
     public void execute() {
         System.out.println("\nСписок всех комнат по возрастанию вместимости: ");
-        RoomsPrinter.printRooms(new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance())
-                .roomsByCapacity());
+        RoomsPrinter.printRooms(roomService.roomsByCapacity());
     }
 }

@@ -1,7 +1,6 @@
 package ui.actions.client;
 
 import essence.person.Client;
-import repository.client.ClientRepository;
 import service.ClientService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
@@ -12,6 +11,16 @@ import ui.utils.validators.PhoneNumberValidator;
  * Класс предоставляет логику выполнения действия по добавлению нового клиента.
  */
 public class AddClientAction implements IAction {
+    private final ClientService clientService;
+
+    /**
+     * Класс предоставляет логику выполнения действия по добавлению нового клиента.
+     * @param clientService Класс обработки данных по клиентам.
+     */
+    public AddClientAction(ClientService clientService) {
+        this.clientService = clientService;
+    }
+
     /**
      * Метод выполняет действие по добавлению нового клиента. Пользователю предлагается ввести ФИО и номер телефона
      * клиента. В случае успешного добавления клиента в репозиторий выводится соответствующее сообщение, иначе выводится
@@ -29,8 +38,8 @@ public class AddClientAction implements IAction {
             phone = InputHandler.getUserInput();
         }
 
-        String result = new ClientService(ClientRepository.getInstance())
-                .addClient(new Client(name, phone)) ? "Удалось добавить клиента" : "Не удалось добавить клиента";
+        String result = clientService.addClient(new Client(name, phone)) ? "Удалось добавить клиента" :
+                "Не удалось добавить клиента";
         System.out.println("\n" + result);
     }
 }

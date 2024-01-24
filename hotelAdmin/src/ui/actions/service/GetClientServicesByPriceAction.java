@@ -1,8 +1,6 @@
 package ui.actions.service;
 
 import essence.person.AbstractClient;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
 import service.ServiceService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
@@ -13,6 +11,16 @@ import ui.utils.printers.ServicesPrinter;
  * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по возрастанию цены.
  */
 public class GetClientServicesByPriceAction implements IAction {
+    private final ServiceService serviceService;
+
+    /**
+     * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по возрастанию цены.
+     * @param serviceService Класс обработки данных по услугам.
+     */
+    public GetClientServicesByPriceAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
+
     /**
      * Метод выполняет действие по получению списка услуг, оказанных клиенту, по возрастанию цены. При выполнении
      * действия пользователю предлагается выбрать клиента, для которого требуется вывести услуги, и затем выводится
@@ -25,9 +33,7 @@ public class GetClientServicesByPriceAction implements IAction {
             System.out.println("\n" + ErrorMessages.NO_CLIENTS.getMessage());
         } else {
             System.out.println("\nСписок услуг, оказанных клиенту, по возрастанию цены: ");
-            ServicesPrinter.printServices(
-                    new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance())
-                            .getClientServicesByPrice(client));
+            ServicesPrinter.printServices(serviceService.getClientServicesByPrice(client));
         }
     }
 }

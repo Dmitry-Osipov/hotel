@@ -1,8 +1,6 @@
 package ui.actions.service;
 
 import essence.person.AbstractClient;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
 import service.ServiceService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
@@ -14,6 +12,17 @@ import ui.utils.printers.ServicesPrinter;
  * оказания.
  */
 public class GetClientServicesByTimeAction implements IAction {
+    private final ServiceService serviceService;
+
+    /**
+     * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по убыванию времени
+     * оказания.
+     * @param serviceService Класс обработки данных по услугам.
+     */
+    public GetClientServicesByTimeAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
+
     /**
      * Метод выполняет действие по получению списка услуг, оказанных клиенту, по убыванию времени оказания. При
      * выполнении действия пользователю предлагается выбрать клиента, для которого требуется вывести услуги, и затем
@@ -27,9 +36,7 @@ public class GetClientServicesByTimeAction implements IAction {
             System.out.println("\n" + ErrorMessages.NO_CLIENTS.getMessage());
         } else {
             System.out.println("Список услуг, оказанных клиенту, по убыванию времени оказания: ");
-            ServicesPrinter.printServices(
-                    new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance())
-                            .getClientServicesByTime(client));
+            ServicesPrinter.printServices(serviceService.getClientServicesByTime(client));
         }
     }
 }

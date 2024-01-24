@@ -2,8 +2,6 @@ package ui.actions.room;
 
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
 import service.RoomService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
@@ -16,6 +14,16 @@ import java.util.List;
  * Класс предоставляет логику выполнения действия по выселению клиентов из комнаты.
  */
 public class EvictAction implements IAction {
+    private final RoomService roomService;
+
+    /**
+     * Класс предоставляет логику выполнения действия по выселению клиентов из комнаты.
+     * @param roomService Класс обработки данных по комнатам.
+     */
+    public EvictAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
+
     /**
      * Метод выполняет действие по выселению клиентов из комнаты. При выполнении действия пользователю предлагается
      * выбрать комнату, затем выбрать клиентов, которых необходимо выселить из данной комнаты. После валидации данных
@@ -32,8 +40,7 @@ public class EvictAction implements IAction {
                 result = ErrorMessages.NO_CLIENTS.getMessage();
             } else {
                 AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
-                result = new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance())
-                        .evict(room, clients) ? "Выселение прошло успешно" : "Выселить не удалось";
+                result = roomService.evict(room, clients) ? "Выселение прошло успешно" : "Выселить не удалось";
             }
         } else {
             result = ErrorMessages.NO_ROOMS.getMessage();

@@ -1,15 +1,25 @@
 package ui.actions.service;
 
 import essence.service.Service;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
 import service.ServiceService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
 
-
+/**
+ * Класс предоставляет логику получения стоимости услуги.
+ */
 public class GetServicePriceAction implements IAction {
+    private final ServiceService serviceService;
+
+    /**
+     * Класс предоставляет логику получения стоимости услуги.
+     * @param serviceService Класс обработки данных по услугам.
+     */
+    public GetServicePriceAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
+
     /**
      * Метод выполняет действие по получению стоимости конкретной услуги. При выполнении действия пользователю
      * предлагается выбрать услугу, для которой требуется узнать стоимость, и затем выводится стоимость выбранной
@@ -21,9 +31,7 @@ public class GetServicePriceAction implements IAction {
         if (service == null) {
             System.out.println("\n" + ErrorMessages.NO_SERVICES.getMessage());
         } else {
-            System.out.println("\nСтоимость услуги - " +
-                    new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance())
-                            .getFavorPrice(service));
+            System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
         }
     }
 }

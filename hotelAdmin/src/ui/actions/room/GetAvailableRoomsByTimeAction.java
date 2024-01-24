@@ -1,7 +1,5 @@
 package ui.actions.room;
 
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
 import service.RoomService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
@@ -16,6 +14,16 @@ import java.util.Arrays;
  * Класс предоставляет логику выполнения действия по выводу списка свободных комнат с конкретного времени.
  */
 public class GetAvailableRoomsByTimeAction implements IAction {
+    private final RoomService roomService;
+
+    /**
+     * Класс предоставляет логику выполнения действия по выводу списка свободных комнат с конкретного времени.
+     * @param roomService Класс обработки данных по комнатам.
+     */
+    public GetAvailableRoomsByTimeAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
+
     /**
      * Метод выполняет действие по выводу списка свободных комнат с конкретного времени. При выполнении
      * действия выводится список свободных комнат. Если свободных комнат нет, пользователю выводится соответствующее
@@ -31,14 +39,12 @@ public class GetAvailableRoomsByTimeAction implements IAction {
         }
 
         System.out.println("\nСвободные комнаты с " + Arrays.toString(dateTime) + ": ");
-        RoomsPrinter.printRooms(new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance())
-                .getAvailableRoomsByTime(
-                        LocalDateTime.of(
-                                Integer.parseInt(dateTime[0]),
-                                Integer.parseInt(dateTime[1]),
-                                Integer.parseInt(dateTime[2]),
-                                Integer.parseInt(dateTime[3]),
-                                Integer.parseInt(dateTime[4])
-                        )));
+        RoomsPrinter.printRooms(roomService.getAvailableRoomsByTime(LocalDateTime.of(
+                Integer.parseInt(dateTime[0]),
+                Integer.parseInt(dateTime[1]),
+                Integer.parseInt(dateTime[2]),
+                Integer.parseInt(dateTime[3]),
+                Integer.parseInt(dateTime[4])
+        )));
     }
 }

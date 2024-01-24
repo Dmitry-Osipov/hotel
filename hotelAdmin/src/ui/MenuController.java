@@ -2,6 +2,14 @@ package ui;
 
 import lombok.Getter;
 import lombok.ToString;
+import repository.client.ClientRepository;
+import repository.room.RoomRepository;
+import repository.room.RoomReservationRepository;
+import repository.service.ProvidedServicesRepository;
+import repository.service.ServiceRepository;
+import service.ClientService;
+import service.RoomService;
+import service.ServiceService;
 import ui.utils.ErrorMessages;
 
 import java.util.Scanner;
@@ -19,7 +27,12 @@ public class MenuController {
      * Класс отвечает за работу UI.
      */
     public MenuController() {
-        builder = new Builder();
+        builder = new Builder(
+                new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance()),
+                new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance()),
+                new ClientService(ClientRepository.getInstance())
+        );
+
         builder.buildMenu();
         navigator = new Navigator(builder.getRootMenu());
     }

@@ -2,8 +2,6 @@ package ui.actions.room;
 
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
 import service.RoomService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
@@ -16,6 +14,16 @@ import java.util.List;
  * Класс предоставляет логику выполнения действия по заселению клиентов в комнату.
  */
 public class CheckInAction implements IAction {
+    private final RoomService roomService;
+
+    /**
+     * Класс предоставляет логику выполнения действия по заселению клиентов в комнату.
+     * @param roomService Класс обработки данных по комнатам.
+     */
+    public CheckInAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
+
     /**
      * Метод выполняет действие по заселению клиентов в комнату. При выполнении действия пользователю предлагается
      * выбрать комнату, затем выбрать клиентов, которых необходимо заселить в данную комнату. После валидации данных
@@ -32,8 +40,7 @@ public class CheckInAction implements IAction {
                 result = ErrorMessages.NO_CLIENTS.getMessage();
             } else {
                 AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
-                result = new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance())
-                        .checkIn(room, clients) ? "Заселение прошло успешно" : "Заселить не удалось";
+                result = roomService.checkIn(room, clients) ? "Заселение прошло успешно" : "Заселить не удалось";
             }
         } else {
             result = ErrorMessages.NO_ROOMS.getMessage();
