@@ -4,7 +4,6 @@ import comparators.ServiceTimeComparator;
 import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
-import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
 import repository.service.ProvidedServicesRepository;
 import repository.service.ServiceRepository;
@@ -36,18 +35,16 @@ public class ServiceService extends AbstractFavorService {
 
     /**
      * Метод обновления данных услуги. Валидация услуги происходит по её ID.
-     * @param id ID услуги.
-     * @param name Новое название услуги.
-     * @param status Новый статус услуги.
-     * @param serviceTime Новое время оказания услуги.
+     * @param service Новые данные услуги, собранные в классе услуги.
      * @return true, если удалось обновить данные, иначе false.
      */
-    public boolean updateService(int id, ServiceNames name, ServiceStatusTypes status, LocalDateTime serviceTime) {
-        for (AbstractService service : serviceRepository.getServices()) {
-            if (service.getId() == id) {
-                service.setName(name);
-                service.setStatus(status);
-                service.setServiceTime(serviceTime);
+    public boolean updateService(AbstractService service) {
+        for (AbstractService currentService : serviceRepository.getServices()) {
+            if (currentService.getId() == service.getId()) {
+                currentService.setName(service.getName());
+                currentService.setPrice(service.getPrice());
+                currentService.setStatus(service.getStatus());
+                currentService.setServiceTime(service.getServiceTime());
 
                 return true;
             }
@@ -101,7 +98,7 @@ public class ServiceService extends AbstractFavorService {
     }
 
     /**
-     * Слежубный метод предназначен для устранения дублирования кода. Метод фильтрует стрим от списка услуг по
+     * Служебный метод предназначен для устранения дублирования кода. Метод фильтрует стрим от списка услуг по
      * содержанию конкретного клиента в списке.
      * @param client Клиент.
      * @return Отфильтрованный стрим.

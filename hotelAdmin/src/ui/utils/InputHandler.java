@@ -13,6 +13,7 @@ import service.RoomService;
 import service.ServiceService;
 import ui.utils.printers.ServicesPrinter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -138,5 +139,23 @@ public final class InputHandler {
         ServicesPrinter.printServices(services);
 
         return services.get(getUserIntegerInput() - 1);
+    }
+
+    /**
+     * Метод запрашивает у пользователя ответ, требуется ли перезаписать существующий файл или дописать данные в
+     * несуществующий файл.
+     * @param fileName Имя файла. Обязательно прописывать полностью имя файла, иначе будет файл храниться в корне.
+     * @return Решение пользователя о перезаписи файла или дозаписи данных в пустой файл.
+     */
+    public static String getUserOverwriteChoice(String fileName) {
+        File file = new File(fileName);
+        String choice = "да";
+
+        if (file.exists()) {
+            System.out.println("Вы уверены, что хотите перезаписать файл? (Да/нет): ");
+            choice = InputHandler.getUserInput().toLowerCase();
+        }
+
+        return choice;
     }
 }

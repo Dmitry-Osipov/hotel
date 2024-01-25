@@ -28,12 +28,7 @@ public class Service extends AbstractFavor implements AbstractService, Comparabl
             return false;
         }
 
-        Service service = (Service) obj;
-        return getId() == service.getId()
-                && getPrice() == service.getPrice()
-                && status == service.status
-                && name == service.name
-                && Objects.equals(serviceTime, service.serviceTime);
+        return getId() == ((Service) obj).getId();
     }
 
     @Override

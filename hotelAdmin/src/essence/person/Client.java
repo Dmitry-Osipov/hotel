@@ -41,12 +41,7 @@ public class Client implements AbstractClient, Comparable<AbstractClient> {
             return false;
         }
 
-        Client client = (Client) obj;
-        return id == client.id
-                && Objects.equals(fio, client.fio)
-                && Objects.equals(phoneNumber, client.phoneNumber)
-                && Objects.equals(checkInTime, client.checkInTime)
-                && Objects.equals(checkOutTime, client.checkOutTime);
+        return id == ((Client) obj).id;
     }
 
     @Override

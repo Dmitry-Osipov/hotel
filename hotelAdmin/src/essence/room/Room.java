@@ -1,5 +1,6 @@
 package essence.room;
 
+import essence.person.Client;
 import essence.service.AbstractFavor;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,15 +52,7 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
             return false;
         }
 
-        Room room = (Room) obj;
-        return getId() == room.getId()
-                && getPrice() == room.getPrice()
-                && number == room.number
-                && capacity == room.capacity
-                && stars == room.stars
-                && Objects.equals(checkInTime, room.checkInTime)
-                && Objects.equals(checkOutTime, room.checkOutTime)
-                && status == room.status;
+        return getId() == ((Room) obj).getId();
     }
 
     @Override

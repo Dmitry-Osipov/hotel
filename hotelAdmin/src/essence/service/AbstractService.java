@@ -36,8 +36,20 @@ public interface AbstractService extends Identifiable {
     int getPrice();
 
     /**
+     * Метод установки новой цены услуги.
+     * @param price Новая цена.
+     */
+    void setPrice(int price);
+
+    /**
      * Метод установки нового названия услуги.
      * @param name Название услуги.
      */
     void setName(ServiceNames name);
+
+    /**
+     * Метод получения названия услуги.
+     * @return Название услуги.
+     */
+    ServiceNames getName();
 }

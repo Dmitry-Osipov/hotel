@@ -12,6 +12,12 @@ public interface AbstractClient extends Identifiable {
     String getPhoneNumber();
 
     /**
+     * Метод установки нового номера телефона.
+     * @param phoneNumber Номер телефона.
+     */
+    void setPhoneNumber(String phoneNumber);
+
+    /**
      * Метод получения ФИО клиента.
      * @return ФИО клиента.
      */
