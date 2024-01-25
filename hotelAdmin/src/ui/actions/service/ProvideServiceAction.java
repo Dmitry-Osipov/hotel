@@ -34,7 +34,8 @@ public class ProvideServiceAction implements IAction {
         } else if (service == null) {
             System.out.println("\n" + ErrorMessages.NO_SERVICES.getMessage());
         } else {
-            String result = serviceService.provideService(client, service) ? "Удалось провести услугу" :
+            int id = InputHandler.getUserIntegerInput();
+            String result = serviceService.provideService(id, client, service) ? "Удалось провести услугу" :
                     "Не удалось провести услугу";
             System.out.println("\n" + result);
         }

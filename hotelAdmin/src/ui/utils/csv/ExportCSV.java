@@ -2,6 +2,8 @@ package ui.utils.csv;
 
 import com.opencsv.CSVWriter;
 import essence.person.AbstractClient;
+import essence.provided.ProvidedService;
+import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.service.AbstractService;
 import lombok.Getter;
@@ -17,7 +19,9 @@ import java.util.List;
 public class ExportCSV {
     private String fileName;
     private final List<AbstractRoom> rooms;
+    private final List<RoomReservation> reservations;
     private final List<AbstractService> services;
+    private final List<ProvidedService> providedServices;
     private final List<AbstractClient> clients;
 
     /**
@@ -27,12 +31,15 @@ public class ExportCSV {
      * @param services Список услуг.
      * @param clients Список клиентов.
      */
-    public ExportCSV(String fileName, List<AbstractRoom> rooms, List<AbstractService> services,
+    public ExportCSV(String fileName, List<AbstractRoom> rooms, List<RoomReservation> reservations,
+                     List<AbstractService> services, List<ProvidedService> providedServices,
                      List<AbstractClient> clients) {
         this.fileName = fileName + ".csv";
         this.rooms = rooms;
         this.services = services;
+        this.providedServices = providedServices;
         this.clients = clients;
+        this.reservations = reservations;
     }
 
     /**
@@ -44,11 +51,10 @@ public class ExportCSV {
     }
 
     /**
-     * Экспорт данных из списка комнат в CSV файл.
-     * @return true, если удалось записать данные, иначе false.
+     * Метод экспортирует данные из списка комнат в CSV файл.
      * @throws IOException Ошибка при обработке файла.
      */
-    public boolean exportRoomsData() throws IOException {
+    public void exportRoomsData() throws IOException {
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
             writer.writeNext(new String[]{"ID", "Номер", "Вместительность", "Цена", "Статус", "Количество звёзд",
                     "Время въезда", "Время выезда"});
@@ -67,16 +73,13 @@ public class ExportCSV {
                 writer.writeNext(data);
             }
         }
-
-        return true;
     }
 
     /**
-     * Экспорт данных из списка услуг в CSV файл.
-     * @return true, если удалось записать данные, иначе false.
+     * Метод экспортирует данные из списка услуг в CSV файл.
      * @throws IOException Ошибка при обработке файла.
      */
-    public boolean exportServicesData() throws IOException {
+    public void exportServicesData() throws IOException {
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
             writer.writeNext(new String[]{"ID", "Название", "Цена", "Статус", "Время оказания"});
             for (AbstractService service : services) {
@@ -90,16 +93,13 @@ public class ExportCSV {
                 writer.writeNext(data);
             }
         }
-
-        return true;
     }
 
     /**
-     * Экспорт данных из списка клиентов в CSV файл.
-     * @return true, если удалось записать данные, иначе false.
-     * @throws IOException ошибка при обработке файла.
+     * Метод экспортирует данные из списка клиентов в CSV файл.
+     * @throws IOException Ошибка при обработке файла.
      */
-    public boolean exportClientsData() throws IOException {
+    public void exportClientsData() throws IOException {
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
             writer.writeNext(new String[]{"ID", "ФИО", "Номер телефона", "Время заезда", "Время выезда"});
             for (AbstractClient client : clients) {
@@ -113,7 +113,44 @@ public class ExportCSV {
                 writer.writeNext(data);
             }
         }
+    }
 
-        return true;
+    /**
+     * Метод экспортирует данные из списка резерваций в CSV файл.
+     * @throws IOException Ошибка при обработке файла.
+     */
+    public void exportReservationsData() throws IOException {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
+            writer.writeNext(new String[] {"ID", "Комната", "Время заезда", "Время выезда", "Список клиентов"});
+            for (RoomReservation reservation : reservations) {
+                String[] data = {
+                        String.valueOf(reservation.getId()),
+                        reservation.getRoom().toString(),
+                        String.valueOf(reservation.getCheckInTime()),
+                        String.valueOf(reservation.getCheckOutTime()),
+                        reservation.getClients().toString()
+                };
+                writer.writeNext(data);
+            }
+        }
+    }
+
+    /**
+     * Метод экспортирует данные из списка проведённых услуг в CSV файл.
+     * @throws IOException Ошибка при обработке файла.
+     */
+    public void exportProvidedServicesData() throws IOException {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
+            writer.writeNext(new String[] {"ID", "Список клиентов", "Услуга", "Время оказания"});
+            for (ProvidedService providedService : providedServices) {
+                String[] data = {
+                        String.valueOf(providedService.getId()),
+                        providedService.getBeneficiaries().toString(),
+                        providedService.getService().toString(),
+                        String.valueOf(providedService.getServiceTime())
+                };
+                writer.writeNext(data);
+            }
+        }
     }
 }

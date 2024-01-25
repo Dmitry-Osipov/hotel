@@ -63,18 +63,19 @@ public class RoomService extends AbstractFavorService {
 
     /**
      * Метод заселяет клиентов в определённую комнату.
+     * @param id Уникальный идентификатор резервации.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
      * @return true, если заселение прошло успешно, иначе false.
      */
-    public boolean checkIn(AbstractRoom room, AbstractClient...clients) {
+    public boolean checkIn(int id, AbstractRoom room, AbstractClient...clients) {
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
             return false;
         }
 
         List<AbstractClient> guests = List.of(clients);
         LocalDateTime now = LocalDateTime.now();
-        reservationRepository.getReservations().add(new RoomReservation(room, now, now.plusHours(22), guests));
+        reservationRepository.getReservations().add(new RoomReservation(id, room, now, now.plusHours(22), guests));
         room.setStatus(RoomStatusTypes.OCCUPIED);
         room.setCheckInTime(now);
         guests.forEach(client -> client.setCheckInTime(now));
@@ -215,7 +216,7 @@ public class RoomService extends AbstractFavorService {
      * @return Полная информация про комнату.
      */
     public String getRoomInfo(Room room) {
-        return room.allInfo();
+        return room.toString();
     }
 
     /**
@@ -248,6 +249,14 @@ public class RoomService extends AbstractFavorService {
                         && room.getStatus() == RoomStatusTypes.AVAILABLE
                         && room.getCheckOutTime().isAfter(dateTime))
                 .toList();
+    }
+
+    /**
+     * Метод получения списка всех резерваций.
+     * @return Список резерваций.
+     */
+    public List<RoomReservation> getReservations() {
+        return reservationRepository.getReservations();
     }
 
     /**

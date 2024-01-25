@@ -36,6 +36,8 @@ public class TestCSV {
         String exportPathRoom = "hotelAdmin/src/ui/utils/csv/data/test_room";
         String exportPathService = "hotelAdmin/src/ui/utils/csv/data/test_service";
         String exportPathClient = "hotelAdmin/src/ui/utils/csv/data/test_client";
+        String exportPathReservations = "hotelAdmin/src/ui/utils/csv/data/test_reservations";
+        String exportPathProvidedServices = "hotelAdmin/src/ui/utils/csv/data/test_provided_services";
 
         RoomService roomService =
                 new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance());
@@ -75,37 +77,45 @@ public class TestCSV {
         clientService.addClient(client4);
         clientService.addClient(client5);
 
-        roomService.checkIn(room1, client1, client2);
+        roomService.checkIn(1, room1, client1, client2);
         roomService.addStarsToRoom(room3, 5);
         roomService.addStarsToRoom(room5, 4);
         roomService.addStarsToRoom(room4, 3);
         roomService.addStarsToRoom(room1, 5);
         roomService.addStarsToRoom(room2, 4);
-        roomService.checkIn(room2, client3);
+        roomService.checkIn(2, room2, client3);
 
-        serviceService.provideService(client1, service1);
-        serviceService.provideService(client3, service4);
+        serviceService.provideService(1, client1, service1);
+        serviceService.provideService(2, client3, service4);
 
         clientService.updateClient(new Client(5, "Lebedev G.I.", "+7(921)728-21-01"));
 
-        ExportCSV exp = new ExportCSV(exportPathRoom, roomService.roomsByStars(), serviceService.getServices(),
-                clientService.getClients());
+        ExportCSV exp = new ExportCSV(exportPathRoom, roomService.roomsByStars(), roomService.getReservations(),
+                serviceService.getServices(), serviceService.getProvidedServices(), clientService.getClients());
         ImportCSV imp = new ImportCSV(exportPathRoom);
 
         try {
             System.out.println("Результаты по экспорту данных: ");
-            System.out.println(exp.exportRoomsData());
+            exp.exportRoomsData();
             exp.setFileName(exportPathService);
-            System.out.println(exp.exportServicesData());
+            exp.exportServicesData();
             exp.setFileName(exportPathClient);
-            System.out.println(exp.exportClientsData() + "\n");
+            exp.exportClientsData();
+            exp.setFileName(exportPathReservations);
+            exp.exportReservationsData();
+            exp.setFileName(exportPathProvidedServices);
+            exp.exportProvidedServicesData();
 
-            System.out.println("Результаты по импорту данных: ");
+            System.out.println("\nРезультаты по импорту данных: ");
             System.out.println(imp.importRoomsData());
             imp.setFileName(exportPathService);
             System.out.println(imp.importServicesData());
             imp.setFileName(exportPathClient);
             System.out.println(imp.importClientsData());
+            imp.setFileName(exportPathReservations);
+            System.out.println(imp.importReservationsData());
+            imp.setFileName(exportPathProvidedServices);
+            System.out.println(imp.importProvidedServicesData());
         } catch (IOException | CsvValidationException e) {
             System.out.println(e.getMessage());
         }

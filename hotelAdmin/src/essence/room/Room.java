@@ -1,6 +1,5 @@
 package essence.room;
 
-import essence.person.Client;
 import essence.service.AbstractFavor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,19 +21,6 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
         super(id, price);
         this.number = number;
         this.capacity = capacity;
-    }
-
-    public String allInfo() {
-        return "Room{" +
-                "id=" + getId() + "; " +
-                "stars=" + stars + "; " +
-                "number=" + number + "; " +
-                "capacity=" + capacity + "; " +
-                "price=" + getPrice() + "; " +
-                "status=" + status + "; " +
-                "check-in time=" + checkInTime + "; " +
-                "check-out time=" + checkOutTime + "; " +
-                '}';
     }
 
     @Override
@@ -63,11 +49,14 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
     @Override
     public String toString() {
         return "Room{" +
+                "id=" + getId() + "; " +
                 "stars=" + stars + "; " +
                 "number=" + number + "; " +
                 "capacity=" + capacity + "; " +
                 "price=" + getPrice() + "; " +
-                "status=" + status +
+                "status=" + status + "; " +
+                "check-in time=" + checkInTime + "; " +
+                "check-out time=" + checkOutTime +
                 '}';
     }
 }

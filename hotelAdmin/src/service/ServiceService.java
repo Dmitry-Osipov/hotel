@@ -55,17 +55,18 @@ public class ServiceService extends AbstractFavorService {
 
     /**
      * Метод проводит услугу для конкретного клиента.
+     * @param id Уникальный идентификатор проведённой услуги.
      * @param client Клиент.
      * @param service Услуга.
      * @return true, если услуга оказана успешно, иначе false.
      */
-    public boolean provideService(AbstractClient client, AbstractService service) {
+    public boolean provideService(int id, AbstractClient client, AbstractService service) {
         if (!serviceRepository.getServices().contains(service)) {
             return false;
         }
 
         LocalDateTime now = LocalDateTime.now();
-        providedServicesRepository.getServices().add(new ProvidedService(service, now, client));
+        providedServicesRepository.getServices().add(new ProvidedService(id, service, now, client));
         service.setServiceTime(now);
         service.setStatus(ServiceStatusTypes.RENDERED);
         return true;
@@ -91,10 +92,18 @@ public class ServiceService extends AbstractFavorService {
 
     /**
      * Метод возвращает список всех услуг.
-     * @return Список услуг.
+     * @return Список всех услуг.
      */
     public List<AbstractService> getServices() {
         return serviceRepository.getServices().stream().toList();
+    }
+
+    /**
+     * Метод возвращает список оказанных услуг.
+     * @return Список оказанных услуг.
+     */
+    public List<ProvidedService> getProvidedServices() {
+        return providedServicesRepository.getServices();
     }
 
     /**

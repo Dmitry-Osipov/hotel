@@ -42,7 +42,8 @@ public class Service extends AbstractFavor implements AbstractService, Comparabl
                 "id=" + getId() + "; " +
                 "name=" + name + "; " +
                 "price=" + getPrice() + "; " +
-                "status=" + status +
+                "status=" + status + "; " +
+                "service time=" + serviceTime +
                 '}';
     }
 

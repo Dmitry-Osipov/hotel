@@ -13,16 +13,25 @@ import java.util.List;
 @Getter
 public class ProvidedService implements Identifiable {
     private final int id;
-    private static int count = 1;
     private final List<AbstractClient> beneficiaries = new ArrayList<>();
     @Setter
     private AbstractService service;
     private final LocalDateTime serviceTime;
 
-    public ProvidedService(AbstractService service, LocalDateTime serviceTime, AbstractClient client) {
-        this.id = count++;
+    public ProvidedService(int id, AbstractService service, LocalDateTime serviceTime, AbstractClient client) {
+        this.id = id;
         this.service = service;
         this.serviceTime = serviceTime;
         this.beneficiaries.add(client);
+    }
+
+    @Override
+    public String toString() {
+        return "ProvidedService{" +
+                "id=" + id + "; " +
+                "beneficiaries=" + beneficiaries + "; " +
+                "service=" + service + "; " +
+                "serviceTime=" + serviceTime +
+                '}';
     }
 }

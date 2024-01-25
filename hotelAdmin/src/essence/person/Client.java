@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
-@ToString
 public class Client implements AbstractClient, Comparable<AbstractClient> {
     private final int id;
     @Setter
@@ -47,5 +46,16 @@ public class Client implements AbstractClient, Comparable<AbstractClient> {
     @Override
     public int compareTo(AbstractClient o) {
         return fio.compareTo(o.getFio());
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id + "; " +
+                "fio=" + fio + "; " +
+                "phoneNumber=" + phoneNumber + "; " +
+                "checkInTime=" + checkInTime + "; " +
+                "checkOutTime=" + checkOutTime +
+                '}';
     }
 }

@@ -16,7 +16,6 @@ import java.util.List;
 public class RoomReservation implements Identifiable {
     private final int id;
     private final List<AbstractClient> clients = new ArrayList<>();
-    private static int count = 1;
     @Setter
     private AbstractRoom room;
     @Setter
@@ -24,9 +23,9 @@ public class RoomReservation implements Identifiable {
     @Setter
     private LocalDateTime checkOutTime;
 
-    public RoomReservation(AbstractRoom room, LocalDateTime checkInTime, LocalDateTime checkOutTime,
+    public RoomReservation(int id, AbstractRoom room, LocalDateTime checkInTime, LocalDateTime checkOutTime,
                            List<AbstractClient> clients) {
-        this.id = count++;
+        this.id = id;
         this.room = room;
         this.checkInTime = checkInTime;
         this.checkOutTime = checkOutTime;
