@@ -62,6 +62,35 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
+     * Метод добавляет резервацию в репозиторий резерваций.
+     * @param reservation Резервация для добавления.
+     * @return {@code true}, если резервация успешно добавлена, иначе {@code false}.
+     */
+    public boolean addReservation(RoomReservation reservation) {
+        return reservationRepository.getReservations().add(reservation);
+    }
+
+    /**
+     * Метод обновляет информацию о резервации в репозитории резерваций.
+     * @param reservation Обновленная информация о резервации.
+     * @return {@code true}, если информация успешно обновлена, иначе {@code false}.
+     */
+    public boolean updateReservation(RoomReservation reservation) {
+        for (RoomReservation currentReservation : reservationRepository.getReservations()) {
+            if (currentReservation.getId() == reservation.getId()) {
+                currentReservation.setRoom(reservation.getRoom());
+                currentReservation.setCheckInTime(reservation.getCheckInTime());
+                currentReservation.setCheckOutTime(reservation.getCheckOutTime());
+                currentReservation.setClients(reservation.getClients());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Метод заселяет клиентов в определённую комнату.
      * @param id Уникальный идентификатор резервации.
      * @param room Комната, в которую требуется заселить клиентов.
@@ -75,9 +104,11 @@ public class RoomService extends AbstractFavorService {
 
         List<AbstractClient> guests = List.of(clients);
         LocalDateTime now = LocalDateTime.now();
-        reservationRepository.getReservations().add(new RoomReservation(id, room, now, now.plusHours(22), guests));
+        LocalDateTime checkOutPlan = now.plusHours(22);
+        addReservation(new RoomReservation(id, room, now, checkOutPlan, guests));
         room.setStatus(RoomStatusTypes.OCCUPIED);
         room.setCheckInTime(now);
+        room.setCheckOutTime(checkOutPlan);
         guests.forEach(client -> client.setCheckInTime(now));
         return true;
     }
@@ -142,7 +173,7 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
-     * Метод формирует список всех комнат, отсортировнный по возрастанию вместимости.
+     * Метод формирует список всех комнат, отсортированный по возрастанию вместимости.
      * @return Отфильтрованный список всех комнат.
      */
     public List<AbstractRoom> roomsByCapacity() {
@@ -238,7 +269,7 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
-     * Метод формирует список свободных комнат с конкртеного времени.
+     * Метод формирует список свободных комнат с конкретного времени.
      * @param dateTime Время.
      * @return Список свободных комнат.
      */
@@ -287,7 +318,7 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
-     * Служебный метод предназначен для устарнения дублирования кода фильтрованного стрима по свободным комнатам.
+     * Служебный метод предназначен для устранения дублирования кода фильтрованного стрима по свободным комнатам.
      * @return Стрим свободных комнат.
      */
     private Stream<AbstractRoom> filteredStreamAvailableRooms() {

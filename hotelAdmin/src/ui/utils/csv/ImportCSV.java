@@ -14,6 +14,7 @@ import essence.service.Service;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
 import lombok.Getter;
+import ui.utils.validators.FileValidator;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,33 +29,20 @@ import java.util.Map;
  */
 @Getter
 public class ImportCSV {
-    private String fileName;
-
-    /**
-     * Класс импорта данных из CSV файла.
-     * @param fileName Путь + имя файла без указания расширения.
-     */
-    public ImportCSV(String fileName) {
-        this.fileName = fileName + ".csv";
+    private ImportCSV() {
     }
 
-    /**
-     * Метод устанавливает новый файл.
-     * @param fileName Путь + имя файла без указания расширения.
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName + ".csv";
-    }
 
     /**
      * Метод импортирует данные по комнатам из CSV файла.
+     * @param fileName Название файла без указания расширения.
      * @return Список комнат.
      * @throws IOException Ошибка при обработке файла.
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
      */
-    public List<AbstractRoom> importRoomsData() throws IOException, CsvValidationException {
+    public static List<AbstractRoom> importRoomsData(String fileName) throws IOException, CsvValidationException {
         List<AbstractRoom> rooms = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             reader.readNext();
 
             String[] nextLine;
@@ -83,13 +71,14 @@ public class ImportCSV {
 
     /**
      * Метод импортирует данные по услугам из CSV файла.
+     * @param fileName Название файла без указания расширения.
      * @return Список услуг.
      * @throws IOException Ошибка при обработке файла.
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
      */
-    public List<AbstractService> importServicesData() throws IOException, CsvValidationException {
+    public static List<AbstractService> importServicesData(String fileName) throws IOException, CsvValidationException {
         List<AbstractService> services = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             reader.readNext();
 
             String[] nextLine;
@@ -113,14 +102,18 @@ public class ImportCSV {
 
     /**
      * Метод импортирует данные по клиентам из CSV файла.
+     * @param fileName Название файла без указания расширения.
      * @return Список клиентов.
      * @throws IOException Ошибка при обработке файла.
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
      */
-    public List<AbstractClient> importClientsData() throws IOException, CsvValidationException {
+    public static List<AbstractClient> importClientsData(String fileName) throws IOException, CsvValidationException {
         List<AbstractClient> clients = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
-            reader.readNext();
+        try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
+            String[] header = reader.readNext();
+            if (!FileValidator.isValidCsvHeader(header, CsvHeaderLength.CLIENTS, CsvHeaderArrays.CLIENTS)) {
+                throw new IOException("Поступил неверный тип данных из CSV");
+            }
 
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
@@ -143,13 +136,15 @@ public class ImportCSV {
 
     /**
      * Метод импортирует данные по резервациям из CSV файла.
+     * @param fileName Название файла без указания расширения.
      * @return Список резерваций.
      * @throws IOException Ошибка при обработке файла.
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
      */
-    public List<RoomReservation> importReservationsData() throws IOException, CsvValidationException {
+    public static List<RoomReservation> importReservationsData(String fileName) throws IOException,
+            CsvValidationException {
         List<RoomReservation> reservations = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             reader.readNext();
 
             String[] nextLine;
@@ -169,13 +164,15 @@ public class ImportCSV {
 
     /**
      * Метод импортирует данные по проведённым услугам из CSV файла.
+     * @param fileName Название файла без указания расширения.
      * @return Список проведённых услуг.
      * @throws IOException Ошибка при обработке файла.
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
      */
-    public List<ProvidedService> importProvidedServicesData() throws IOException, CsvValidationException {
+    public static List<ProvidedService> importProvidedServicesData(String fileName) throws IOException,
+            CsvValidationException {
         List<ProvidedService> providedServices = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             reader.readNext();
 
             String[] nextLine;
@@ -202,7 +199,7 @@ public class ImportCSV {
      * @param dateTime Строка времени и даты.
      * @return Время, если строка или значение строки не равно null, иначе возвращается null.
      */
-    private LocalDateTime parseDateTime(String dateTime) {
+    private static LocalDateTime parseDateTime(String dateTime) {
         return dateTime != null && !dateTime.equals("null") ? LocalDateTime.parse(dateTime) : null;
     }
 
@@ -211,7 +208,7 @@ public class ImportCSV {
      * @param room Строка комнаты.
      * @return Комната.
      */
-    private AbstractRoom parseRoom(String room) {
+    private static AbstractRoom parseRoom(String room) {
         room = room.substring(5, room.length() - 1);
         Map<String, String> roomMap = new HashMap<>();
         updateMapByArray(roomMap, room.split("; "));
@@ -239,7 +236,7 @@ public class ImportCSV {
      * @param client Список клиентов в виде строки.
      * @return Список клиентов.
      */
-    private List<AbstractClient> parseClients(String client) {
+    private static List<AbstractClient> parseClients(String client) {
         List<AbstractClient> guests = new ArrayList<>();
         client = client.substring(1, client.length()-1);
         Map<String, String> clientMap = new HashMap<>();
@@ -269,7 +266,7 @@ public class ImportCSV {
      * @param map Мапа, которую необходимо обновить.
      * @param array Массив, откуда будут браться данные для обновления.
      */
-    private void updateMapByArray(Map<String, String> map, String[] array) {
+    private static void updateMapByArray(Map<String, String> map, String[] array) {
         for (String data : array) {
             String[] keyValue = data.split("=");
             String key = keyValue[0].trim();
@@ -283,7 +280,7 @@ public class ImportCSV {
      * @param service Строка услуги.
      * @return Услуга.
      */
-    private AbstractService parseService(String service) {
+    private static AbstractService parseService(String service) {
         service = service.substring(8, service.length() - 1);
         Map<String, String> serviceMap = new HashMap<>();
         updateMapByArray(serviceMap, service.split("; "));

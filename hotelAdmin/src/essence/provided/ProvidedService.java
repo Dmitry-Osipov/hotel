@@ -13,10 +13,12 @@ import java.util.List;
 @Getter
 public class ProvidedService implements Identifiable {
     private final int id;
-    private final List<AbstractClient> beneficiaries = new ArrayList<>();
+    @Setter
+    private List<AbstractClient> beneficiaries = new ArrayList<>();
     @Setter
     private AbstractService service;
-    private final LocalDateTime serviceTime;
+    @Setter
+    private LocalDateTime serviceTime;
 
     public ProvidedService(int id, AbstractService service, LocalDateTime serviceTime, AbstractClient client) {
         this.id = id;

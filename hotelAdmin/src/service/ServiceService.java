@@ -54,6 +54,35 @@ public class ServiceService extends AbstractFavorService {
     }
 
     /**
+     * Метод addProvidedService добавляет оказанную услугу в репозиторий оказанных услуг.
+     * @param providedService Оказанная услуга для добавления.
+     * @return {@code true}, если услуга успешно добавлена, иначе {@code false}.
+     */
+    public boolean addProvidedService(ProvidedService providedService) {
+        return providedServicesRepository.getServices().add(providedService);
+    }
+
+    /**
+     * Метод updateProvidedService обновляет информацию об оказанной услуге в репозитории оказанных услуг.
+     * Если услуга с указанным ID найдена и успешно обновлена, метод возвращает true, иначе - false.
+     * @param providedService Обновленная информация об оказанной услуге.
+     * @return {@code true}, если информация успешно добавлена, иначе {@code false}.
+     */
+    public boolean updateProvidedService(ProvidedService providedService) {
+        for (ProvidedService currentProvidedService : providedServicesRepository.getServices()) {
+            if (currentProvidedService.getId() == providedService.getId()) {
+                currentProvidedService.setService(providedService.getService());
+                currentProvidedService.setServiceTime(providedService.getServiceTime());
+                currentProvidedService.setBeneficiaries(providedService.getBeneficiaries());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Метод проводит услугу для конкретного клиента.
      * @param id Уникальный идентификатор проведённой услуги.
      * @param client Клиент.
@@ -66,7 +95,7 @@ public class ServiceService extends AbstractFavorService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        providedServicesRepository.getServices().add(new ProvidedService(id, service, now, client));
+        addProvidedService(new ProvidedService(id, service, now, client));
         service.setServiceTime(now);
         service.setStatus(ServiceStatusTypes.RENDERED);
         return true;

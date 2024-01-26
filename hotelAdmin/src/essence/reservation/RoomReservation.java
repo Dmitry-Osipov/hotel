@@ -15,7 +15,8 @@ import java.util.List;
 @ToString
 public class RoomReservation implements Identifiable {
     private final int id;
-    private final List<AbstractClient> clients = new ArrayList<>();
+    @Setter
+    private List<AbstractClient> clients = new ArrayList<>();
     @Setter
     private AbstractRoom room;
     @Setter

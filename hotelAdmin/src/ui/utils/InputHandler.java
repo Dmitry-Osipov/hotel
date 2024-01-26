@@ -12,6 +12,7 @@ import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
 import ui.utils.printers.ServicesPrinter;
+import ui.utils.validators.FileValidator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -142,13 +143,12 @@ public final class InputHandler {
     }
 
     /**
-     * Метод запрашивает у пользователя ответ, требуется ли перезаписать существующий файл или дописать данные в
-     * несуществующий файл.
+     * Метод запрашивает у пользователя ответ, требуется ли перезаписать существующий файл.
      * @param fileName Имя файла. Обязательно прописывать полностью имя файла, иначе будет файл храниться в корне.
      * @return Решение пользователя о перезаписи файла или дозаписи данных в пустой файл.
      */
     public static String getUserOverwriteChoice(String fileName) {
-        File file = new File(fileName);
+        File file = new File(fileName + ".csv");
         String choice = "да";
 
         if (file.exists()) {
@@ -157,5 +157,21 @@ public final class InputHandler {
         }
 
         return choice;
+    }
+
+    /**
+     * Метод getFileNameFromUser предназначен для получения названия файла от пользователя.
+     * @return Название файла, введенное пользователем и прошедшее проверку на корректность.
+     */
+    public static String getFileNameFromUser() {
+        System.out.println("\nВведите название файла без указания расширения. Название может состоять только из " +
+                "латинских букв, цифр, подчёркивания и тире: ");
+        String fileName = InputHandler.getUserInput();
+        while (!FileValidator.isValidFileName(fileName)) {
+            System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
+            fileName = InputHandler.getUserInput();
+        }
+
+        return fileName;
     }
 }

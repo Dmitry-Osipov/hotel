@@ -90,32 +90,20 @@ public class TestCSV {
 
         clientService.updateClient(new Client(5, "Lebedev G.I.", "+7(921)728-21-01"));
 
-        ExportCSV exp = new ExportCSV(exportPathRoom, roomService.roomsByStars(), roomService.getReservations(),
-                serviceService.getServices(), serviceService.getProvidedServices(), clientService.getClients());
-        ImportCSV imp = new ImportCSV(exportPathRoom);
-
         try {
             System.out.println("Результаты по экспорту данных: ");
-            exp.exportRoomsData();
-            exp.setFileName(exportPathService);
-            exp.exportServicesData();
-            exp.setFileName(exportPathClient);
-            exp.exportClientsData();
-            exp.setFileName(exportPathReservations);
-            exp.exportReservationsData();
-            exp.setFileName(exportPathProvidedServices);
-            exp.exportProvidedServicesData();
+            ExportCSV.exportRoomsData(exportPathRoom, roomService.roomsByStars());
+            ExportCSV.exportServicesData(exportPathService, serviceService.getServices());
+            ExportCSV.exportClientsData(exportPathClient, clientService.getClients());
+            ExportCSV.exportReservationsData(exportPathReservations, roomService.getReservations());
+            ExportCSV.exportProvidedServicesData(exportPathProvidedServices, serviceService.getProvidedServices());
 
             System.out.println("\nРезультаты по импорту данных: ");
-            System.out.println(imp.importRoomsData());
-            imp.setFileName(exportPathService);
-            System.out.println(imp.importServicesData());
-            imp.setFileName(exportPathClient);
-            System.out.println(imp.importClientsData());
-            imp.setFileName(exportPathReservations);
-            System.out.println(imp.importReservationsData());
-            imp.setFileName(exportPathProvidedServices);
-            System.out.println(imp.importProvidedServicesData());
+            System.out.println(ImportCSV.importRoomsData(exportPathRoom));
+            System.out.println(ImportCSV.importServicesData(exportPathService));
+            System.out.println(ImportCSV.importClientsData(exportPathClient));
+            System.out.println(ImportCSV.importReservationsData(exportPathReservations));
+            System.out.println(ImportCSV.importProvidedServicesData(exportPathProvidedServices));
         } catch (IOException | CsvValidationException e) {
             System.out.println(e.getMessage());
         }
