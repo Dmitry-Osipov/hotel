@@ -14,6 +14,7 @@ import essence.service.Service;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
 import lombok.Getter;
+import ui.utils.ErrorMessages;
 import ui.utils.validators.FileValidator;
 
 import java.io.FileReader;
@@ -43,7 +44,10 @@ public class ImportCSV {
     public static List<AbstractRoom> importRoomsData(String fileName) throws IOException, CsvValidationException {
         List<AbstractRoom> rooms = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
-            reader.readNext();
+            String[] header = reader.readNext();
+            if (!FileValidator.isValidCsvHeader(header, CsvHeaderLength.ROOMS, CsvHeaderArrays.ROOMS)) {
+                throw new IOException("\n" + ErrorMessages.INCORRECT_FILE_DATA_TYPE.getMessage());
+            }
 
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
@@ -79,7 +83,10 @@ public class ImportCSV {
     public static List<AbstractService> importServicesData(String fileName) throws IOException, CsvValidationException {
         List<AbstractService> services = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
-            reader.readNext();
+            String[] header = reader.readNext();
+            if (!FileValidator.isValidCsvHeader(header, CsvHeaderLength.SERVICES, CsvHeaderArrays.SERVICES)) {
+                throw new IOException("\n" + ErrorMessages.INCORRECT_FILE_DATA_TYPE.getMessage());
+            }
 
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
@@ -112,7 +119,7 @@ public class ImportCSV {
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             String[] header = reader.readNext();
             if (!FileValidator.isValidCsvHeader(header, CsvHeaderLength.CLIENTS, CsvHeaderArrays.CLIENTS)) {
-                throw new IOException("Поступил неверный тип данных из CSV");
+                throw new IOException("\n" + ErrorMessages.INCORRECT_FILE_DATA_TYPE.getMessage());
             }
 
             String[] nextLine;
@@ -145,7 +152,10 @@ public class ImportCSV {
             CsvValidationException {
         List<RoomReservation> reservations = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
-            reader.readNext();
+            String[] header = reader.readNext();
+            if (!FileValidator.isValidCsvHeader(header, CsvHeaderLength.RESERVATIONS, CsvHeaderArrays.RESERVATIONS)) {
+                throw new IOException("\n" + ErrorMessages.INCORRECT_FILE_DATA_TYPE.getMessage());
+            }
 
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
@@ -173,7 +183,11 @@ public class ImportCSV {
             CsvValidationException {
         List<ProvidedService> providedServices = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
-            reader.readNext();
+            String[] header = reader.readNext();
+            if (!FileValidator.isValidCsvHeader(header, CsvHeaderLength.PROVIDED_SERVICES,
+                    CsvHeaderArrays.PROVIDED_SERVICES)) {
+                throw new IOException("\n" + ErrorMessages.INCORRECT_FILE_DATA_TYPE.getMessage());
+            }
 
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {

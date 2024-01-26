@@ -16,7 +16,8 @@ public enum ErrorMessages {
     SERVICE_ADDITION_FAILURE("Не удалось добавить услугу"),
     CLIENT_ADDITION_FAILURE("Не удалось добавить клиента"),
     RESERVATION_ADDITION_FAILURE("Не удалось добавить резервацию"),
-    SERVICE_PROVIDED_ADDITION_FAILURE("Не удалось добавить проведённую услугу");
+    SERVICE_PROVIDED_ADDITION_FAILURE("Не удалось добавить проведённую услугу"),
+    INCORRECT_FILE_DATA_TYPE("Поступил неверный тип данных из файла");
 
     private final String message;
 
