@@ -1,13 +1,19 @@
 package service;
 
 import comparators.ServiceTimeComparator;
+import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
 import repository.service.ProvidedServicesRepository;
 import repository.service.ServiceRepository;
+import ui.utils.InputHandler;
+import ui.utils.id.IdFileManager;
+import ui.utils.csv.FileAdditionResult;
+import ui.utils.validators.UniqueIdValidator;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
@@ -84,14 +90,24 @@ public class ServiceService extends AbstractFavorService {
 
     /**
      * Метод проводит услугу для конкретного клиента.
-     * @param id Уникальный идентификатор проведённой услуги.
      * @param client Клиент.
      * @param service Услуга.
      * @return true, если услуга оказана успешно, иначе false.
      */
-    public boolean provideService(int id, AbstractClient client, AbstractService service) {
+    public boolean provideService(AbstractClient client, AbstractService service) {
         if (!serviceRepository.getServices().contains(service)) {
             return false;
+        }
+
+        String path = FileAdditionResult.getIdDirectory() + "provided_service_id.txt";
+        int id = IdFileManager.readMaxId(path);
+        if (!UniqueIdValidator.validateUniqueId(getProvidedServices(), id)) {
+            id = getProvidedServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
+        }
+        try {
+            IdFileManager.writeMaxId(path, id + 1);
+        } catch (IOException e) {
+            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
         }
 
         LocalDateTime now = LocalDateTime.now();

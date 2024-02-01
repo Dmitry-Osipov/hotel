@@ -4,6 +4,7 @@ import comparators.RoomCapacityComparator;
 import comparators.RoomCheckOutTimeComparator;
 import comparators.RoomNumberComparator;
 import comparators.RoomPriceComparator;
+import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
@@ -11,7 +12,12 @@ import essence.room.Room;
 import essence.room.RoomStatusTypes;
 import repository.room.RoomRepository;
 import repository.room.RoomReservationRepository;
+import ui.utils.InputHandler;
+import ui.utils.id.IdFileManager;
+import ui.utils.csv.FileAdditionResult;
+import ui.utils.validators.UniqueIdValidator;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -92,12 +98,11 @@ public class RoomService extends AbstractFavorService {
 
     /**
      * Метод заселяет клиентов в определённую комнату.
-     * @param id Уникальный идентификатор резервации.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
      * @return true, если заселение прошло успешно, иначе false.
      */
-    public boolean checkIn(int id, AbstractRoom room, AbstractClient...clients) {
+    public boolean checkIn(AbstractRoom room, AbstractClient...clients) {
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
             return false;
         }
@@ -105,6 +110,18 @@ public class RoomService extends AbstractFavorService {
         List<AbstractClient> guests = List.of(clients);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime checkOutPlan = now.plusHours(22);
+
+        String path = FileAdditionResult.getIdDirectory() + "reservation_id.text";
+        int id = IdFileManager.readMaxId(path);
+        if (!UniqueIdValidator.validateUniqueId(getReservations(), id)) {
+            id = getReservations().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
+        }
+        try {
+            IdFileManager.writeMaxId(path, id + 1);
+        } catch (IOException e) {
+            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
+        }
+
         addReservation(new RoomReservation(id, room, now, checkOutPlan, guests));
         room.setStatus(RoomStatusTypes.OCCUPIED);
         room.setCheckInTime(now);

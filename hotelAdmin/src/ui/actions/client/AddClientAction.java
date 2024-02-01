@@ -1,12 +1,17 @@
 package ui.actions.client;
 
+import essence.Identifiable;
 import essence.person.Client;
 import service.ClientService;
 import ui.actions.IAction;
 import ui.utils.ErrorMessages;
+import ui.utils.id.IdFileManager;
 import ui.utils.InputHandler;
+import ui.utils.csv.FileAdditionResult;
 import ui.utils.validators.PhoneNumberValidator;
 import ui.utils.validators.UniqueIdValidator;
+
+import java.io.IOException;
 
 /**
  * Класс предоставляет логику выполнения действия по добавлению нового клиента.
@@ -29,11 +34,15 @@ public class AddClientAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nВведите уникальный ID клиента: ");
-        int id = InputHandler.getUserIntegerInput();
-        while (!UniqueIdValidator.validateUniqueId(clientService.getClients(), id)) {
-            System.out.println("\nТакой клиент уже есть. Введите уникальный ID: ");
-            id = InputHandler.getUserIntegerInput();
+        String path = FileAdditionResult.getIdDirectory() + "client_id.txt";
+        int id = IdFileManager.readMaxId(path);
+        if (!UniqueIdValidator.validateUniqueId(clientService.getClients(), id)) {
+            id = clientService.getClients().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
+        }
+        try {
+            IdFileManager.writeMaxId(path, id + 1);
+        } catch (IOException e) {
+            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
         }
 
         System.out.println("\nВведите ФИО клиента: ");

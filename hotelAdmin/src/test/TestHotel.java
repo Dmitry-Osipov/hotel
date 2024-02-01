@@ -43,14 +43,14 @@ public class TestHotel {
         result = rs.addRoom(room2) ? "Комната успешно добавлена" : "Комната не была добавлена";
         System.out.println(result);
 
-        result = rs.checkIn(1, room1, client1) ? "Удалось заселить" : "Не удалось заселить";
+        result = rs.checkIn(room1, client1) ? "Удалось заселить" : "Не удалось заселить";
         System.out.println(result);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        result = rs.checkIn(2, room1) ? "Удалось заселить в пустую комнату" : "Не удалось заселить в пустую комнату";
+        result = rs.checkIn(room1) ? "Удалось заселить в пустую комнату" : "Не удалось заселить в пустую комнату";
         System.out.println(result);
         result = rs.evict(room1, client1) ? "Удалось выселить" : "Не удалось выселить";
         System.out.println(result);
@@ -64,7 +64,7 @@ public class TestHotel {
         System.out.println("Комнаты по звёздам: " + rs.roomsByStars());
         System.out.println(rs.roomsByCapacity());
         System.out.println(rs.roomsByPrice());
-        rs.checkIn(3, room1, client1);
+        rs.checkIn(room1, client1);
         System.out.println("Свободные комнаты по звёздам: " + rs.availableRoomsByStars());
         System.out.println(rs.availableRoomsByCapacity());
         System.out.println(rs.availableRoomsByPrice());
@@ -75,7 +75,7 @@ public class TestHotel {
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        rs.checkIn(4, room2, client1, client2);
+        rs.checkIn(room2, client1, client2);
 
         System.out.println("История комнаты 1: ");
         System.out.println(rs.getRoomLastClients(room1, 2));
@@ -105,26 +105,26 @@ public class TestHotel {
         ss.addService(service2);
         result = ss.addService(service1) ? "Удалось добавить услугу" : "Не удалось добавить услугу";
         System.out.println(result);
-        result = ss.provideService(1, client1, service1) ? "Удалось оказать услугу" : "Не удалось оказать услугу";
+        result = ss.provideService(client1, service1) ? "Удалось оказать услугу" : "Не удалось оказать услугу";
         System.out.println(result);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        ss.provideService(2, client1, service2);
+        ss.provideService(client1, service2);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        ss.provideService(3, client1, service3);
+        ss.provideService(client1, service3);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        ss.provideService(4, client1, service4);
+        ss.provideService(client1, service4);
         System.out.println("Услуги по цене: " + ss.getClientServicesByPrice(client1));
         System.out.println("Услуги по времени: " + ss.getClientServicesByTime(client1));
     }

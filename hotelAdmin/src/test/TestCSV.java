@@ -77,16 +77,16 @@ public class TestCSV {
         clientService.addClient(client4);
         clientService.addClient(client5);
 
-        roomService.checkIn(1, room1, client1, client2);
+        roomService.checkIn(room1, client1, client2);
         roomService.addStarsToRoom(room3, 5);
         roomService.addStarsToRoom(room5, 4);
         roomService.addStarsToRoom(room4, 3);
         roomService.addStarsToRoom(room1, 5);
         roomService.addStarsToRoom(room2, 4);
-        roomService.checkIn(2, room2, client3);
+        roomService.checkIn(room2, client3);
 
-        serviceService.provideService(1, client1, service1);
-        serviceService.provideService(2, client3, service4);
+        serviceService.provideService(client1, service1);
+        serviceService.provideService(client3, service4);
 
         clientService.updateClient(new Client(5, "Lebedev G.I.", "+7(921)728-21-01"));
 

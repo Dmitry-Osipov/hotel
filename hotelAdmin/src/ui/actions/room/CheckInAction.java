@@ -39,10 +39,8 @@ public class CheckInAction implements IAction {
             if (guests.isEmpty()) {
                 result = ErrorMessages.NO_CLIENTS.getMessage();
             } else {
-                int id = InputHandler.getUserIntegerInput();
                 AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
-                result = roomService.checkIn(id, room, clients) ? "Заселение прошло успешно"
-                        : "Заселить не удалось";
+                result = roomService.checkIn(room, clients) ? "Заселение прошло успешно" : "Заселить не удалось";
             }
         } else {
             result = ErrorMessages.NO_ROOMS.getMessage();
