@@ -3,8 +3,8 @@ package ui.actions.room;
 import essence.room.AbstractRoom;
 import service.RoomService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 
 /**
  * Класс предоставляет логику выполнения действия по добавлению звёзд комнате.
@@ -27,19 +27,15 @@ public class AddStarsAction implements IAction {
      */
     @Override
     public void execute() {
-        AbstractRoom room = InputHandler.getRoomByInput();
-
-        String result;
-        if (room != null) {
+        try {
+            AbstractRoom room = InputHandler.getRoomByInput();
             System.out.println("\nВведите количество звёзд (от 1 до 5): ");
             int stars = InputHandler.getUserIntegerInput();
-
-            result = roomService.addStarsToRoom(room, stars) ? "Добавление звёзд прошло успешно" :
+            String result = roomService.addStarsToRoom(room, stars) ? "Добавление звёзд прошло успешно" :
                     "Введено недопустимое количество звёзд";
-        } else {
-            result = ErrorMessages.NO_ROOMS.getMessage();
+            System.out.println("\n" + result);
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
-
-        System.out.println("\n" + result);
     }
 }

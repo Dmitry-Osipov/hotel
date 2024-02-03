@@ -4,9 +4,9 @@ import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
 import service.RoomService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
 import ui.utils.ListToArrayConverter;
+import ui.utils.exceptions.NoEntityException;
 
 import java.util.List;
 
@@ -31,20 +31,14 @@ public class EvictAction implements IAction {
      */
     @Override
     public void execute() {
-        AbstractRoom room = InputHandler.getRoomByInput();
-
-        String result;
-        if (room != null) {
+        try {
+            AbstractRoom room = InputHandler.getRoomByInput();
             List<AbstractClient> guests = InputHandler.getManyClientsByInput();
-            if (guests.isEmpty()) {
-                result = ErrorMessages.NO_CLIENTS.getMessage();
-            } else {
-                AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
-                result = roomService.evict(room, clients) ? "Выселение прошло успешно" : "Выселить не удалось";
-            }
-        } else {
-            result = ErrorMessages.NO_ROOMS.getMessage();
+            AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
+            String result = roomService.evict(room, clients) ? "Выселение прошло успешно" : "Выселить не удалось";
+            System.out.println("\n" + result);
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
-        System.out.println("\n" + result);
     }
 }

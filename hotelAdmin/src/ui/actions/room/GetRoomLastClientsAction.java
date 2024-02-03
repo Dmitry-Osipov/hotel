@@ -4,8 +4,8 @@ import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
 import service.RoomService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 
 import java.util.List;
 
@@ -30,9 +30,8 @@ public class GetRoomLastClientsAction implements IAction {
      */
     @Override
     public void execute() {
-        AbstractRoom room = InputHandler.getRoomByInput();
-
-        if (room != null) {
+        try {
+            AbstractRoom room = InputHandler.getRoomByInput();
             System.out.println("\nВведите количество последних клиентов: ");
             int count = InputHandler.getUserIntegerInput();
 
@@ -41,8 +40,8 @@ public class GetRoomLastClientsAction implements IAction {
             for (int i = 0; i < clients.size(); i++) {
                 System.out.println(i+1 + ". " + clients.get(i));
             }
-        } else {
-            System.out.println("\n" + ErrorMessages.NO_ROOMS.getMessage());
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

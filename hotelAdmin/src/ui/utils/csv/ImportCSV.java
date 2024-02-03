@@ -14,7 +14,7 @@ import essence.service.Service;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
 import lombok.Getter;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
 import ui.utils.validators.FileValidator;
 
 import java.io.FileReader;

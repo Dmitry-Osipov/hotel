@@ -2,7 +2,7 @@ package ui.actions.service;
 
 import service.ServiceService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
 import ui.utils.InputHandler;
 import ui.utils.csv.ExportCSV;
 import ui.utils.csv.FileAdditionResult;

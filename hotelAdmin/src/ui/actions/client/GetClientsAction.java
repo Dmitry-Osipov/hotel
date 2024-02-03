@@ -3,7 +3,7 @@ package ui.actions.client;
 import essence.person.AbstractClient;
 import service.ClientService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
 
 import java.util.List;
 

@@ -3,8 +3,8 @@ package ui.actions.room;
 import essence.room.Room;
 import service.RoomService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 
 /**
  * Класс предоставляет логику выполнения действия по выводу стоимости комнаты.
@@ -26,12 +26,11 @@ public class GetRoomPriceAction implements IAction {
      */
     @Override
     public void execute() {
-        Room room = (Room) InputHandler.getRoomByInput();
-
-        if (room != null) {
+        try {
+            Room room = (Room) InputHandler.getRoomByInput();
             System.out.println("\nСтоимость комнаты - " + roomService.getFavorPrice(room));
-        } else {
-            System.out.println("\n" + ErrorMessages.NO_ROOMS.getMessage());
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package ui.utils;
 
+import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
 import essence.service.AbstractService;
@@ -11,6 +12,8 @@ import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
+import ui.utils.exceptions.ErrorMessages;
+import ui.utils.exceptions.NoEntityException;
 import ui.utils.printers.ServicesPrinter;
 import ui.utils.validators.FileValidator;
 
@@ -51,31 +54,34 @@ public final class InputHandler {
     /**
      * Метод выводит в консоль все комнаты, отсортированные в порядке убывания звёзд. Пользователю требуется выбрать
      * какой-либо из номеров.
-     * @return Номер или null, если список комнат пуст.
+     * @return Номер.
+     * @throws NoEntityException Ошибка связана с отсутствием комнат.
      */
-    public static AbstractRoom getRoomByInput() {
+    public static AbstractRoom getRoomByInput() throws NoEntityException {
         List<AbstractRoom> rooms =
                 new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance()).roomsByStars();
         if (rooms.isEmpty()) {
-            return null;
+            throw new NoEntityException(ErrorMessages.NO_ROOMS.getMessage());
         }
 
         System.out.println("\nВыберите комнату: ");
         for (int i = 0; i < rooms.size(); i++) {
             System.out.println(i+1 + ". " + rooms.get(i));
         }
+        int choice = getEntityByInput(rooms, false);
 
-        return rooms.get(getUserIntegerInput() - 1);
+        return rooms.get(choice);
     }
 
     /**
      * Служебный метод предназначен для снижения дублирования кода. Метод выводит в консоль всех клиентов.
      * @return Список клиентов.
+     * @throws NoEntityException Ошибка связана с отсутствием клиентов.
      */
-    private static List<AbstractClient> getClients() {
+    private static List<AbstractClient> getClients() throws NoEntityException {
         List<AbstractClient> clients = new ClientService(ClientRepository.getInstance()).getClients();
         if (clients.isEmpty()) {
-            return clients;
+            throw new NoEntityException(ErrorMessages.NO_CLIENTS.getMessage());
         }
 
         for (int i = 0; i < clients.size(); i++) {
@@ -87,33 +93,29 @@ public final class InputHandler {
 
     /**
      * Пользователю требуется выбрать какого-либо клиента.
-     * @return Клиент или null, если список клиентов пуст.
+     * @return Клиент.
+     * @throws NoEntityException Ошибка связана с отсутствием клиентов.
      */
     public static AbstractClient getClientByInput() {
         System.out.println("\nВыберите клиента: ");
         List<AbstractClient> clients = getClients();
-        if (clients.isEmpty()) {
-            return null;
-        }
-
-        return clients.get(getUserIntegerInput() - 1);
+        int choice = getEntityByInput(clients, false);
+        return clients.get(choice);
     }
 
     /**
      * Пользователю требуется выбрать одного или нескольких клиентов.
      * @return Список клиентов.
+     * @throws NoEntityException Ошибка связана с отсутствием клиентов.
      */
     public static List<AbstractClient> getManyClientsByInput() {
         System.out.println("\nСписок всех клиентов: ");
         List<AbstractClient> clients = getClients();
-        if (clients.isEmpty()) {
-            return clients;
-        }
 
         List<AbstractClient> guests = new ArrayList<>(2);
         while (true) {
             System.out.println("\nВыберите клиента (для выхода введите -1): ");
-            int choice = getUserIntegerInput() - 1;
+            int choice = getEntityByInput(clients, true);
             if (choice == -2) {
                 break;
             }
@@ -125,21 +127,22 @@ public final class InputHandler {
 
     /**
      * Пользователю требуется выбрать услугу.
-     * @return Услуга или null, если список услуг пуст.
+     * @return Услуга.
+     * @throws NoEntityException Ошибка связана с отсутствием услуг.
      */
-    public static AbstractService getServiceByInput() {
+    public static AbstractService getServiceByInput() throws NoEntityException {
         List<AbstractService> services =
                 new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance())
                         .getServices();
 
-        if(services.isEmpty()) {
-            return null;
+        if (services.isEmpty()) {
+            throw new NoEntityException(ErrorMessages.NO_SERVICES.getMessage());
         }
 
         System.out.println("\nВыберите услугу: ");
         ServicesPrinter.printServices(services);
-
-        return services.get(getUserIntegerInput() - 1);
+        int choice = getEntityByInput(services, false);
+        return services.get(choice);
     }
 
     /**
@@ -173,5 +176,27 @@ public final class InputHandler {
         }
 
         return fileName;
+    }
+
+    /**
+     * Служебный метод предназначен для снижения дублирования кода. Метод получает услугу, клиента или комнату от
+     * пользователя.
+     * @param list Список сущностей.
+     * @param manyEntity {@code true}, если нужно получить несколько сущностей. {@code false}, если нужно получить одну
+     * сущность.
+     * @return Выбор пользователя.
+     */
+    private static <T extends Identifiable> int getEntityByInput(List<T> list, boolean manyEntity) {
+        int choice = getUserIntegerInput() - 1;
+        while (choice < 0 || list.size() < choice) {
+            if (manyEntity && choice == -2) {
+                break;
+            }
+
+            System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
+            choice = getUserIntegerInput() - 1;
+        }
+
+        return choice;
     }
 }

@@ -2,6 +2,7 @@ package ui.actions.room;
 
 import service.RoomService;
 import ui.actions.IAction;
+import ui.utils.exceptions.NoEntityException;
 import ui.utils.printers.RoomsPrinter;
 
 /**
@@ -25,7 +26,11 @@ public class GetAvailableRoomsByPriceAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nСписок свободных комнат по возрастанию цены: ");
-        RoomsPrinter.printRooms(roomService.availableRoomsByPrice());
+        try {
+            System.out.println("\nСписок свободных комнат по возрастанию цены: ");
+            RoomsPrinter.printRooms(roomService.availableRoomsByPrice());
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
+        }
     }
 }

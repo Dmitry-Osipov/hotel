@@ -2,6 +2,7 @@ package ui.actions.service;
 
 import service.ServiceService;
 import ui.actions.IAction;
+import ui.utils.exceptions.NoEntityException;
 import ui.utils.printers.ServicesPrinter;
 
 /**
@@ -24,7 +25,11 @@ public class GetServicesAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nСписок всех услуг: ");
-        ServicesPrinter.printServices(serviceService.getServices());
+        try {
+            System.out.println("\nСписок всех услуг: ");
+            ServicesPrinter.printServices(serviceService.getServices());
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
+        }
     }
 }

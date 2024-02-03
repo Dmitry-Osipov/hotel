@@ -1,4 +1,4 @@
-package ui.utils;
+package ui.utils.exceptions;
 
 import lombok.Getter;
 

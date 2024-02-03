@@ -3,8 +3,8 @@ package ui.actions.service;
 import essence.person.AbstractClient;
 import service.ServiceService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 import ui.utils.printers.ServicesPrinter;
 
 /**
@@ -31,12 +31,12 @@ public class GetClientServicesByTimeAction implements IAction {
      */
     @Override
     public void execute() {
-        AbstractClient client = InputHandler.getClientByInput();
-        if (client == null) {
-            System.out.println("\n" + ErrorMessages.NO_CLIENTS.getMessage());
-        } else {
+        try {
+            AbstractClient client = InputHandler.getClientByInput();
             System.out.println("Список услуг, оказанных клиенту, по убыванию времени оказания: ");
             ServicesPrinter.printServices(serviceService.getClientServicesByTime(client));
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

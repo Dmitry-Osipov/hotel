@@ -4,7 +4,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import essence.person.AbstractClient;
 import service.ClientService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
 import ui.utils.InputHandler;
 import ui.utils.csv.FileAdditionResult;
 import ui.utils.csv.ImportCSV;

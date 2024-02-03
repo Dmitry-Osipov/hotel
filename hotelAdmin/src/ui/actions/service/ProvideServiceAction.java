@@ -4,8 +4,8 @@ import essence.person.AbstractClient;
 import essence.service.AbstractService;
 import service.ServiceService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 
 /**
  * Класс предоставляет логику выполнения действия по предоставлению услуги клиенту.
@@ -27,16 +27,14 @@ public class ProvideServiceAction implements IAction {
      */
     @Override
     public void execute() {
-        AbstractClient client = InputHandler.getClientByInput();
-        AbstractService service = InputHandler.getServiceByInput();
-        if (client == null) {
-            System.out.println("\n" + ErrorMessages.NO_CLIENTS.getMessage());
-        } else if (service == null) {
-            System.out.println("\n" + ErrorMessages.NO_SERVICES.getMessage());
-        } else {
+        try {
+            AbstractClient client = InputHandler.getClientByInput();
+            AbstractService service = InputHandler.getServiceByInput();
             String result = serviceService.provideService(client, service) ? "Удалось провести услугу" :
                     "Не удалось провести услугу";
             System.out.println("\n" + result);
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }
