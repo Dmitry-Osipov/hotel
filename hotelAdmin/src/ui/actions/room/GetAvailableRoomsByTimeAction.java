@@ -2,8 +2,9 @@ package ui.actions.room;
 
 import service.RoomService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 import ui.utils.printers.RoomsPrinter;
 import ui.utils.validators.ArrayDigitsValidator;
 
@@ -39,12 +40,16 @@ public class GetAvailableRoomsByTimeAction implements IAction {
         }
 
         System.out.println("\nСвободные комнаты с " + Arrays.toString(dateTime) + ": ");
-        RoomsPrinter.printRooms(roomService.getAvailableRoomsByTime(LocalDateTime.of(
-                Integer.parseInt(dateTime[0]),
-                Integer.parseInt(dateTime[1]),
-                Integer.parseInt(dateTime[2]),
-                Integer.parseInt(dateTime[3]),
-                Integer.parseInt(dateTime[4])
-        )));
+        try {
+            RoomsPrinter.printRooms(roomService.getAvailableRoomsByTime(LocalDateTime.of(
+                    Integer.parseInt(dateTime[0]),
+                    Integer.parseInt(dateTime[1]),
+                    Integer.parseInt(dateTime[2]),
+                    Integer.parseInt(dateTime[3]),
+                    Integer.parseInt(dateTime[4])
+            )));
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
+        }
     }
 }

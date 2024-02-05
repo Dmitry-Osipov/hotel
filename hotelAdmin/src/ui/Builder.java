@@ -6,11 +6,15 @@ import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
 import ui.actions.client.AddClientAction;
+import ui.actions.client.ExportClientsDataAction;
 import ui.actions.client.GetClientsAction;
+import ui.actions.client.ImportClientsDataAction;
 import ui.actions.room.AddRoomAction;
 import ui.actions.room.AddStarsAction;
 import ui.actions.room.CheckInAction;
 import ui.actions.room.EvictAction;
+import ui.actions.room.ExportReservationsDataAction;
+import ui.actions.room.ExportRoomsDataAction;
 import ui.actions.room.GetAvailableRoomsByCapacityAction;
 import ui.actions.room.GetAvailableRoomsByPriceAction;
 import ui.actions.room.GetAvailableRoomsByStarsAction;
@@ -23,11 +27,17 @@ import ui.actions.room.GetRoomPriceAction;
 import ui.actions.room.GetRoomsByCapacityAction;
 import ui.actions.room.GetRoomsByPriceAction;
 import ui.actions.room.GetRoomsByStarsAction;
+import ui.actions.room.ImportReservationDataAction;
+import ui.actions.room.ImportRoomsDataAction;
 import ui.actions.service.AddServiceAction;
+import ui.actions.service.ExportProvidedServicesDataAction;
+import ui.actions.service.ExportServicesDataAction;
 import ui.actions.service.GetClientServicesByPriceAction;
 import ui.actions.service.GetClientServicesByTimeAction;
 import ui.actions.service.GetServicePriceAction;
 import ui.actions.service.GetServicesAction;
+import ui.actions.service.ImportProvidedServicesDataAction;
+import ui.actions.service.ImportServiceDataAction;
 import ui.actions.service.ProvideServiceAction;
 
 
@@ -79,6 +89,18 @@ public class Builder {
      */
     private Menu buildRoomsMenu() {
         MenuItem addRoom = new MenuItem("Добавить комнату", new AddRoomAction(roomService), null);
+
+        MenuItem exportRoomsData = new MenuItem("Экспортировать данные по комнатам в CSV",
+                new ExportRoomsDataAction(roomService), null);
+
+        MenuItem exportReservationsData = new MenuItem("Экспортировать данные по резервациям в CSV",
+                new ExportReservationsDataAction(roomService), null);
+
+        MenuItem importRoomsData = new MenuItem("Импортировать данные по комнатам из CSV",
+                new ImportRoomsDataAction(roomService), null);
+
+        MenuItem importReservationsData = new MenuItem("Импортировать данные по резервациям из CSV",
+                new ImportReservationDataAction(roomService), null);
 
         MenuItem getPrice = new MenuItem("Вывести стоимость комнаты", new GetRoomPriceAction(roomService),
                 null);
@@ -133,9 +155,10 @@ public class Builder {
         MenuItem getAvailableRoomsByTime = new MenuItem("Вывести список свободных комнат с конкретного времени",
                 new GetAvailableRoomsByTimeAction(roomService), null);
 
-        return new Menu("Управление комнатами", new MenuItem[]{addRoom, getPrice, addStars, checkIn, evict,
-                roomsByStars, roomsByPrice, roomsByCapacity, availableRoomsByStars, availableRoomsByPrice,
-                availableRoomsByCapacity, countAvailableRooms, getRoomLastClients, getRoomInfo, getClientRoomsByNumbers,
+        return new Menu("Управление комнатами", new MenuItem[]{addRoom, importRoomsData, importReservationsData,
+                exportRoomsData, exportReservationsData, getPrice, addStars, checkIn, evict, roomsByStars, roomsByPrice,
+                roomsByCapacity, availableRoomsByStars, availableRoomsByPrice, availableRoomsByCapacity,
+                countAvailableRooms, getRoomLastClients, getRoomInfo, getClientRoomsByNumbers,
                 getClientRoomsByCheckOutTime, getAvailableRoomsByTime});
     }
 
@@ -145,6 +168,18 @@ public class Builder {
      */
     private Menu buildServicesMenu() {
         MenuItem addService = new MenuItem("Добавить услугу", new AddServiceAction(serviceService), null);
+
+        MenuItem exportServicesData = new MenuItem("Экспортировать данные по услугам в CSV",
+                new ExportServicesDataAction(serviceService), null);
+
+        MenuItem exportProvidedServicesData = new MenuItem("Экспортировать данные по проведённым услугам в CSV",
+                new ExportProvidedServicesDataAction(serviceService), null);
+
+        MenuItem importServicesData = new MenuItem("Импортировать данные по услугам из CSV",
+                new ImportServiceDataAction(serviceService), null);
+
+        MenuItem importProvidedServicesData = new MenuItem("Импортировать данные по проведённым услугам из CSV",
+                new ImportProvidedServicesDataAction(serviceService), null);
 
         MenuItem getPrice = new MenuItem("Вывести стоимость услуги", new GetServicePriceAction(serviceService),
                 null);
@@ -163,8 +198,9 @@ public class Builder {
                 "Вывести список услуг, оказанных клиенту и отсортированных по убыванию времени оказания",
                 new GetClientServicesByTimeAction(serviceService), null);
 
-        return new Menu("Управление услугами", new MenuItem[]{addService, getPrice, getServices, provideService,
-                getClientServicesByPrice, getClientServicesByTime});
+        return new Menu("Управление услугами", new MenuItem[]{addService, importServicesData,
+                importProvidedServicesData, exportServicesData, exportProvidedServicesData, getPrice, getServices,
+                provideService, getClientServicesByPrice, getClientServicesByTime});
     }
 
     /**
@@ -174,6 +210,12 @@ public class Builder {
     private Menu buildClientsMenu() {
         MenuItem addClient = new MenuItem("Добавить клиента", new AddClientAction(clientService), null);
 
+        MenuItem exportClientsData = new MenuItem("Экспортировать данные по клиентам в CSV",
+                new ExportClientsDataAction(clientService), null);
+
+        MenuItem importClientsData = new MenuItem("Импортировать данные по клиентам из CSV",
+                new ImportClientsDataAction(clientService), null);
+
         MenuItem getClients = new MenuItem("Вывести список всех клиентов", new GetClientsAction(clientService),
                 null);
 
@@ -181,6 +223,7 @@ public class Builder {
                 () -> System.out.println("\nКоличество клиентов - " + clientService.countClients()),
                 null);
 
-        return new Menu("Управление клиентами", new MenuItem[]{addClient, getClients, countClients});
+        return new Menu("Управление клиентами", new MenuItem[]{addClient, importClientsData, exportClientsData,
+                getClients, countClients});
     }
 }

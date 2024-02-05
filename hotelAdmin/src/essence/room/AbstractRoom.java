@@ -1,13 +1,12 @@
 package essence.room;
 
-import essence.person.AbstractClient;
+import essence.Identifiable;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-public interface AbstractRoom {
+public interface AbstractRoom extends Identifiable {
     /**
-     * Метод установки нового статуса команты.
+     * Метод установки нового статуса комнаты.
      * @param status Новый статус.
      */
     void setStatus(RoomStatusTypes status);
@@ -43,7 +42,7 @@ public interface AbstractRoom {
     void setPrice(int price);
 
     /**
-     * Метож получения цены комнаты.
+     * Метод получения цены комнаты.
      * @return Цена.
      */
     int getPrice();
@@ -77,4 +76,16 @@ public interface AbstractRoom {
      * @return Номер комнаты.
      */
     int getNumber();
+
+    /**
+     * Метод устанавливает новый номер.
+     * @param number Новый номер.
+     */
+    void setNumber(int number);
+
+    /**
+     * Метод устанавливает новое значение вместимости.
+     * @param capacity Новая вместимость.
+     */
+    void setCapacity(int capacity);
 }

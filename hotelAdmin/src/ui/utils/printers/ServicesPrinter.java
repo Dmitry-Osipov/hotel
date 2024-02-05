@@ -1,7 +1,8 @@
 package ui.utils.printers;
 
 import essence.service.AbstractService;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
+import ui.utils.exceptions.NoEntityException;
 
 import java.util.List;
 
@@ -16,13 +17,14 @@ public final class ServicesPrinter {
     /**
      * Метод выводит в консоль список услуг или сообщение об отсутствии услуг.
      * @param services Список услуг.
+     * @throws NoEntityException Ошибка связана с отсутствием услуг.
      */
-    public static void printServices(List<AbstractService> services) {
+    public static void printServices(List<AbstractService> services) throws NoEntityException {
         if (services.isEmpty()) {
-            System.out.println("\n" + ErrorMessages.NO_SERVICES.getMessage());
+            throw new NoEntityException(ErrorMessages.NO_SERVICES.getMessage());
         } else {
             for (int i = 0; i < services.size(); i++) {
-                System.out.println(i + 1 + ". " + services.get(i));
+                System.out.println(i+1 + ". " + services.get(i));
             }
         }
     }

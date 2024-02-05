@@ -1,11 +1,10 @@
 package essence.service;
 
-import essence.person.AbstractClient;
+import essence.Identifiable;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-public interface AbstractService {
+public interface AbstractService extends Identifiable {
     /**
      * Метод устанавливает новый статус исполнения услуги.
      * @param status Новый статус.
@@ -35,4 +34,22 @@ public interface AbstractService {
      * @return Цена.
      */
     int getPrice();
+
+    /**
+     * Метод установки новой цены услуги.
+     * @param price Новая цена.
+     */
+    void setPrice(int price);
+
+    /**
+     * Метод установки нового названия услуги.
+     * @param name Название услуги.
+     */
+    void setName(ServiceNames name);
+
+    /**
+     * Метод получения названия услуги.
+     * @return Название услуги.
+     */
+    ServiceNames getName();
 }

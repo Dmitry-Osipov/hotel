@@ -4,8 +4,8 @@ import essence.room.AbstractRoom;
 import essence.room.Room;
 import service.RoomService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 
 /**
  * Класс предоставляет логику выполнения действия по выводу полной информации о комнате.
@@ -27,11 +27,11 @@ public class GetRoomInfoAction implements IAction {
      */
     @Override
     public void execute() {
-        AbstractRoom room = InputHandler.getRoomByInput();
-        if (room != null) {
+        try {
+            AbstractRoom room = InputHandler.getRoomByInput();
             System.out.println("\nПолная информация о комнате - " + roomService.getRoomInfo((Room) room));
-        } else {
-            System.out.println("\n" + ErrorMessages.NO_ROOMS.getMessage());
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

@@ -4,6 +4,7 @@ import comparators.RoomCapacityComparator;
 import comparators.RoomCheckOutTimeComparator;
 import comparators.RoomNumberComparator;
 import comparators.RoomPriceComparator;
+import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
@@ -11,7 +12,11 @@ import essence.room.Room;
 import essence.room.RoomStatusTypes;
 import repository.room.RoomRepository;
 import repository.room.RoomReservationRepository;
+import ui.utils.csv.FileAdditionResult;
+import ui.utils.id.IdFileManager;
+import ui.utils.validators.UniqueIdValidator;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +44,58 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
+     * Метод обновляет данные по комнате.
+     * @param room Новые данные комнаты, собранные в классе комнаты.
+     * @return true, если обновить удалось, иначе false.
+     */
+    public boolean updateRoom(AbstractRoom room) {
+        for (AbstractRoom currentRoom : roomRepository.getRooms()) {
+            if (currentRoom.getId() == room.getId()) {
+                currentRoom.setNumber(room.getNumber());
+                currentRoom.setCapacity(room.getCapacity());
+                currentRoom.setStatus(room.getStatus());
+                currentRoom.setPrice(room.getPrice());
+                currentRoom.setStars(room.getStars());
+                currentRoom.setCheckInTime(room.getCheckInTime());
+                currentRoom.setCheckOutTime(room.getCheckOutTime());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Метод добавляет резервацию в репозиторий резерваций.
+     * @param reservation Резервация для добавления.
+     * @return {@code true}, если резервация успешно добавлена, иначе {@code false}.
+     */
+    public boolean addReservation(RoomReservation reservation) {
+        return reservationRepository.getReservations().add(reservation);
+    }
+
+    /**
+     * Метод обновляет информацию о резервации в репозитории резерваций.
+     * @param reservation Обновленная информация о резервации.
+     * @return {@code true}, если информация успешно обновлена, иначе {@code false}.
+     */
+    public boolean updateReservation(RoomReservation reservation) {
+        for (RoomReservation currentReservation : reservationRepository.getReservations()) {
+            if (currentReservation.getId() == reservation.getId()) {
+                currentReservation.setRoom(reservation.getRoom());
+                currentReservation.setCheckInTime(reservation.getCheckInTime());
+                currentReservation.setCheckOutTime(reservation.getCheckOutTime());
+                currentReservation.setClients(reservation.getClients());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
@@ -51,9 +108,23 @@ public class RoomService extends AbstractFavorService {
 
         List<AbstractClient> guests = List.of(clients);
         LocalDateTime now = LocalDateTime.now();
-        reservationRepository.getReservations().add(new RoomReservation(room, now, now.plusHours(22), guests));
+        LocalDateTime checkOutPlan = now.plusHours(22);
+
+        String path = FileAdditionResult.getIdDirectory() + "reservation_id.text";
+        int id = IdFileManager.readMaxId(path);
+        if (!UniqueIdValidator.validateUniqueId(getReservations(), id)) {
+            id = getReservations().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
+        }
+        try {
+            IdFileManager.writeMaxId(path, id + 1);
+        } catch (IOException e) {
+            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
+        }
+
+        addReservation(new RoomReservation(id, room, now, checkOutPlan, guests));
         room.setStatus(RoomStatusTypes.OCCUPIED);
         room.setCheckInTime(now);
+        room.setCheckOutTime(checkOutPlan);
         guests.forEach(client -> client.setCheckInTime(now));
         return true;
     }
@@ -118,7 +189,7 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
-     * Метод формирует список всех комнат, отсортировнный по возрастанию вместимости.
+     * Метод формирует список всех комнат, отсортированный по возрастанию вместимости.
      * @return Отфильтрованный список всех комнат.
      */
     public List<AbstractRoom> roomsByCapacity() {
@@ -192,7 +263,7 @@ public class RoomService extends AbstractFavorService {
      * @return Полная информация про комнату.
      */
     public String getRoomInfo(Room room) {
-        return room.allInfo();
+        return room.toString();
     }
 
     /**
@@ -214,7 +285,7 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
-     * Метод формирует список свободных комнат с конкртеного времени.
+     * Метод формирует список свободных комнат с конкретного времени.
      * @param dateTime Время.
      * @return Список свободных комнат.
      */
@@ -225,6 +296,14 @@ public class RoomService extends AbstractFavorService {
                         && room.getStatus() == RoomStatusTypes.AVAILABLE
                         && room.getCheckOutTime().isAfter(dateTime))
                 .toList();
+    }
+
+    /**
+     * Метод получения списка всех резерваций.
+     * @return Список резерваций.
+     */
+    public List<RoomReservation> getReservations() {
+        return reservationRepository.getReservations();
     }
 
     /**
@@ -255,7 +334,7 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
-     * Служебный метод предназначен для устарнения дублирования кода фильтрованного стрима по свободным комнатам.
+     * Служебный метод предназначен для устранения дублирования кода фильтрованного стрима по свободным комнатам.
      * @return Стрим свободных комнат.
      */
     private Stream<AbstractRoom> filteredStreamAvailableRooms() {

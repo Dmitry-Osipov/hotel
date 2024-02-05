@@ -2,24 +2,38 @@ package essence.service;
 
 import lombok.Getter;
 import lombok.Setter;
-import essence.person.AbstractClient;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 @Getter
+@Setter
 public class Service extends AbstractFavor implements AbstractService, Comparable<AbstractService> {
-    private final ServiceNames name;
-    private static int count = 1;
-    @Setter
+    private ServiceNames name;
     private ServiceStatusTypes status = ServiceStatusTypes.UNPAID;
-    @Setter
     private LocalDateTime serviceTime;
 
-    public Service(ServiceNames name, int price) {
-        super(count++, price);
+    public Service(int id, ServiceNames name, int price) {
+        super(id, price);
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return getId() == ((Service) obj).getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override
@@ -28,7 +42,8 @@ public class Service extends AbstractFavor implements AbstractService, Comparabl
                 "id=" + getId() + "; " +
                 "name=" + name + "; " +
                 "price=" + getPrice() + "; " +
-                "status=" + status +
+                "status=" + status + "; " +
+                "service time=" + serviceTime +
                 '}';
     }
 

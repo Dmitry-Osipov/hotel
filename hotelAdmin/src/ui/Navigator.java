@@ -2,7 +2,7 @@ package ui;
 
 import lombok.Getter;
 import lombok.ToString;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
 
 /**
  * Класс отвечает за навигацию по меню.

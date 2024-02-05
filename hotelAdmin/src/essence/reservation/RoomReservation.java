@@ -1,5 +1,6 @@
 package essence.reservation;
 
+import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
 import lombok.Getter;
@@ -12,10 +13,10 @@ import java.util.List;
 
 @Getter
 @ToString
-public class RoomReservation {
+public class RoomReservation implements Identifiable {
     private final int id;
-    private final List<AbstractClient> clients = new ArrayList<>();
-    private static int count = 1;
+    @Setter
+    private List<AbstractClient> clients = new ArrayList<>();
     @Setter
     private AbstractRoom room;
     @Setter
@@ -23,9 +24,9 @@ public class RoomReservation {
     @Setter
     private LocalDateTime checkOutTime;
 
-    public RoomReservation(AbstractRoom room, LocalDateTime checkInTime, LocalDateTime checkOutTime,
+    public RoomReservation(int id, AbstractRoom room, LocalDateTime checkInTime, LocalDateTime checkOutTime,
                            List<AbstractClient> clients) {
-        this.id = count++;
+        this.id = id;
         this.room = room;
         this.checkInTime = checkInTime;
         this.checkOutTime = checkOutTime;

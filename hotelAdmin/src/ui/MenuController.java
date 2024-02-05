@@ -10,7 +10,7 @@ import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
-import ui.utils.ErrorMessages;
+import ui.utils.exceptions.ErrorMessages;
 
 import java.util.Scanner;
 

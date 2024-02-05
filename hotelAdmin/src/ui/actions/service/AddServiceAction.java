@@ -1,10 +1,16 @@
 package ui.actions.service;
 
+import essence.Identifiable;
 import essence.service.Service;
 import essence.service.ServiceNames;
 import service.ServiceService;
 import ui.actions.IAction;
+import ui.utils.id.IdFileManager;
 import ui.utils.InputHandler;
+import ui.utils.csv.FileAdditionResult;
+import ui.utils.validators.UniqueIdValidator;
+
+import java.io.IOException;
 
 /**
  * Класс предоставляет логику выполнения действия по добавлению новой услуги в отель.
@@ -27,6 +33,17 @@ public class AddServiceAction implements IAction {
      */
     @Override
     public void execute() {
+        String path = FileAdditionResult.getIdDirectory() + "service_id.txt";
+        int id = IdFileManager.readMaxId(path);
+        if (!UniqueIdValidator.validateUniqueId(serviceService.getServices(), id)) {
+            id = serviceService.getServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
+        }
+        try {
+            IdFileManager.writeMaxId(path, id + 1);
+        } catch (IOException e) {
+            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
+        }
+
         System.out.println("\nВыберите название услуги: ");
         ServiceNames[] names = ServiceNames.values();
         for (int i = 0; i < names.length; i++) {
@@ -37,7 +54,7 @@ public class AddServiceAction implements IAction {
         System.out.println("\nВведите стоимость услуги: ");
         int cost = InputHandler.getUserIntegerInput();
 
-        String result = serviceService.addService(new Service(name, cost)) ? "Удалось добавить услугу" :
+        String result = serviceService.addService(new Service(id, name, cost)) ? "Удалось добавить услугу" :
                 "Не удалось добавить услугу";
         System.out.println("\n" + result);
     }

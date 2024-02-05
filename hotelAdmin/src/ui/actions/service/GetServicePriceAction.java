@@ -3,8 +3,8 @@ package ui.actions.service;
 import essence.service.Service;
 import service.ServiceService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 
 /**
  * Класс предоставляет логику получения стоимости услуги.
@@ -27,11 +27,11 @@ public class GetServicePriceAction implements IAction {
      */
     @Override
     public void execute() {
-        Service service = (Service) InputHandler.getServiceByInput();
-        if (service == null) {
-            System.out.println("\n" + ErrorMessages.NO_SERVICES.getMessage());
-        } else {
+        try {
+            Service service = (Service) InputHandler.getServiceByInput();
             System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

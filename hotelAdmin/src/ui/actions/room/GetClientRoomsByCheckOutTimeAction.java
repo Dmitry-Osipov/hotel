@@ -3,8 +3,8 @@ package ui.actions.room;
 import essence.person.AbstractClient;
 import service.RoomService;
 import ui.actions.IAction;
-import ui.utils.ErrorMessages;
 import ui.utils.InputHandler;
+import ui.utils.exceptions.NoEntityException;
 import ui.utils.printers.RoomsPrinter;
 
 /**
@@ -28,12 +28,12 @@ public class GetClientRoomsByCheckOutTimeAction implements IAction {
      */
     @Override
     public void execute() {
-        AbstractClient client = InputHandler.getClientByInput();
-        if (client == null) {
-            System.out.println("\n" + ErrorMessages.NO_CLIENTS.getMessage());
-        } else {
+        try {
+            AbstractClient client = InputHandler.getClientByInput();
             System.out.println("\nСписок всех комнат клиента по убыванию времени выезда: ");
             RoomsPrinter.printRooms(roomService.getClientRoomsByCheckOutTime(client));
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

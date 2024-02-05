@@ -9,9 +9,9 @@ import java.util.TreeSet;
 
 public class TestRoom {
     public static void main(String[] args) {
-        Room room = new Room(110, 2, 200);
-        Room newRoom = new Room(111, 5, 3000);
-        Room room1 = new Room(112, 3, 3000);
+        Room room = new Room(1, 110, 2, 200);
+        Room newRoom = new Room(2, 111, 5, 3000);
+        Room room1 = new Room(3, 112, 3, 3000);
         room.setStatus(RoomStatusTypes.REPAIR);
         System.out.println(room.getStatus());
         room.setPrice(2500);

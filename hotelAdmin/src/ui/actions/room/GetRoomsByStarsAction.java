@@ -2,6 +2,7 @@ package ui.actions.room;
 
 import service.RoomService;
 import ui.actions.IAction;
+import ui.utils.exceptions.NoEntityException;
 import ui.utils.printers.RoomsPrinter;
 
 /**
@@ -25,7 +26,11 @@ public class GetRoomsByStarsAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nСписок всех комнат по убыванию звёзд: ");
-        RoomsPrinter.printRooms(roomService.roomsByStars());
+        try {
+            System.out.println("\nСписок всех комнат по убыванию звёзд: ");
+            RoomsPrinter.printRooms(roomService.roomsByStars());
+        } catch (NoEntityException e) {
+            System.out.println("\n" + e.getMessage());
+        }
     }
 }
