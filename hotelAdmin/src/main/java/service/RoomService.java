@@ -10,6 +10,8 @@ import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import repository.room.RoomRepository;
 import repository.room.RoomReservationRepository;
 import ui.utils.csv.FileAdditionResult;
@@ -26,6 +28,7 @@ import java.util.stream.Stream;
  * Класс отвечает за обработку данных по комнатам.
  */
 public class RoomService extends AbstractFavorService {
+    private static final Logger logger = LoggerFactory.getLogger(RoomService.class);
     private final RoomRepository roomRepository;
     private final RoomReservationRepository reservationRepository;
 
@@ -40,7 +43,16 @@ public class RoomService extends AbstractFavorService {
      * @return true, если комната была добавлена, иначе false.
      */
     public boolean addRoom(AbstractRoom room) {
-        return roomRepository.getRooms().add(room);
+        boolean added = roomRepository.getRooms().add(room);
+        int id = room.getId();
+
+        if (added) {
+            logger.info("Добавлена новая комната с ID {}", id);
+        } else {
+            logger.warn("Не удалось добавить комнату с ID {}", id);
+        }
+
+        return added;
     }
 
     /**
