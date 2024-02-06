@@ -1,9 +1,6 @@
 package test;
 
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
-import com.opencsv.exceptions.CsvException;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.person.Client;
 import essence.room.Room;
@@ -17,21 +14,12 @@ import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
-import ui.utils.InputHandler;
 import ui.utils.csv.ExportCSV;
 import ui.utils.csv.ImportCSV;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
 
 public class TestCSV {
-    private static final Random random = new Random();
-
     public static void main(String[] args) {
         String exportPathRoom = "hotelAdmin/src/ui/utils/csv/data/test_room";
         String exportPathService = "hotelAdmin/src/ui/utils/csv/data/test_service";

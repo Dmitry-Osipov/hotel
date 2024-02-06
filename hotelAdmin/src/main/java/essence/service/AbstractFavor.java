@@ -8,7 +8,7 @@ public abstract class AbstractFavor {
     private int price;
     private final int MIN_PRICE = 1500;
 
-    public AbstractFavor(int id, int price) {
+    protected AbstractFavor(int id, int price) {
         this.id = id;
         setPrice(price);
     }

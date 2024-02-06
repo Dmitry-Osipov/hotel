@@ -1,7 +1,6 @@
 package comparators;
 
 import essence.reservation.RoomReservation;
-import essence.room.AbstractRoom;
 
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.Comparator;

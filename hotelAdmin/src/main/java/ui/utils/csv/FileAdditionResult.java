@@ -13,8 +13,8 @@ public enum FileAdditionResult {
     FAILURE("Файл не был перезаписан");
 
     private final String message;
-    private static final String DATA_DIRECTORY = "hotelAdmin/src/ui/utils/csv/data/";
-    private static final String ID_DIRECTORY = "hotelAdmin/src/ui/utils/id/data/";
+    private static final String DATA_DIRECTORY = "hotelAdmin/src/main/java/ui/utils/csv/data/";
+    private static final String ID_DIRECTORY = "hotelAdmin/src/main/java/ui/utils/id/data/";
 
     FileAdditionResult(String message) {
         this.message = message;
