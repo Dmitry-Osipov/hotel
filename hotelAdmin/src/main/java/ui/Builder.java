@@ -1,7 +1,8 @@
 package ui;
 
 import lombok.Getter;
-import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -44,9 +45,9 @@ import ui.actions.service.ProvideServiceAction;
 /**
  * Класс отвечает за формирование меню.
  */
-@Getter
-@ToString
 public class Builder {
+    private static final Logger logger = LoggerFactory.getLogger("AppProcess");
+    @Getter
     private Menu rootMenu;
     private final RoomService roomService;
     private final ServiceService serviceService;
@@ -76,6 +77,7 @@ public class Builder {
      * @return Главное меню.
      */
     private Menu buildMainMenu() {
+        logger.info("Формирование главного меню");
         MenuItem roomsMenu = new MenuItem("Управление комнатами", null, buildRoomsMenu());
         MenuItem serviceMenu = new MenuItem("Управление услугами", null, buildServicesMenu());
         MenuItem clientMenu = new MenuItem("Управление клиентами", null, buildClientsMenu());
@@ -88,6 +90,7 @@ public class Builder {
      * @return Меню управления комнатами.
      */
     private Menu buildRoomsMenu() {
+        logger.info("Формирование меню комнат");
         MenuItem addRoom = new MenuItem("Добавить комнату", new AddRoomAction(roomService), null);
 
         MenuItem exportRoomsData = new MenuItem("Экспортировать данные по комнатам в CSV",
@@ -155,6 +158,7 @@ public class Builder {
         MenuItem getAvailableRoomsByTime = new MenuItem("Вывести список свободных комнат с конкретного времени",
                 new GetAvailableRoomsByTimeAction(roomService), null);
 
+        logger.info("Меню комнат сформировано");
         return new Menu("Управление комнатами", new MenuItem[]{addRoom, importRoomsData, importReservationsData,
                 exportRoomsData, exportReservationsData, getPrice, addStars, checkIn, evict, roomsByStars, roomsByPrice,
                 roomsByCapacity, availableRoomsByStars, availableRoomsByPrice, availableRoomsByCapacity,
@@ -167,6 +171,7 @@ public class Builder {
      * @return Меню услуг.
      */
     private Menu buildServicesMenu() {
+        logger.info("Формирование меню услуг");
         MenuItem addService = new MenuItem("Добавить услугу", new AddServiceAction(serviceService), null);
 
         MenuItem exportServicesData = new MenuItem("Экспортировать данные по услугам в CSV",
@@ -198,6 +203,7 @@ public class Builder {
                 "Вывести список услуг, оказанных клиенту и отсортированных по убыванию времени оказания",
                 new GetClientServicesByTimeAction(serviceService), null);
 
+        logger.info("Меню услуг сформировано");
         return new Menu("Управление услугами", new MenuItem[]{addService, importServicesData,
                 importProvidedServicesData, exportServicesData, exportProvidedServicesData, getPrice, getServices,
                 provideService, getClientServicesByPrice, getClientServicesByTime});
@@ -208,6 +214,7 @@ public class Builder {
      * @return Меню управления клиентами.
      */
     private Menu buildClientsMenu() {
+        logger.info("Формирование меню клиентов");
         MenuItem addClient = new MenuItem("Добавить клиента", new AddClientAction(clientService), null);
 
         MenuItem exportClientsData = new MenuItem("Экспортировать данные по клиентам в CSV",
@@ -223,6 +230,7 @@ public class Builder {
                 () -> System.out.println("\nКоличество клиентов - " + clientService.countClients()),
                 null);
 
+        logger.info("Меню клиентов сформировано");
         return new Menu("Управление клиентами", new MenuItem[]{addClient, importClientsData, exportClientsData,
                 getClients, countClients});
     }

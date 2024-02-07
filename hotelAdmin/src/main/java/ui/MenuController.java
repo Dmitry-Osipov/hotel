@@ -1,7 +1,7 @@
 package ui;
 
-import lombok.Getter;
-import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import repository.client.ClientRepository;
 import repository.room.RoomRepository;
 import repository.room.RoomReservationRepository;
@@ -17,9 +17,8 @@ import java.util.Scanner;
 /**
  * Класс отвечает за работу UI.
  */
-@Getter
-@ToString
 public class MenuController {
+    private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     private final Builder builder;
     private final Navigator navigator;
 
@@ -41,6 +40,7 @@ public class MenuController {
      * Метод запускает приложение отеля.
      */
     public void run() {
+        logger.info("Запуск приложения");
         while (true) {
             navigator.printMenu();
             int choice = getUserInput() - 1;
@@ -60,17 +60,21 @@ public class MenuController {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\nВыберите действие (для выхода введите -1): ");
         while (!scanner.hasNextInt()) {
+            logger.info("Пользователь ввёл не целое число");
             System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
             scanner.next();
         }
 
-        return scanner.nextInt();
+        int choice = scanner.nextInt();
+        logger.info("Пользователь ввёл число {}", choice);
+        return choice;
     }
 
     /**
      * Служебный метод производит user-friendly выход из программы.
      */
     private void exit() {
+        logger.info("Выход из приложения");
         System.out.println("\nВыход из программы...");
     }
 }
