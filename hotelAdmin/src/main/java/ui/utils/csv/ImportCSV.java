@@ -13,7 +13,8 @@ import essence.service.AbstractService;
 import essence.service.Service;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
-import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ui.utils.exceptions.ErrorMessages;
 import ui.utils.validators.FileValidator;
 
@@ -28,11 +29,11 @@ import java.util.Map;
 /**
  * Класс импорта данных из CSV файла.
  */
-@Getter
 public class ImportCSV {
+    private static final Logger logger = LoggerFactory.getLogger(ImportCSV.class);
+
     private ImportCSV() {
     }
-
 
     /**
      * Метод импортирует данные по комнатам из CSV файла.
@@ -43,6 +44,7 @@ public class ImportCSV {
      */
     public static List<AbstractRoom> importRoomsData(String fileName) throws IOException, CsvValidationException {
         List<AbstractRoom> rooms = new ArrayList<>();
+        logger.info("Вызов метода импорта данных по комнатам из CSV файла {}", fileName);
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             String[] header = reader.readNext();
             if (!FileValidator.isValidCsvHeader(header, CsvHeaderLength.ROOMS, CsvHeaderArrays.ROOMS)) {
@@ -68,8 +70,15 @@ public class ImportCSV {
 
                 rooms.add(room);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось импортировать данные по комнатам из CSV файла {}. Ошибка IO", fileName);
+            throw new IOException(e.getMessage());
+        } catch (CsvValidationException e) {
+            logger.error("Не удалось импортировать данные по комнатам из CSV файла {}. Ошибка валидации", fileName);
+            throw new CsvValidationException(e.getMessage());
         }
 
+        logger.info("Удалось импортировать данные по комнатам из CSV файла {}. Полученный список: {}", fileName, rooms);
         return rooms;
     }
 
@@ -81,6 +90,7 @@ public class ImportCSV {
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
      */
     public static List<AbstractService> importServicesData(String fileName) throws IOException, CsvValidationException {
+        logger.info("Вызов метода импорта данных по услугам из CSV файла {}", fileName);
         List<AbstractService> services = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             String[] header = reader.readNext();
@@ -102,8 +112,16 @@ public class ImportCSV {
 
                 services.add(service);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось импортировать данные по услугам из CSV файла {}. Ошибка IO", fileName);
+            throw new IOException(e.getMessage());
+        } catch (CsvValidationException e) {
+            logger.error("Не удалось импортировать данные по услугам из CSV файла {}. Ошибка валидации", fileName);
+            throw new CsvValidationException(e.getMessage());
         }
 
+        logger.info("Удалось импортировать данные по услугам из CSV файла {}. Полученный список: {}",
+                fileName, services);
         return services;
     }
 
@@ -115,6 +133,7 @@ public class ImportCSV {
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
      */
     public static List<AbstractClient> importClientsData(String fileName) throws IOException, CsvValidationException {
+        logger.info("Вызов метода импорта данных по клиентам из CSV файла {}", fileName);
         List<AbstractClient> clients = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             String[] header = reader.readNext();
@@ -136,8 +155,16 @@ public class ImportCSV {
 
                 clients.add(client);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось импортировать данные по клиентам из CSV файла {}. Ошибка IO", fileName);
+            throw new IOException(e.getMessage());
+        } catch (CsvValidationException e) {
+            logger.error("Не удалось импортировать данные по клиентам из CSV файла {}. Ошибка валидации", fileName);
+            throw new CsvValidationException(e.getMessage());
         }
 
+        logger.info("Удалось импортировать данные по клиентам из CSV файла {}. Полученный список: {}",
+                fileName, clients);
         return clients;
     }
 
@@ -150,6 +177,7 @@ public class ImportCSV {
      */
     public static List<RoomReservation> importReservationsData(String fileName) throws IOException,
             CsvValidationException {
+        logger.info("Вызов метода импорта данных по резервациям из CSV файла {}", fileName);
         List<RoomReservation> reservations = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             String[] header = reader.readNext();
@@ -167,8 +195,16 @@ public class ImportCSV {
 
                 reservations.add(new RoomReservation(id, room, checkInTime, checkOutTime, clients));
             }
+        } catch (IOException e) {
+            logger.error("Не удалось импортировать данные по резервациям из CSV файла {}. Ошибка IO", fileName);
+            throw new IOException(e.getMessage());
+        } catch (CsvValidationException e) {
+            logger.error("Не удалось импортировать данные по резервация из CSV файла {}. Ошибка валидации", fileName);
+            throw new CsvValidationException(e.getMessage());
         }
 
+        logger.info("Удалось импортировать данные по резервациям из CSV файла {}. Полученный список: {}",
+                fileName, reservations);
         return reservations;
     }
 
@@ -181,6 +217,7 @@ public class ImportCSV {
      */
     public static List<ProvidedService> importProvidedServicesData(String fileName) throws IOException,
             CsvValidationException {
+        logger.info("Вызов метода импорта данных по оказанным услугам из CSV файла {}", fileName);
         List<ProvidedService> providedServices = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"))) {
             String[] header = reader.readNext();
@@ -203,8 +240,17 @@ public class ImportCSV {
 
                 providedServices.add(providedService);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось импортировать данные по оказанным услугам из CSV файла {}. Ошибка IO", fileName);
+            throw new IOException(e.getMessage());
+        } catch (CsvValidationException e) {
+            logger.error("Не удалось импортировать данные по оказанным услугам из CSV файла {}. Ошибка валидации",
+                    fileName);
+            throw new CsvValidationException(e.getMessage());
         }
 
+        logger.info("Удалось импортировать данные по оказанным услугам из CSV файла {}. Полученный список: {}",
+                fileName, providedServices);
         return providedServices;
     }
 

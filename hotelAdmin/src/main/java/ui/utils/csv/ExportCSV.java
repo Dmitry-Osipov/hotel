@@ -6,7 +6,8 @@ import essence.provided.ProvidedService;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.service.AbstractService;
-import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,8 +16,8 @@ import java.util.List;
 /**
  * Класс экспорта данных в CSV файл.
  */
-@Getter
 public final class ExportCSV {
+    private static final Logger logger = LoggerFactory.getLogger(ExportCSV.class);
 
     private ExportCSV() {
     }
@@ -28,6 +29,7 @@ public final class ExportCSV {
      * @throws IOException Ошибка при обработке файла.
      */
     public static void exportRoomsData(String fileName, List<AbstractRoom> rooms) throws IOException {
+        logger.info("Вызов метода экспорта данных в CSV файл {} списка комнат {}", fileName, rooms);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
             writer.writeNext(new String[]{"ID", "Номер", "Вместительность", "Цена", "Статус", "Количество звёзд",
                     "Время въезда", "Время выезда"});
@@ -45,7 +47,12 @@ public final class ExportCSV {
                 };
                 writer.writeNext(data);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось экспортировать в CSV файл {} список комнат {}", fileName, rooms);
+            throw new IOException(e.getMessage());
         }
+
+        logger.info("Удалось экспортировать в CSV файл {} список комнат {}", fileName, rooms);
     }
 
     /**
@@ -55,6 +62,7 @@ public final class ExportCSV {
      * @throws IOException Ошибка при обработке файла.
      */
     public static void exportServicesData(String fileName, List<AbstractService> services) throws IOException {
+        logger.info("Вызов метода экспорта данных в CSV файл {} списка услуг {}", fileName, services);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
             writer.writeNext(new String[]{"ID", "Название", "Цена", "Статус", "Время оказания"});
             for (AbstractService service : services) {
@@ -67,7 +75,12 @@ public final class ExportCSV {
                 };
                 writer.writeNext(data);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось экспортировать в CSV файл {} список услуг {}", fileName, services);
+            throw new IOException(e.getMessage());
         }
+
+        logger.info("Удалось экспортировать в CSV файл {} список услуг {}", fileName, services);
     }
 
     /**
@@ -77,6 +90,7 @@ public final class ExportCSV {
      * @throws IOException Ошибка при обработке файла.
      */
     public static void exportClientsData(String fileName, List<AbstractClient> clients) throws IOException {
+        logger.info("Вызов метода экспорта данных в CSV файл {} списка клиентов {}", fileName, clients);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
             writer.writeNext(new String[]{"ID", "ФИО", "Номер телефона", "Время заезда", "Время выезда"});
             for (AbstractClient client : clients) {
@@ -89,7 +103,12 @@ public final class ExportCSV {
                 };
                 writer.writeNext(data);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось экспортировать в CSV файл {} список клиентов {}", fileName, clients);
+            throw new IOException(e.getMessage());
         }
+
+        logger.info("Удалось экспортировать в CSV файл {} список клиентов {}", fileName, clients);
     }
 
     /**
@@ -99,6 +118,7 @@ public final class ExportCSV {
      * @throws IOException Ошибка при обработке файла.
      */
     public static void exportReservationsData(String fileName, List<RoomReservation> reservations) throws IOException {
+        logger.info("Вызов метода экспорта данных в CSV файл {} списка резерваций {}", fileName, reservations);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
             writer.writeNext(new String[] {"ID", "Комната", "Время заезда", "Время выезда", "Список клиентов"});
             for (RoomReservation reservation : reservations) {
@@ -111,7 +131,12 @@ public final class ExportCSV {
                 };
                 writer.writeNext(data);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось экспортировать в CSV файл {} список резерваций {}", fileName, reservations);
+            throw new IOException(e.getMessage());
         }
+
+        logger.info("Удалось экспортировать в CSV файл {} список резерваций {}", fileName, reservations);
     }
 
     /**
@@ -122,6 +147,7 @@ public final class ExportCSV {
      */
     public static void exportProvidedServicesData(String fileName, List<ProvidedService> providedServices)
             throws IOException {
+        logger.info("Вызов метода экспорта данных в CSV файл {} списка оказанных услуг {}", fileName, providedServices);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
             writer.writeNext(new String[] {"ID", "Список клиентов", "Услуга", "Время оказания"});
             for (ProvidedService providedService : providedServices) {
@@ -133,6 +159,12 @@ public final class ExportCSV {
                 };
                 writer.writeNext(data);
             }
+        } catch (IOException e) {
+            logger.error("Не удалось экспортировать в CSV файл {} список оказанных услуг {}",
+                    fileName, providedServices);
+            throw new IOException(e.getMessage());
         }
+
+        logger.info("Удалось экспортировать в CSV файл {} список оказанных услуг {}", fileName, providedServices);
     }
 }

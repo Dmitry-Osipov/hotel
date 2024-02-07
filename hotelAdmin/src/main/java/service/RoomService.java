@@ -20,6 +20,7 @@ import ui.utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -28,7 +29,8 @@ import java.util.stream.Stream;
  * Класс отвечает за обработку данных по комнатам.
  */
 public class RoomService extends AbstractFavorService {
-    private static final Logger logger = LoggerFactory.getLogger(RoomService.class);
+    private static final Logger roomLogger = LoggerFactory.getLogger(RoomService.class);
+    private static final Logger reservationLogger = LoggerFactory.getLogger("service.ReservationService");
     private final RoomRepository roomRepository;
     private final RoomReservationRepository reservationRepository;
 
@@ -40,16 +42,17 @@ public class RoomService extends AbstractFavorService {
     /**
      * Метод добавляет новую комнату в список всех комнат отеля.
      * @param room Новая комната.
-     * @return true, если комната была добавлена, иначе false.
+     * @return {@code true}, если комната была добавлена, иначе {@code false}.
      */
     public boolean addRoom(AbstractRoom room) {
+        int roomId = room.getId();
+        roomLogger.info("Вызван метод добавления комнаты с ID {}", roomId);
         boolean added = roomRepository.getRooms().add(room);
-        int id = room.getId();
 
         if (added) {
-            logger.info("Добавлена новая комната с ID {}", id);
+            roomLogger.info("Добавлена новая комната с ID {}", roomId);
         } else {
-            logger.warn("Не удалось добавить комнату с ID {}", id);
+            roomLogger.warn("Не удалось добавить комнату с ID {}", roomId);
         }
 
         return added;
@@ -58,11 +61,13 @@ public class RoomService extends AbstractFavorService {
     /**
      * Метод обновляет данные по комнате.
      * @param room Новые данные комнаты, собранные в классе комнаты.
-     * @return true, если обновить удалось, иначе false.
+     * @return {@code true}, если обновить удалось, иначе {@code false}.
      */
     public boolean updateRoom(AbstractRoom room) {
+        int roomId = room.getId();
+        roomLogger.info("Вызван метод обновления комнаты с ID {}", roomId);
         for (AbstractRoom currentRoom : roomRepository.getRooms()) {
-            if (currentRoom.getId() == room.getId()) {
+            if (currentRoom.getId() == roomId) {
                 currentRoom.setNumber(room.getNumber());
                 currentRoom.setCapacity(room.getCapacity());
                 currentRoom.setStatus(room.getStatus());
@@ -70,11 +75,13 @@ public class RoomService extends AbstractFavorService {
                 currentRoom.setStars(room.getStars());
                 currentRoom.setCheckInTime(room.getCheckInTime());
                 currentRoom.setCheckOutTime(room.getCheckOutTime());
+                roomLogger.info("Обновлена комната с ID {}", roomId);
 
                 return true;
             }
         }
 
+        roomLogger.warn("Не удалось обновить комнату с ID {}", roomId);
         return false;
     }
 
@@ -84,7 +91,17 @@ public class RoomService extends AbstractFavorService {
      * @return {@code true}, если резервация успешно добавлена, иначе {@code false}.
      */
     public boolean addReservation(RoomReservation reservation) {
-        return reservationRepository.getReservations().add(reservation);
+        int reservationId = reservation.getId();
+        reservationLogger.info("Вызван метод добавления новой резервации с ID {}", reservationId);
+        boolean added = reservationRepository.getReservations().add(reservation);
+
+        if (added) {
+            reservationLogger.info("Добавлена новая резервация с ID {}", reservationId);
+        } else {
+            reservationLogger.warn("Не удалось добавить резервацию с ID {}", reservationId);
+        }
+
+        return added;
     }
 
     /**
@@ -93,17 +110,21 @@ public class RoomService extends AbstractFavorService {
      * @return {@code true}, если информация успешно обновлена, иначе {@code false}.
      */
     public boolean updateReservation(RoomReservation reservation) {
+        int reservationId = reservation.getId();
+        reservationLogger.info("Вызван метод обновления резервации с ID {}", reservationId);
         for (RoomReservation currentReservation : reservationRepository.getReservations()) {
-            if (currentReservation.getId() == reservation.getId()) {
+            if (currentReservation.getId() == reservationId) {
                 currentReservation.setRoom(reservation.getRoom());
                 currentReservation.setCheckInTime(reservation.getCheckInTime());
                 currentReservation.setCheckOutTime(reservation.getCheckOutTime());
                 currentReservation.setClients(reservation.getClients());
+                reservationLogger.info("Обновлена резервация с ID {}", reservationId);
 
                 return true;
             }
         }
 
+        reservationLogger.warn("Не удалось обновить резервацию с ID {}", reservationId);
         return false;
     }
 
@@ -111,10 +132,18 @@ public class RoomService extends AbstractFavorService {
      * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
-     * @return true, если заселение прошло успешно, иначе false.
+     * @return {@code true}, если заселение прошло успешно, иначе {@code false}.
      */
     public boolean checkIn(AbstractRoom room, AbstractClient...clients) {
+        String startMessage = "Вызван метод заселения в комнату с ID {} следующих клиентов: {}";
+        int roomId = room.getId();
+        String clientsString = Arrays.toString(clients);
+        roomLogger.info(startMessage, roomId, clientsString);
+        reservationLogger.info(startMessage, roomId, clientsString);
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
+            String message = "Провалена попытка заселения в комнату с ID {} следующих клиентов: {}";
+            roomLogger.warn(message, roomId, clientsString);
+            reservationLogger.warn(message, roomId, clientsString);
             return false;
         }
 
@@ -138,6 +167,7 @@ public class RoomService extends AbstractFavorService {
         room.setCheckInTime(now);
         room.setCheckOutTime(checkOutPlan);
         guests.forEach(client -> client.setCheckInTime(now));
+        roomLogger.info("В комнату с ID {} заселены следующие клиенты: {}", roomId, clientsString);
         return true;
     }
 
@@ -145,13 +175,18 @@ public class RoomService extends AbstractFavorService {
      * Метод позволяет оценить комнату.
      * @param room Комната, которую требуется оценить.
      * @param stars Оценка (должна быть в пределах от 1 до 5 включительно).
-     * @return true, если оценка была добавлена, иначе false.
+     * @return {@code true}, если оценка была добавлена, иначе {@code false}.
      */
     public boolean addStarsToRoom(AbstractRoom room, int stars) {
+        int roomId = room.getId();
+        roomLogger.info("Вызван метод добавления звёзд комнате с ID {}", roomId);
         if (stars < 1 || 5 < stars) {
+            roomLogger.warn("Звёзды в количестве {} не были добавлены комнате с ID {}", stars, roomId);
             return false;
         }
+
         room.setStars(room.getStars() + stars);
+        roomLogger.info("Звёзды в количестве {} были добавлены комнате с ID {}", stars, roomId);
         return true;
     }
 
@@ -159,10 +194,18 @@ public class RoomService extends AbstractFavorService {
      * * Метод выселения из комнаты.
      * @param room Комната, из которой требуется выселить клиентов.
      * @param clients Клиенты, которых требуется выселить.
-     * @return true, если выселение прошло успешно, иначе false.
+     * @return {@code true}, если выселение прошло успешно, иначе {@code false}.
      */
     public boolean evict(AbstractRoom room, AbstractClient ...clients) {
+        String startMessage = "Вызван метод выселения из комнаты с ID {} следующих клиентов: {}";
+        int roomId = room.getId();
+        String clientsString = Arrays.toString(clients);
+        roomLogger.info(startMessage, roomId, clientsString);
+        reservationLogger.info(startMessage, roomId, clientsString);
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.OCCUPIED)) {
+            String message = "Провалена попытка выселения из комнаты с ID {} следующих клиентов: {}";
+            roomLogger.warn(message, roomId, clientsString);
+            reservationLogger.warn(message, roomId, clientsString);
             return false;
         }
 
@@ -173,7 +216,12 @@ public class RoomService extends AbstractFavorService {
 
         room.setStatus(RoomStatusTypes.AVAILABLE);
         room.setCheckOutTime(now);
-        getReservationByRoom(room).forEach(reservation -> reservation.setCheckOutTime(now));
+        roomLogger.info("Произошло выселение из комнаты с ID {} следующих клиентов: {}",
+                roomId, clientsString);
+        for (RoomReservation reservation : getReservationByRoom(room).toList()) {
+            reservation.setCheckOutTime(now);
+            reservationLogger.info("Произошло выселение по резервации с ID {}", reservation.getId());
+        }
 
         return true;
     }
@@ -183,6 +231,7 @@ public class RoomService extends AbstractFavorService {
      * @return Отфильтрованный список всех комнат.
      */
     public List<AbstractRoom> roomsByStars() {
+        roomLogger.info("Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд");
         return roomRepository.getRooms()
                 .stream()
                 .sorted()
@@ -194,6 +243,7 @@ public class RoomService extends AbstractFavorService {
      * @return Отфильтрованный список всех комнат.
      */
     public List<AbstractRoom> roomsByPrice() {
+        roomLogger.info("Вызван метод получения всех комнат, отсортированных в порядке возрастания цены");
         return roomRepository.getRooms()
                 .stream()
                 .sorted(new RoomPriceComparator())
@@ -205,6 +255,7 @@ public class RoomService extends AbstractFavorService {
      * @return Отфильтрованный список всех комнат.
      */
     public List<AbstractRoom> roomsByCapacity() {
+        roomLogger.info("Вызван метод получения всех комнат, отсортированных в порядке убывания вместимости");
         return roomRepository.getRooms()
                 .stream()
                 .sorted(new RoomCapacityComparator())
@@ -216,6 +267,7 @@ public class RoomService extends AbstractFavorService {
      * @return Отфильтрованный список свободных комнат.
      */
     public List<AbstractRoom> availableRoomsByStars() {
+        roomLogger.info("Вызван метод получения свободных комнат, отсортированных в порядке убывания звёзд");
         return filteredStreamAvailableRooms()
                 .sorted()
                 .toList();
@@ -226,6 +278,7 @@ public class RoomService extends AbstractFavorService {
      * @return Отфильтрованный список свободных комнат.
      */
     public List<AbstractRoom> availableRoomsByPrice() {
+        roomLogger.info("Вызван метод получения свободных комнат, отсортированных в порядке возрастания цены");
         return filteredStreamAvailableRooms()
                 .sorted(new RoomPriceComparator())
                 .toList();
@@ -236,6 +289,7 @@ public class RoomService extends AbstractFavorService {
      * @return Отфильтрованный список свободных комнат.
      */
     public List<AbstractRoom> availableRoomsByCapacity() {
+        roomLogger.info("Вызван метод получения свободных комнат, отсортированных в порядке убывания вместимости");
         return filteredStreamAvailableRooms()
                 .sorted(new RoomCapacityComparator())
                 .toList();
@@ -246,6 +300,7 @@ public class RoomService extends AbstractFavorService {
      * @return Количество свободных комнат.
      */
     public int countAvailableRooms() {
+        roomLogger.info("Вызван метод подсчёта количества свободных комнат");
         return (int) filteredStreamAvailableRooms().count();
     }
 
@@ -256,6 +311,9 @@ public class RoomService extends AbstractFavorService {
      * @return Список из нескольких последних клиентов.
      */
     public List<AbstractClient> getRoomLastClients(AbstractRoom room, int count) {
+        int roomId = room.getId();
+        roomLogger.info("Вызван метод формирования списка последних {} клиентов клиентов комнаты с ID {}",
+                count, roomId);
         if (count < 1) {
             System.out.println("Полученное количество менее 1. Выводим последнего клиента комнаты:");
             count = 1;
@@ -266,7 +324,9 @@ public class RoomService extends AbstractFavorService {
                     "Выводим всех последних клиентов комнаты:");
         }
 
-        return streamVisitingClientsLimit(room, count).toList();
+        List<AbstractClient> list = streamVisitingClientsLimit(room, count).toList();
+        roomLogger.info("Для комнаты с ID {} получен следующий список последних {} клиентов: {}", roomId, count, list);
+        return list;
     }
 
     /**
@@ -275,6 +335,7 @@ public class RoomService extends AbstractFavorService {
      * @return Полная информация про комнату.
      */
     public String getRoomInfo(Room room) {
+        roomLogger.info("Вызван метод получения информации по комнате с ID {}", room.getId());
         return room.toString();
     }
 
@@ -284,7 +345,13 @@ public class RoomService extends AbstractFavorService {
      * @return Список комнат.
      */
     public List<AbstractRoom> getClientRoomsByNumbers(AbstractClient client) {
-        return getFilteredClientRooms(new RoomNumberComparator(), client);
+        int clientId = client.getId();
+        roomLogger.info("Вызван метод получения всех комнат, отсортированных в порядке возрастания номера комнаты, " +
+                "для клиента с ID {}", clientId);
+        List<AbstractRoom> rooms = getFilteredClientRooms(new RoomNumberComparator(), client);
+        roomLogger.info("Для клиента с ID {} получен следующий список последних комнат, отсортированный в порядке " +
+                "возрастания номера комнаты: {}", clientId, rooms);
+        return rooms;
     }
 
     /**
@@ -293,7 +360,13 @@ public class RoomService extends AbstractFavorService {
      * @return Список комнат.
      */
     public List<AbstractRoom> getClientRoomsByCheckOutTime(AbstractClient client) {
-        return getFilteredClientRooms(new RoomCheckOutTimeComparator(), client).reversed();
+        int clientId = client.getId();
+        roomLogger.info("Вызван метод получения всех комнат, отсортированных в порядке убывания времени выезда, " +
+                "для клиента с ID {}", clientId);
+        List<AbstractRoom> rooms = getFilteredClientRooms(new RoomCheckOutTimeComparator(), client).reversed();
+        roomLogger.info("Для клиента с ID {} получен следующий список последних комнат, отсортированный в порядке " +
+                "убывания времени выезда: {}", clientId, rooms);
+        return rooms;
     }
 
     /**
@@ -302,12 +375,15 @@ public class RoomService extends AbstractFavorService {
      * @return Список свободных комнат.
      */
     public List<AbstractRoom> getAvailableRoomsByTime(LocalDateTime dateTime) {
-        return roomRepository.getRooms()
+        roomLogger.info("Вызван метод получения свободных комнат, начиная с: {}", dateTime);
+        List<AbstractRoom> rooms = roomRepository.getRooms()
                 .stream()
                 .filter(room -> room.getCheckOutTime() != null
                         && room.getStatus() == RoomStatusTypes.AVAILABLE
                         && room.getCheckOutTime().isAfter(dateTime))
                 .toList();
+        roomLogger.info("По времени {} получен следующий список свободных комнат: {}", dateTime, rooms);
+        return rooms;
     }
 
     /**
@@ -315,6 +391,7 @@ public class RoomService extends AbstractFavorService {
      * @return Список резерваций.
      */
     public List<RoomReservation> getReservations() {
+        reservationLogger.info("Вызов метода получения списка резерваций");
         return reservationRepository.getReservations();
     }
 

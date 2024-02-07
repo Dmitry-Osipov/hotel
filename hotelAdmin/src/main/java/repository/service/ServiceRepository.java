@@ -1,8 +1,8 @@
 package repository.service;
 
+import essence.service.AbstractService;
 import lombok.Getter;
 import lombok.ToString;
-import essence.service.AbstractService;
 
 import java.util.HashSet;
 import java.util.Set;

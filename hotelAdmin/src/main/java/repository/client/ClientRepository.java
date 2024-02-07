@@ -1,8 +1,8 @@
 package repository.client;
 
+import essence.person.AbstractClient;
 import lombok.Getter;
 import lombok.ToString;
-import essence.person.AbstractClient;
 
 import java.util.HashSet;
 import java.util.Set;

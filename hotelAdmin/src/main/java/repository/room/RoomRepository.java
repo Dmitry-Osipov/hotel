@@ -1,8 +1,8 @@
 package repository.room;
 
+import essence.room.AbstractRoom;
 import lombok.Getter;
 import lombok.ToString;
-import essence.room.AbstractRoom;
 
 import java.util.HashSet;
 import java.util.Set;

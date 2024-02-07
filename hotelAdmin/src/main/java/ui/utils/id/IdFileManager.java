@@ -1,5 +1,8 @@
 package ui.utils.id;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -11,6 +14,8 @@ import java.io.IOException;
  * Этот класс предоставляет статические методы для чтения и записи максимального идентификатора.
  */
 public final class IdFileManager {
+    private static final Logger logger = LoggerFactory.getLogger(IdFileManager.class);
+
     private IdFileManager() {
     }
 
@@ -20,16 +25,22 @@ public final class IdFileManager {
      * @return Максимальный идентификатор, считанный из файла, или значение по умолчанию (1), если чтение не удалось.
      */
     public static int readMaxId(String fileName) {
+        logger.info("Вызван метод чтения ID из файла {}", fileName);
         int defaultId = 1;
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line = reader.readLine();
             if (line != null && !line.isEmpty()) {
-                return Integer.parseInt(line);
+                int id = Integer.parseInt(line);
+                logger.info("Получено ID {} из файла {}", id, fileName);
+                return id;
             }
         } catch (IOException e) {
+            logger.warn("Произошла ошибка во время обработки файла {}. Передано стандартное ID {}",
+                    fileName, defaultId);
             return defaultId;
         }
 
+        logger.info("Передано стандартное ID {}", defaultId);
         return defaultId;
     }
 
@@ -42,6 +53,9 @@ public final class IdFileManager {
     public static void writeMaxId(String fileName, int id) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             writer.write(String.valueOf(id));
+        } catch (IOException e) {
+            logger.warn("Произошла ошибка во время обработки файла {} с переданным ID {}", fileName, id);
+            throw new IOException(e.getMessage());
         }
     }
 }

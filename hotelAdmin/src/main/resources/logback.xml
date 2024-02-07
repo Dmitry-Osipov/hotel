@@ -1,28 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT"
-              class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level  %logger{20} - %msg%n</pattern>
-        </encoder>
-    </appender>
+    <property name="HOME_LOG" value="hotelAdmin/src/main/java/logs" />
+    <property name="WORK_LOG" value="${HOME_LOG}/work" />
+    <property name="FILE_LOG" value="${HOME_LOG}/file" />
+    <property name="DEFAULT_PATTERN" value="%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level  %logger{36} -" />
 
-    <appender name="FILE"
+
+    <appender name="ROOM_FILE"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>hotelAdmin/src/main/java/logs/slf4jlogbackexample.log</file>
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>hotelAdmin/src/main/java/logs/slf4jlogbackexample.%d{yyyy-MM-dd}.log</fileNamePattern>
+        <file>${WORK_LOG}/room.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${WORK_LOG}/room.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
             <totalSizeCap>10MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level  %logger{20} - %msg%n</pattern>
+            <pattern>${DEFAULT_PATTERN} Room: %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="debug">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
-    </root>
+    <appender name="SERVICE_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${WORK_LOG}/service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${WORK_LOG}/service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} Service: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CLIENT_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${WORK_LOG}/client.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${WORK_LOG}/client.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} Client: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="PROVIDED_SERVICE_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${WORK_LOG}/provided_service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${WORK_LOG}/provided_service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} Provided Service: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RESERVATION_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${WORK_LOG}/reservation.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${WORK_LOG}/reservation.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} Reservation: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ID_FILE_MANAGER_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_LOG}/id_file_manager.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_LOG}/id_file_manager.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} ID File Manager: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="EXPORT_CSV_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_LOG}/export_scv.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_LOG}/export_scv.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} Export CSV: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="IMPORT_CSV_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_LOG}/import_csv.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_LOG}/import_csv.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} Import CSV: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name="service.RoomService" level="debug" additivity="false">
+        <appender-ref ref="ROOM_FILE" />
+    </logger>
+
+    <logger name="service.ServiceService" level="debug" additivity="false">
+        <appender-ref ref="SERVICE_FILE" />
+    </logger>
+
+    <logger name="service.ClientService" level="debug" additivity="false">
+        <appender-ref ref="CLIENT_FILE" />
+    </logger>
+
+    <logger name="service.ReservationService" level="debug" additivity="false">
+        <appender-ref ref="RESERVATION_FILE" />
+    </logger>
+
+    <logger name="service.ProvidedServiceService" level="debug" additivity="false">
+        <appender-ref ref="PROVIDED_SERVICE_FILE" />
+    </logger>
+
+    <logger name="ui.utils.id.IdFileManager" level="debug" additivity="false">
+        <appender-ref ref="ID_FILE_MANAGER_FILE" />
+    </logger>
+
+    <logger name="ui.utils.csv.ExportCSV" level="debug" additivity="false">
+        <appender-ref ref="EXPORT_CSV_FILE" />
+    </logger>
+
+    <logger name="ui.utils.csv.ImportCSV" level="debug" additivity="false">
+        <appender-ref ref="IMPORT_CSV_FILE" />
+    </logger>
 </configuration>
