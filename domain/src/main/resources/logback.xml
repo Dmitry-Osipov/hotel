@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="HOME_LOG" value="hotelAdmin/src/main/java/logs" />
+    <property name="HOME_LOG" value="domain/src/main/java/logs" />
     <property name="WORK_LOG" value="${HOME_LOG}/work" />
     <property name="FILE_LOG" value="${HOME_LOG}/file" />
     <property name="APP_LOG" value="${HOME_LOG}/app" />
