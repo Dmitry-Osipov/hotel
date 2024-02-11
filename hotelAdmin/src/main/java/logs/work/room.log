@@ -1,63 +1,23 @@
-07.02.2024 16:17:52.394 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 1
-07.02.2024 16:17:52.394 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 1
-07.02.2024 16:17:52.394 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 1
-07.02.2024 16:17:52.394 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 1
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 3
-07.02.2024 16:17:52.395 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 3
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 3
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 3
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 2
-07.02.2024 16:17:52.395 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 2
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 2
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 2
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 5
-07.02.2024 16:17:52.395 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 5
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 5
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 5
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 4
-07.02.2024 16:17:52.395 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 4
-07.02.2024 16:17:52.395 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 4
-07.02.2024 16:17:52.396 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 4
-07.02.2024 16:20:22.802 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:20:28.824 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:20:38.259 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:20:43.029 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 8
-07.02.2024 16:20:43.030 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 8
-07.02.2024 16:22:42.763 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:22:51.170 [main] INFO   service.RoomService - Room: Вызван метод заселения в комнату с ID 2 следующих клиентов: [Client{id=7; fio=Soshin V. V.; phoneNumber=+7(821)911-21-11; checkInTime=null; checkOutTime=null}]
-07.02.2024 16:22:51.171 [main] WARN   service.RoomService - Room: Провалена попытка заселения в комнату с ID 2 следующих клиентов: [Client{id=7; fio=Soshin V. V.; phoneNumber=+7(821)911-21-11; checkInTime=null; checkOutTime=null}]
-07.02.2024 16:22:55.348 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:23:07.439 [main] INFO   service.RoomService - Room: Вызван метод заселения в комнату с ID 8 следующих клиентов: [Client{id=7; fio=Soshin V. V.; phoneNumber=+7(821)911-21-11; checkInTime=null; checkOutTime=null}, Client{id=5; fio=Lebedev G.I.; phoneNumber=+7(921)728-21-01; checkInTime=null; checkOutTime=null}]
-07.02.2024 16:23:07.443 [main] INFO   service.RoomService - Room: В комнату с ID 8 заселены следующие клиенты: [Client{id=7; fio=Soshin V. V.; phoneNumber=+7(821)911-21-11; checkInTime=null; checkOutTime=null}, Client{id=5; fio=Lebedev G.I.; phoneNumber=+7(921)728-21-01; checkInTime=null; checkOutTime=null}]
-07.02.2024 16:23:17.634 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:23:28.045 [main] INFO   service.RoomService - Room: Вызван метод выселения из комнаты с ID 1 следующих клиентов: [Client{id=1; fio=Osipov D. R.; phoneNumber=+7(902)902-98-11; checkInTime=2024-01-25T22:00:37.783098; checkOutTime=null}]
-07.02.2024 16:23:28.049 [main] INFO   service.RoomService - Room: Произошло выселение из комнаты с ID 1 следующих клиентов: [Client{id=1; fio=Osipov D. R.; phoneNumber=+7(902)902-98-11; checkInTime=2024-01-25T22:00:37.783098; checkOutTime=null}]
-07.02.2024 16:23:33.796 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:23:37.976 [main] INFO   service.RoomService - Room: Вызван метод выселения из комнаты с ID 1 следующих клиентов: [Client{id=2; fio=Musofranova N. S.; phoneNumber=+7(961)150-09-97; checkInTime=2024-01-25T22:00:37.783098; checkOutTime=null}]
-07.02.2024 16:23:37.977 [main] WARN   service.RoomService - Room: Провалена попытка выселения из комнаты с ID 1 следующих клиентов: [Client{id=2; fio=Musofranova N. S.; phoneNumber=+7(961)150-09-97; checkInTime=2024-01-25T22:00:37.783098; checkOutTime=null}]
-07.02.2024 16:24:13.636 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 1
-07.02.2024 16:24:13.636 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 1
-07.02.2024 16:24:13.636 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 1
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 1
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 3
-07.02.2024 16:24:13.637 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 3
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 3
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 3
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 2
-07.02.2024 16:24:13.637 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 2
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 2
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 2
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 5
-07.02.2024 16:24:13.637 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 5
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 5
-07.02.2024 16:24:13.637 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 5
-07.02.2024 16:24:13.638 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 4
-07.02.2024 16:24:13.638 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 4
-07.02.2024 16:24:13.638 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 4
-07.02.2024 16:24:13.638 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 4
-07.02.2024 16:24:24.866 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:57:09.693 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 16:57:58.569 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 17:07:35.187 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 17:08:31.878 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
-07.02.2024 17:13:17.370 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
+11.02.2024 14:28:59.513 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 1
+11.02.2024 14:28:59.513 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 1
+11.02.2024 14:28:59.513 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 1
+11.02.2024 14:28:59.513 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 1
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 3
+11.02.2024 14:28:59.514 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 3
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 3
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 3
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 2
+11.02.2024 14:28:59.514 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 2
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 2
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 2
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 5
+11.02.2024 14:28:59.514 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 5
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 5
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 5
+11.02.2024 14:28:59.514 [main] INFO   service.RoomService - Room: Вызван метод обновления комнаты с ID 4
+11.02.2024 14:28:59.515 [main] WARN   service.RoomService - Room: Не удалось обновить комнату с ID 4
+11.02.2024 14:28:59.515 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 4
+11.02.2024 14:28:59.515 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 4
+11.02.2024 14:29:33.725 [main] INFO   service.RoomService - Room: Вызван метод получения всех комнат, отсортированных в порядке убывания звёзд
+11.02.2024 14:29:37.956 [main] INFO   service.RoomService - Room: Вызван метод добавления комнаты с ID 9
+11.02.2024 14:29:37.956 [main] INFO   service.RoomService - Room: Добавлена новая комната с ID 9
