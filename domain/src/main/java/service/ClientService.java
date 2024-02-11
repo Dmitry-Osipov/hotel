@@ -4,6 +4,8 @@ import essence.person.AbstractClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.client.ClientRepository;
+import utils.exceptions.EntityContainedException;
+import utils.exceptions.ErrorMessages;
 
 import java.util.List;
 
@@ -21,20 +23,20 @@ public class ClientService {
     /**
      * Метод добавляет нового клиента в список всех клиентов отеля.
      * @param client Новый клиент.
-     * @return true, если клиент был добавлен, иначе false.
+     * @throws EntityContainedException Ошибка вылетает, когда клиент уже содержится в отеле (невозможно повторно
+     * добавить).
      */
-    public boolean addClient(AbstractClient client) {
+    public void addClient(AbstractClient client) throws EntityContainedException {
         int clientId = client.getId();
         logger.info("Вызван метод добавления нового клиента с ID {}", clientId);
         boolean added = clientRepository.getClients().add(client);
 
-        if (added) {
-            logger.info("Удалось добавить нового клиента с ID {}", clientId);
-        } else {
-            logger.warn("Не удалось добавить нового клиента с ID {}", clientId);
+        if (!added) {
+            logger.error("Не удалось добавить нового клиента с ID {}", clientId);
+            throw new EntityContainedException(ErrorMessages.CLIENT_CONTAINED.getMessage());
         }
 
-        return added;
+        logger.info("Удалось добавить нового клиента с ID {}", clientId);
     }
 
     /**
@@ -60,7 +62,7 @@ public class ClientService {
     /**
      * Метод обновляет данные по клиенту.
      * @param client Новые данные клиента, собранные в классе клиента.
-     * @return true, если удалось обновить данные, иначе false.
+     * @return {@code true}, если удалось обновить данные, иначе {@code false}.
      */
     public boolean updateClient(AbstractClient client) {
         int clientId = client.getId();
@@ -77,7 +79,7 @@ public class ClientService {
             }
         }
 
-        logger.warn("Не удалось обновить клиента с ID {}", clientId);
+        logger.error("Не удалось обновить клиента с ID {}", clientId);
         return false;
     }
 }

@@ -7,6 +7,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.csv.FileAdditionResult;
 import utils.csv.ImportCSV;
+import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 
 import java.io.IOException;
@@ -39,22 +40,20 @@ public class ImportServiceDataAction implements IAction {
             List<AbstractService> services = ImportCSV.importServicesData(path);
             String result;
             for (AbstractService service : services) {
-                boolean updated = serviceService.updateService(service);
                 int id = service.getId();
-                if (!updated) {
-                    boolean added = serviceService.addService(service);
-                    if (!added) {
-                        result = ErrorMessages.SERVICE_ADDITION_FAILURE.getMessage() + " с ID " + id;
-                    } else {
-                        result = "Услуга с ID " + id + " успешно добавлена";
-                    }
-                } else {
+                boolean updated = serviceService.updateService(service);
+                if (updated) {
                     result = "Данные по услуге с ID " + id + " успешно обновлены";
+                } else {
+                    serviceService.addService(service);
+                    result = "Услуга с ID " + id + " успешно добавлена";
                 }
                 System.out.println("\n" + result);
             }
         } catch (IOException | CsvValidationException e) {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
+        } catch (EntityContainedException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

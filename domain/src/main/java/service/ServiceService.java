@@ -11,6 +11,9 @@ import repository.service.ProvidedServicesRepository;
 import repository.service.ServiceRepository;
 import utils.comparators.ServiceTimeComparator;
 import utils.csv.FileAdditionResult;
+import utils.exceptions.EntityContainedException;
+import utils.exceptions.ErrorMessages;
+import utils.exceptions.NoEntityException;
 import utils.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
@@ -36,20 +39,20 @@ public class ServiceService extends AbstractFavorService {
     /**
      * Метод добавляет новую услугу в список всех услуг отеля.
      * @param service Новая услуга.
-     * @return {@code true}, если услуга была добавлена, иначе {@code false}.
+     * @throws EntityContainedException Ошибка вылетает, когда услуга уже содержится в отеле (невозможно повторно
+     * добавить).
      */
-    public boolean addService(AbstractService service) {
+    public void addService(AbstractService service) throws EntityContainedException {
         int serviceId = service.getId();
         serviceLogger.info("Вызван метод добавления услуги с ID {}", serviceId);
         boolean added = serviceRepository.getServices().add(service);
 
-        if (added) {
-            serviceLogger.info("Добавлена новая услуга с ID {}", serviceId);
-        } else {
-            serviceLogger.warn("Не удалось добавить услугу с ID {}", serviceId);
+        if (!added) {
+            serviceLogger.error("Не удалось добавить услугу с ID {}", serviceId);
+            throw new EntityContainedException(ErrorMessages.SERVICE_CONTAINED.getMessage());
         }
 
-        return added;
+        serviceLogger.info("Добавлена новая услуга с ID {}", serviceId);
     }
 
     /**
@@ -72,32 +75,23 @@ public class ServiceService extends AbstractFavorService {
             }
         }
 
-        serviceLogger.warn("Не удалось обновить услугу с ID {}", serviceId);
+        serviceLogger.error("Не удалось обновить услугу с ID {}", serviceId);
         return false;
     }
 
     /**
      * Метод addProvidedService добавляет оказанную услугу в репозиторий оказанных услуг.
      * @param providedService Оказанная услуга для добавления.
-     * @return {@code true}, если услуга успешно добавлена, иначе {@code false}.
      */
-    public boolean addProvidedService(ProvidedService providedService) {
+    public void addProvidedService(ProvidedService providedService) {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод добавления новой оказанной услуги с ID {}", providedServiceId);
-        boolean added = providedServicesRepository.getServices().add(providedService);
-
-        if (added) {
-            providedServiceLogger.info("Добавлена новая оказанная услуга с ID {}", providedServiceId);
-        } else {
-            providedServiceLogger.warn("Не удалось добавить оказанную услугу с ID {}", providedServiceId);
-        }
-
-        return added;
+        providedServicesRepository.getServices().add(providedService);
+        providedServiceLogger.info("Добавлена новая оказанная услуга с ID {}", providedServiceId);
     }
 
     /**
      * Метод updateProvidedService обновляет информацию об оказанной услуге в репозитории оказанных услуг.
-     * Если услуга с указанным ID найдена и успешно обновлена, метод возвращает true, иначе - false.
      * @param providedService Обновленная информация об оказанной услуге.
      * @return {@code true}, если информация успешно добавлена, иначе {@code false}.
      */
@@ -115,7 +109,7 @@ public class ServiceService extends AbstractFavorService {
             }
         }
 
-        providedServiceLogger.warn("Не удалось обновить оказанную услугу с ID {}", providedServiceId);
+        providedServiceLogger.error("Не удалось обновить оказанную услугу с ID {}", providedServiceId);
         return false;
     }
 
@@ -123,9 +117,9 @@ public class ServiceService extends AbstractFavorService {
      * Метод проводит услугу для конкретного клиента.
      * @param client Клиент.
      * @param service Услуга.
-     * @return {@code true}, если услуга оказана успешно, иначе {@code false}.
+     * @throws NoEntityException Ошибка вылетает, если услуги нет в отеле.
      */
-    public boolean provideService(AbstractClient client, AbstractService service) {
+    public void provideService(AbstractClient client, AbstractService service) throws NoEntityException {
         String startMessage = "Вызван метод оказания услуги с ID {} для клиента с ID {}";
         int serviceId = service.getId();
         int clientId = client.getId();
@@ -133,9 +127,9 @@ public class ServiceService extends AbstractFavorService {
         providedServiceLogger.info(startMessage, serviceId, clientId);
         if (!serviceRepository.getServices().contains(service)) {
             String message = "Провалена попытка оказания услуги с ID {} для клиента с ID {}";
-            serviceLogger.warn(message, serviceId, clientId);
-            providedServiceLogger.warn(message, serviceId, clientId);
-            return false;
+            serviceLogger.error(message, serviceId, clientId);
+            providedServiceLogger.error(message, serviceId, clientId);
+            throw new NoEntityException(ErrorMessages.NO_SERVICE.getMessage());
         }
 
         String path = FileAdditionResult.getIdDirectory() + "provided_service_id.txt";
@@ -154,7 +148,6 @@ public class ServiceService extends AbstractFavorService {
         service.setServiceTime(now);
         service.setStatus(ServiceStatusTypes.RENDERED);
         serviceLogger.info("Услуга с ID {} была оказана клиенту с ID {}", serviceId, clientId);
-        return true;
     }
 
     /**

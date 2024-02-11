@@ -6,6 +6,7 @@ import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.csv.FileAdditionResult;
+import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.id.IdFileManager;
 import utils.validators.PhoneNumberValidator;
@@ -55,8 +56,11 @@ public class AddClientAction implements IAction {
             phone = InputHandler.getUserInput();
         }
 
-        String result = clientService.addClient(new Client(id, name, phone)) ? "Удалось добавить клиента" :
-                "Не удалось добавить клиента";
-        System.out.println("\n" + result);
+        try {
+            clientService.addClient(new Client(id, name, phone));
+            System.out.println("\nУдалось добавить клиента");
+        } catch (EntityContainedException e) {
+            System.out.println("\n" + e.getMessage());
+        }
     }
 }

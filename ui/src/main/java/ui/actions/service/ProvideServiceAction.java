@@ -30,9 +30,8 @@ public class ProvideServiceAction implements IAction {
         try {
             AbstractClient client = InputHandler.getClientByInput();
             AbstractService service = InputHandler.getServiceByInput();
-            String result = serviceService.provideService(client, service) ? "Удалось провести услугу" :
-                    "Не удалось провести услугу";
-            System.out.println("\n" + result);
+            serviceService.provideService(client, service);
+            System.out.println("\nУдалось провести услугу");
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
         }

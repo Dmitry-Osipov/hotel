@@ -7,6 +7,7 @@ import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.csv.FileAdditionResult;
+import utils.exceptions.EntityContainedException;
 import utils.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
@@ -33,29 +34,30 @@ public class AddServiceAction implements IAction {
      */
     @Override
     public void execute() {
-        String path = FileAdditionResult.getIdDirectory() + "service_id.txt";
-        int id = IdFileManager.readMaxId(path);
-        if (!UniqueIdValidator.validateUniqueId(serviceService.getServices(), id)) {
-            id = serviceService.getServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
-        }
         try {
+            String path = FileAdditionResult.getIdDirectory() + "service_id.txt";
+            int id = IdFileManager.readMaxId(path);
+            if (!UniqueIdValidator.validateUniqueId(serviceService.getServices(), id)) {
+                id = serviceService.getServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
+            }
             IdFileManager.writeMaxId(path, id + 1);
+
+            System.out.println("\nВыберите название услуги: ");
+            ServiceNames[] names = ServiceNames.values();
+            for (int i = 0; i < names.length; i++) {
+                System.out.println(i+1 + ". " + names[i]);
+            }
+            ServiceNames name = names[InputHandler.getUserIntegerInput() - 1];
+
+            System.out.println("\nВведите стоимость услуги: ");
+            int cost = InputHandler.getUserIntegerInput();
+
+            serviceService.addService(new Service(id, name, cost));
+            System.out.println("\nУдалось добавить услугу");
         } catch (IOException e) {
             System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
+        } catch (EntityContainedException e) {
+            System.out.println("\n" + e.getMessage());
         }
-
-        System.out.println("\nВыберите название услуги: ");
-        ServiceNames[] names = ServiceNames.values();
-        for (int i = 0; i < names.length; i++) {
-            System.out.println(i+1 + ". " + names[i]);
-        }
-        ServiceNames name = names[InputHandler.getUserIntegerInput() - 1];
-
-        System.out.println("\nВведите стоимость услуги: ");
-        int cost = InputHandler.getUserIntegerInput();
-
-        String result = serviceService.addService(new Service(id, name, cost)) ? "Удалось добавить услугу" :
-                "Не удалось добавить услугу";
-        System.out.println("\n" + result);
     }
 }

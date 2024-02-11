@@ -10,7 +10,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>osipov_dmitry_java_23.domain</groupId>
     <artifactId>domain</artifactId>
 
     <properties>

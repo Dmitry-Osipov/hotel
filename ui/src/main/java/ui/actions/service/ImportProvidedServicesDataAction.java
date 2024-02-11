@@ -39,17 +39,13 @@ public class ImportProvidedServicesDataAction implements IAction {
             List<ProvidedService> providedServices = ImportCSV.importProvidedServicesData(path);
             String result;
             for (ProvidedService providedService : providedServices) {
-                boolean updated = serviceService.updateProvidedService(providedService);
                 int id = providedService.getId();
-                if (!updated) {
-                    boolean added = serviceService.addProvidedService(providedService);
-                    if (!added) {
-                        result = ErrorMessages.SERVICE_PROVIDED_ADDITION_FAILURE.getMessage() + " с ID " + id;
-                    } else {
-                        result = "Проведённая услуга с ID " + id + " успешно добавлена";
-                    }
-                } else {
+                boolean updated = serviceService.updateProvidedService(providedService);
+                if (updated) {
                     result = "Данные по проведённой услуге с ID " + id + " успешно обновлены";
+                } else {
+                    serviceService.addProvidedService(providedService);
+                    result = "Проведённая услуга с ID " + id + " успешно добавлена";
                 }
                 System.out.println("\n" + result);
             }

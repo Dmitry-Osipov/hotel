@@ -15,6 +15,9 @@ import utils.comparators.RoomCheckOutTimeComparator;
 import utils.comparators.RoomNumberComparator;
 import utils.comparators.RoomPriceComparator;
 import utils.csv.FileAdditionResult;
+import utils.exceptions.EntityContainedException;
+import utils.exceptions.ErrorMessages;
+import utils.exceptions.InvalidDataException;
 import utils.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
@@ -42,20 +45,20 @@ public class RoomService extends AbstractFavorService {
     /**
      * Метод добавляет новую комнату в список всех комнат отеля.
      * @param room Новая комната.
-     * @return {@code true}, если комната была добавлена, иначе {@code false}.
+     * @throws EntityContainedException Ошибка вылетает, когда комната уже содержится в отеле (невозможно повторно
+     * добавить).
      */
-    public boolean addRoom(AbstractRoom room) {
+    public void addRoom(AbstractRoom room) throws EntityContainedException {
         int roomId = room.getId();
         roomLogger.info("Вызван метод добавления комнаты с ID {}", roomId);
         boolean added = roomRepository.getRooms().add(room);
 
-        if (added) {
-            roomLogger.info("Добавлена новая комната с ID {}", roomId);
-        } else {
-            roomLogger.warn("Не удалось добавить комнату с ID {}", roomId);
+        if (!added) {
+            roomLogger.error("Не удалось добавить комнату с ID {}", roomId);
+            throw new EntityContainedException(ErrorMessages.ROOM_CONTAINED.getMessage());
         }
 
-        return added;
+        roomLogger.info("Добавлена новая комната с ID {}", roomId);
     }
 
     /**
@@ -81,27 +84,19 @@ public class RoomService extends AbstractFavorService {
             }
         }
 
-        roomLogger.warn("Не удалось обновить комнату с ID {}", roomId);
+        roomLogger.error("Не удалось обновить комнату с ID {}", roomId);
         return false;
     }
 
     /**
      * Метод добавляет резервацию в репозиторий резерваций.
      * @param reservation Резервация для добавления.
-     * @return {@code true}, если резервация успешно добавлена, иначе {@code false}.
      */
-    public boolean addReservation(RoomReservation reservation) {
+    public void addReservation(RoomReservation reservation) {
         int reservationId = reservation.getId();
         reservationLogger.info("Вызван метод добавления новой резервации с ID {}", reservationId);
-        boolean added = reservationRepository.getReservations().add(reservation);
-
-        if (added) {
-            reservationLogger.info("Добавлена новая резервация с ID {}", reservationId);
-        } else {
-            reservationLogger.warn("Не удалось добавить резервацию с ID {}", reservationId);
-        }
-
-        return added;
+        reservationRepository.getReservations().add(reservation);
+        reservationLogger.info("Добавлена новая резервация с ID {}", reservationId);
     }
 
     /**
@@ -124,7 +119,7 @@ public class RoomService extends AbstractFavorService {
             }
         }
 
-        reservationLogger.warn("Не удалось обновить резервацию с ID {}", reservationId);
+        reservationLogger.error("Не удалось обновить резервацию с ID {}", reservationId);
         return false;
     }
 
@@ -132,9 +127,10 @@ public class RoomService extends AbstractFavorService {
      * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
-     * @return {@code true}, если заселение прошло успешно, иначе {@code false}.
+     * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
+     * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "свободен").
      */
-    public boolean checkIn(AbstractRoom room, AbstractClient...clients) {
+    public void checkIn(AbstractRoom room, AbstractClient...clients) throws InvalidDataException {
         String startMessage = "Вызван метод заселения в комнату с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
@@ -142,9 +138,9 @@ public class RoomService extends AbstractFavorService {
         reservationLogger.info(startMessage, roomId, clientsString);
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
             String message = "Провалена попытка заселения в комнату с ID {} следующих клиентов: {}";
-            roomLogger.warn(message, roomId, clientsString);
-            reservationLogger.warn(message, roomId, clientsString);
-            return false;
+            roomLogger.error(message, roomId, clientsString);
+            reservationLogger.error(message, roomId, clientsString);
+            throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
         }
 
         List<AbstractClient> guests = List.of(clients);
@@ -168,35 +164,34 @@ public class RoomService extends AbstractFavorService {
         room.setCheckOutTime(checkOutPlan);
         guests.forEach(client -> client.setCheckInTime(now));
         roomLogger.info("В комнату с ID {} заселены следующие клиенты: {}", roomId, clientsString);
-        return true;
     }
 
     /**
      * Метод позволяет оценить комнату.
      * @param room Комната, которую требуется оценить.
      * @param stars Оценка (должна быть в пределах от 1 до 5 включительно).
-     * @return {@code true}, если оценка была добавлена, иначе {@code false}.
+     * @throws InvalidDataException Ошибка вылетает, если было введено количество звёзд меньше 1 или больше 5.
      */
-    public boolean addStarsToRoom(AbstractRoom room, int stars) {
+    public void addStarsToRoom(AbstractRoom room, int stars) throws InvalidDataException {
         int roomId = room.getId();
         roomLogger.info("Вызван метод добавления звёзд комнате с ID {}", roomId);
         if (stars < 1 || 5 < stars) {
-            roomLogger.warn("Звёзды в количестве {} не были добавлены комнате с ID {}", stars, roomId);
-            return false;
+            roomLogger.error("Звёзды в количестве {} не были добавлены комнате с ID {}", stars, roomId);
+            throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
         }
 
         room.setStars(room.getStars() + stars);
         roomLogger.info("Звёзды в количестве {} были добавлены комнате с ID {}", stars, roomId);
-        return true;
     }
 
     /**
-     * * Метод выселения из комнаты.
+     * Метод выселения из комнаты.
      * @param room Комната, из которой требуется выселить клиентов.
      * @param clients Клиенты, которых требуется выселить.
-     * @return {@code true}, если выселение прошло успешно, иначе {@code false}.
+     * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
+     * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "занят").
      */
-    public boolean evict(AbstractRoom room, AbstractClient ...clients) {
+    public void evict(AbstractRoom room, AbstractClient ...clients) throws InvalidDataException {
         String startMessage = "Вызван метод выселения из комнаты с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
@@ -204,9 +199,9 @@ public class RoomService extends AbstractFavorService {
         reservationLogger.info(startMessage, roomId, clientsString);
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.OCCUPIED)) {
             String message = "Провалена попытка выселения из комнаты с ID {} следующих клиентов: {}";
-            roomLogger.warn(message, roomId, clientsString);
-            reservationLogger.warn(message, roomId, clientsString);
-            return false;
+            roomLogger.error(message, roomId, clientsString);
+            reservationLogger.error(message, roomId, clientsString);
+            throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -222,8 +217,6 @@ public class RoomService extends AbstractFavorService {
             reservation.setCheckOutTime(now);
             reservationLogger.info("Произошло выселение по резервации с ID {}", reservation.getId());
         }
-
-        return true;
     }
 
     /**

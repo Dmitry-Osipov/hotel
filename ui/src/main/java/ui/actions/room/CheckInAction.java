@@ -6,6 +6,7 @@ import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.ListToArrayConverter;
+import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 
 import java.util.List;
@@ -35,9 +36,9 @@ public class CheckInAction implements IAction {
             AbstractRoom room = InputHandler.getRoomByInput();
             List<AbstractClient> guests = InputHandler.getManyClientsByInput();
             AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
-            String result = roomService.checkIn(room, clients) ? "Заселение прошло успешно" : "Заселить не удалось";
-            System.out.println("\n" + result);
-        } catch (NoEntityException e) {
+            roomService.checkIn(room, clients);
+            System.out.println("\nЗаселение прошло успешно");
+        } catch (NoEntityException | InvalidDataException e) {
             System.out.println("\n" + e.getMessage());
         }
     }

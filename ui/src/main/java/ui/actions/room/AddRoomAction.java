@@ -6,6 +6,7 @@ import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.csv.FileAdditionResult;
+import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.id.IdFileManager;
 import utils.validators.ArrayDigitsValidator;
@@ -52,11 +53,12 @@ public class AddRoomAction implements IAction {
             userInput = InputHandler.getUserInput().split(" ");
         }
 
-        String result = roomService.addRoom(new Room(
-                id,
-                Integer.parseInt(userInput[0]),
-                Integer.parseInt(userInput[1]),
-                Integer.parseInt(userInput[2]))) ? "Удалось добавить комнату" : "Не удалось добавить комнату";
-        System.out.println("\n" + result);
+        try {
+            roomService.addRoom(new Room(id, Integer.parseInt(userInput[0]), Integer.parseInt(userInput[1]),
+                    Integer.parseInt(userInput[2])));
+            System.out.println("\nУдалось добавить комнату");
+        } catch (EntityContainedException e) {
+            System.out.println("\n" + e.getMessage());
+        }
     }
 }

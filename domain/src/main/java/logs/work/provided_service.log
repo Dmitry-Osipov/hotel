@@ -1,14 +1,12 @@
-07.02.2024 16:18:25.364 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод обновления оказанной услуги с ID 1
-07.02.2024 16:18:25.364 [main] WARN   service.ProvidedServiceService - Provided Service: Не удалось обновить оказанную услугу с ID 1
-07.02.2024 16:18:25.364 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод добавления новой оказанной услуги с ID 1
-07.02.2024 16:18:25.364 [main] INFO   service.ProvidedServiceService - Provided Service: Добавлена новая оказанная услуга с ID 1
-07.02.2024 16:18:25.365 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод обновления оказанной услуги с ID 2
-07.02.2024 16:18:25.365 [main] WARN   service.ProvidedServiceService - Provided Service: Не удалось обновить оказанную услугу с ID 2
-07.02.2024 16:18:25.365 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод добавления новой оказанной услуги с ID 2
-07.02.2024 16:18:25.365 [main] INFO   service.ProvidedServiceService - Provided Service: Добавлена новая оказанная услуга с ID 2
-07.02.2024 16:21:47.672 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод получения списка оказанных услуг, отсортированных по возрастанию цены, для клиента с ID 5
-07.02.2024 16:21:47.676 [main] INFO   service.ProvidedServiceService - Provided Service: Для клиента с ID 5 получен следующий список оказанных услуг, отсортированный по возрастанию цены: []
-07.02.2024 16:22:34.695 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод оказания услуги с ID 7 для клиента с ID 7
-07.02.2024 16:22:34.697 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод получения списка оказанных услуг
-07.02.2024 16:22:34.698 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод добавления новой оказанной услуги с ID 4
-07.02.2024 16:22:34.699 [main] INFO   service.ProvidedServiceService - Provided Service: Добавлена новая оказанная услуга с ID 4
+11.02.2024 20:31:09.072 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод обновления оказанной услуги с ID 1
+11.02.2024 20:31:09.074 [main] ERROR  service.ProvidedServiceService - Provided Service: Не удалось обновить оказанную услугу с ID 1
+11.02.2024 20:31:09.074 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод добавления новой оказанной услуги с ID 1
+11.02.2024 20:31:09.074 [main] INFO   service.ProvidedServiceService - Provided Service: Добавлена новая оказанная услуга с ID 1
+11.02.2024 20:31:09.074 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод обновления оказанной услуги с ID 2
+11.02.2024 20:31:09.074 [main] ERROR  service.ProvidedServiceService - Provided Service: Не удалось обновить оказанную услугу с ID 2
+11.02.2024 20:31:09.074 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод добавления новой оказанной услуги с ID 2
+11.02.2024 20:31:09.074 [main] INFO   service.ProvidedServiceService - Provided Service: Добавлена новая оказанная услуга с ID 2
+11.02.2024 20:31:42.925 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод обновления оказанной услуги с ID 1
+11.02.2024 20:31:42.925 [main] INFO   service.ProvidedServiceService - Provided Service: Удалось обновить оказанную услугу с ID 1
+11.02.2024 20:31:42.925 [main] INFO   service.ProvidedServiceService - Provided Service: Вызван метод обновления оказанной услуги с ID 2
+11.02.2024 20:31:42.925 [main] INFO   service.ProvidedServiceService - Provided Service: Удалось обновить оказанную услугу с ID 2

@@ -6,6 +6,7 @@ import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.ListToArrayConverter;
+import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 
 import java.util.List;
@@ -35,9 +36,9 @@ public class EvictAction implements IAction {
             AbstractRoom room = InputHandler.getRoomByInput();
             List<AbstractClient> guests = InputHandler.getManyClientsByInput();
             AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
-            String result = roomService.evict(room, clients) ? "Выселение прошло успешно" : "Выселить не удалось";
-            System.out.println("\n" + result);
-        } catch (NoEntityException e) {
+            roomService.evict(room, clients);
+            System.out.println("\nВыселение прошло успешно");
+        } catch (NoEntityException | InvalidDataException e) {
             System.out.println("\n" + e.getMessage());
         }
     }

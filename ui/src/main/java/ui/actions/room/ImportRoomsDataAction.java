@@ -7,6 +7,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.csv.FileAdditionResult;
 import utils.csv.ImportCSV;
+import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 
 import java.io.IOException;
@@ -38,22 +39,20 @@ public class ImportRoomsDataAction implements IAction {
             List<AbstractRoom> rooms = ImportCSV.importRoomsData(path);
             String result;
             for (AbstractRoom room : rooms) {
-                boolean updated = roomService.updateRoom(room);
                 int id = room.getId();
-                if (!updated) {
-                    boolean added = roomService.addRoom(room);
-                    if (!added) {
-                        result = ErrorMessages.ROOM_ADDITION_FAILURE.getMessage() + " с ID " + id;
-                    } else {
-                        result = "Комната с ID " + id + " успешно добавлена";
-                    }
-                } else {
+                boolean updated = roomService.updateRoom(room);
+                if (updated) {
                     result = "Данные по комнате с ID " + id + " успешно обновлены";
+                } else {
+                    roomService.addRoom(room);
+                    result = "Комната с ID " + id + " успешно добавлена";
                 }
                 System.out.println("\n" + result);
             }
         } catch (IOException | CsvValidationException e) {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
+        } catch (EntityContainedException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

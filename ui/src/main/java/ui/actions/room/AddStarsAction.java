@@ -4,6 +4,7 @@ import essence.room.AbstractRoom;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
+import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 
 /**
@@ -31,10 +32,9 @@ public class AddStarsAction implements IAction {
             AbstractRoom room = InputHandler.getRoomByInput();
             System.out.println("\nВведите количество звёзд (от 1 до 5): ");
             int stars = InputHandler.getUserIntegerInput();
-            String result = roomService.addStarsToRoom(room, stars) ? "Добавление звёзд прошло успешно" :
-                    "Введено недопустимое количество звёзд";
-            System.out.println("\n" + result);
-        } catch (NoEntityException e) {
+            roomService.addStarsToRoom(room, stars);
+            System.out.println("\nДобавление звёзд прошло успешно");
+        } catch (NoEntityException | InvalidDataException e) {
             System.out.println("\n" + e.getMessage());
         }
     }

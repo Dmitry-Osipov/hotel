@@ -35,12 +35,12 @@ public final class IdFileManager {
                 return id;
             }
         } catch (IOException e) {
-            logger.warn("Произошла ошибка во время обработки файла {}. Передано стандартное ID {}",
+            logger.error("Произошла ошибка во время обработки файла {}. Передано стандартное ID {}",
                     fileName, defaultId);
             return defaultId;
         }
 
-        logger.info("Передано стандартное ID {}", defaultId);
+        logger.warn("Передано стандартное ID {}", defaultId);
         return defaultId;
     }
 
@@ -54,7 +54,7 @@ public final class IdFileManager {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             writer.write(String.valueOf(id));
         } catch (IOException e) {
-            logger.warn("Произошла ошибка во время обработки файла {} с переданным ID {}", fileName, id);
+            logger.error("Произошла ошибка во время обработки файла {} с переданным ID {}", fileName, id);
             throw new IOException(e.getMessage());
         }
     }

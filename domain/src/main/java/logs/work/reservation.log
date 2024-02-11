@@ -1,18 +1,12 @@
-07.02.2024 16:18:06.601 [main] INFO   service.ReservationService - Reservation: Вызван метод обновления резервации с ID 1
-07.02.2024 16:18:06.601 [main] WARN   service.ReservationService - Reservation: Не удалось обновить резервацию с ID 1
-07.02.2024 16:18:06.601 [main] INFO   service.ReservationService - Reservation: Вызван метод добавления новой резервации с ID 1
-07.02.2024 16:18:06.601 [main] INFO   service.ReservationService - Reservation: Добавлена новая резервация с ID 1
-07.02.2024 16:18:06.602 [main] INFO   service.ReservationService - Reservation: Вызван метод обновления резервации с ID 2
-07.02.2024 16:18:06.602 [main] WARN   service.ReservationService - Reservation: Не удалось обновить резервацию с ID 2
-07.02.2024 16:18:06.602 [main] INFO   service.ReservationService - Reservation: Вызван метод добавления новой резервации с ID 2
-07.02.2024 16:18:06.602 [main] INFO   service.ReservationService - Reservation: Добавлена новая резервация с ID 2
-07.02.2024 16:22:51.170 [main] INFO   service.ReservationService - Reservation: Вызван метод заселения в комнату с ID 2 следующих клиентов: [Client{id=7; fio=Soshin V. V.; phoneNumber=+7(821)911-21-11; checkInTime=null; checkOutTime=null}]
-07.02.2024 16:22:51.171 [main] WARN   service.ReservationService - Reservation: Провалена попытка заселения в комнату с ID 2 следующих клиентов: [Client{id=7; fio=Soshin V. V.; phoneNumber=+7(821)911-21-11; checkInTime=null; checkOutTime=null}]
-07.02.2024 16:23:07.440 [main] INFO   service.ReservationService - Reservation: Вызван метод заселения в комнату с ID 8 следующих клиентов: [Client{id=7; fio=Soshin V. V.; phoneNumber=+7(821)911-21-11; checkInTime=null; checkOutTime=null}, Client{id=5; fio=Lebedev G.I.; phoneNumber=+7(921)728-21-01; checkInTime=null; checkOutTime=null}]
-07.02.2024 16:23:07.441 [main] INFO   service.ReservationService - Reservation: Вызов метода получения списка резерваций
-07.02.2024 16:23:07.442 [main] INFO   service.ReservationService - Reservation: Вызван метод добавления новой резервации с ID 6
-07.02.2024 16:23:07.442 [main] INFO   service.ReservationService - Reservation: Добавлена новая резервация с ID 6
-07.02.2024 16:23:28.046 [main] INFO   service.ReservationService - Reservation: Вызван метод выселения из комнаты с ID 1 следующих клиентов: [Client{id=1; fio=Osipov D. R.; phoneNumber=+7(902)902-98-11; checkInTime=2024-01-25T22:00:37.783098; checkOutTime=null}]
-07.02.2024 16:23:28.049 [main] INFO   service.ReservationService - Reservation: Произошло выселение по резервации с ID 1
-07.02.2024 16:23:37.976 [main] INFO   service.ReservationService - Reservation: Вызван метод выселения из комнаты с ID 1 следующих клиентов: [Client{id=2; fio=Musofranova N. S.; phoneNumber=+7(961)150-09-97; checkInTime=2024-01-25T22:00:37.783098; checkOutTime=null}]
-07.02.2024 16:23:37.977 [main] WARN   service.ReservationService - Reservation: Провалена попытка выселения из комнаты с ID 1 следующих клиентов: [Client{id=2; fio=Musofranova N. S.; phoneNumber=+7(961)150-09-97; checkInTime=2024-01-25T22:00:37.783098; checkOutTime=null}]
+11.02.2024 20:30:50.755 [main] INFO   service.ReservationService - Reservation: Вызван метод обновления резервации с ID 1
+11.02.2024 20:30:50.756 [main] ERROR  service.ReservationService - Reservation: Не удалось обновить резервацию с ID 1
+11.02.2024 20:30:50.756 [main] INFO   service.ReservationService - Reservation: Вызван метод добавления новой резервации с ID 1
+11.02.2024 20:30:50.756 [main] INFO   service.ReservationService - Reservation: Добавлена новая резервация с ID 1
+11.02.2024 20:30:50.757 [main] INFO   service.ReservationService - Reservation: Вызван метод обновления резервации с ID 2
+11.02.2024 20:30:50.757 [main] ERROR  service.ReservationService - Reservation: Не удалось обновить резервацию с ID 2
+11.02.2024 20:30:50.757 [main] INFO   service.ReservationService - Reservation: Вызван метод добавления новой резервации с ID 2
+11.02.2024 20:30:50.757 [main] INFO   service.ReservationService - Reservation: Добавлена новая резервация с ID 2
+11.02.2024 20:31:29.353 [main] INFO   service.ReservationService - Reservation: Вызван метод обновления резервации с ID 1
+11.02.2024 20:31:29.354 [main] INFO   service.ReservationService - Reservation: Обновлена резервация с ID 1
+11.02.2024 20:31:29.354 [main] INFO   service.ReservationService - Reservation: Вызван метод обновления резервации с ID 2
+11.02.2024 20:31:29.354 [main] INFO   service.ReservationService - Reservation: Обновлена резервация с ID 2

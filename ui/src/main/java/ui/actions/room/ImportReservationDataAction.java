@@ -38,17 +38,13 @@ public class ImportReservationDataAction implements IAction {
             List<RoomReservation> reservations = ImportCSV.importReservationsData(path);
             String result;
             for (RoomReservation reservation : reservations) {
-                boolean updated = roomService.updateReservation(reservation);
                 int id = reservation.getId();
-                if (!updated) {
-                    boolean added = roomService.addReservation(reservation);
-                    if (!added) {
-                        result = ErrorMessages.RESERVATION_ADDITION_FAILURE.getMessage() + " с ID " + id;
-                    } else {
-                        result = "Резервация с ID " + id + " успешно добавлена";
-                    }
-                } else {
+                boolean updated = roomService.updateReservation(reservation);
+                if (updated) {
                     result = "Данные по резервации с ID " + id + " успешно обновлены";
+                } else {
+                    roomService.addReservation(reservation);
+                    result = "Резервация с ID " + id + " успешно добавлена";
                 }
                 System.out.println("\n" + result);
             }

@@ -40,11 +40,11 @@ public class Navigator {
     public void navigate(Integer index) {
         logger.info("Вызов метода навигации по меню");
         if (index < 0 || currentMenu.getMenuItems().length <= index) {
-            logger.warn("Пользователь выбрал несуществующий пункт меню");
+            logger.error("Пользователь выбрал несуществующий пункт меню");
             System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
         } else {
             Menu nextMenu = getNextMenu(index);
-            logger.warn("Пользователь корректно выбрал пункт меню. Выполнение действия \"{}\" и " +
+            logger.info("Пользователь корректно выбрал пункт меню. Выполнение действия \"{}\" и " +
                     "переход на следующее меню \"{}\"", currentMenu.getMenuItems()[index].title(), nextMenu.getName());
             currentMenu.getMenuItems()[index].doAction();
             currentMenu = nextMenu;

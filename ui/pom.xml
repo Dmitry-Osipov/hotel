@@ -10,7 +10,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>osipov_dmitry_java_23.ui</groupId>
     <artifactId>ui</artifactId>
 
     <properties>
@@ -22,7 +21,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>osipov_dmitry_java_23.domain</groupId>
+            <groupId>osipov_dmitry_java_23</groupId>
             <artifactId>domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
