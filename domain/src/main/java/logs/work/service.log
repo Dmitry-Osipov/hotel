@@ -1,0 +1,27 @@
+07.02.2024 16:18:17.188 [main] INFO   service.ServiceService - Service: Вызван метод обновления услуги с ID 1
+07.02.2024 16:18:17.188 [main] WARN   service.ServiceService - Service: Не удалось обновить услугу с ID 1
+07.02.2024 16:18:17.188 [main] INFO   service.ServiceService - Service: Вызван метод добавления услуги с ID 1
+07.02.2024 16:18:17.188 [main] INFO   service.ServiceService - Service: Добавлена новая услуга с ID 1
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Вызван метод обновления услуги с ID 2
+07.02.2024 16:18:17.189 [main] WARN   service.ServiceService - Service: Не удалось обновить услугу с ID 2
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Вызван метод добавления услуги с ID 2
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Добавлена новая услуга с ID 2
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Вызван метод обновления услуги с ID 3
+07.02.2024 16:18:17.189 [main] WARN   service.ServiceService - Service: Не удалось обновить услугу с ID 3
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Вызван метод добавления услуги с ID 3
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Добавлена новая услуга с ID 3
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Вызван метод обновления услуги с ID 4
+07.02.2024 16:18:17.189 [main] WARN   service.ServiceService - Service: Не удалось обновить услугу с ID 4
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Вызван метод добавления услуги с ID 4
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Добавлена новая услуга с ID 4
+07.02.2024 16:18:17.189 [main] INFO   service.ServiceService - Service: Вызван метод обновления услуги с ID 5
+07.02.2024 16:18:17.190 [main] WARN   service.ServiceService - Service: Не удалось обновить услугу с ID 5
+07.02.2024 16:18:17.190 [main] INFO   service.ServiceService - Service: Вызван метод добавления услуги с ID 5
+07.02.2024 16:18:17.190 [main] INFO   service.ServiceService - Service: Добавлена новая услуга с ID 5
+07.02.2024 16:20:47.218 [main] INFO   service.ServiceService - Service: Вызван метод получения списка всех услуг
+07.02.2024 16:20:57.758 [main] INFO   service.ServiceService - Service: Вызван метод добавления услуги с ID 7
+07.02.2024 16:20:57.760 [main] INFO   service.ServiceService - Service: Добавлена новая услуга с ID 7
+07.02.2024 16:21:58.528 [main] INFO   service.ServiceService - Service: Вызван метод получения списка всех услуг
+07.02.2024 16:22:26.939 [main] INFO   service.ServiceService - Service: Вызван метод получения списка всех услуг
+07.02.2024 16:22:34.695 [main] INFO   service.ServiceService - Service: Вызван метод оказания услуги с ID 7 для клиента с ID 7
+07.02.2024 16:22:34.699 [main] INFO   service.ServiceService - Service: Услуга с ID 7 была оказана клиенту с ID 7
