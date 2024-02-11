@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>osipov_dmitry_java_23</groupId>
+        <groupId>hotel</groupId>
         <artifactId>osipov_dmitry_java_23</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
