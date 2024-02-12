@@ -5,10 +5,10 @@ import essence.person.AbstractClient;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
-import utils.csv.ImportCSV;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.file.FileAdditionResult;
+import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
 import java.util.List;

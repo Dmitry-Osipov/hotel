@@ -6,9 +6,9 @@ import essence.service.ServiceNames;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
-import utils.id.IdFileManager;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;

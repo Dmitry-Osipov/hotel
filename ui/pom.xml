@@ -21,7 +21,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>osipov_dmitry_java_23</groupId>
+            <groupId>hotel</groupId>
             <artifactId>domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>

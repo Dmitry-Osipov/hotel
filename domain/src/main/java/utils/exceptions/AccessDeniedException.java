@@ -1,15 +1,15 @@
 package utils.exceptions;
 
 /**
- * Исключение, бросаемое для обозначения сущностей, которые уже содержатся, но не должны иметь дубликатов.
+ * Исключение, бросаемое для обозначения запрета доступа к операции.
  * Это исключение является подклассом RuntimeException.
  */
-public class EntityContainedException extends RuntimeException {
+public class AccessDeniedException extends RuntimeException {
     /**
      * Создает новое исключение с заданным сообщением.
      * @param message сообщение об ошибке, которое будет содержаться в исключении.
      */
-    public EntityContainedException(String message) {
+    public AccessDeniedException(String message) {
         super(message);
     }
 }

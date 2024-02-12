@@ -1,4 +1,4 @@
-package utils.csv;
+package utils.file;
 
 import lombok.Getter;
 
@@ -13,8 +13,9 @@ public enum FileAdditionResult {
     FAILURE("Файл не был перезаписан");
 
     private final String message;
-    private static final String DATA_DIRECTORY = "domain/src/main/java/utils/csv/data/";
-    private static final String ID_DIRECTORY = "domain/src/main/java/utils/id/data/";
+    private static final String DATA_DIRECTORY = "domain/src/main/java/utils/file/csv/data/";
+    private static final String ID_DIRECTORY = "domain/src/main/java/utils/file/id/data/";
+    private static final String PROPERTY_FILE = "domain/src/main/resources/config.properties";
 
     FileAdditionResult(String message) {
         this.message = message;
@@ -34,5 +35,13 @@ public enum FileAdditionResult {
      */
     public static String getIdDirectory() {
         return ID_DIRECTORY;
+    }
+
+    /**
+     * Метод получения пути к property файлу.
+     * @return Путь к property файлу.
+     */
+    public static String getPropertyFile() {
+        return PROPERTY_FILE;
     }
 }

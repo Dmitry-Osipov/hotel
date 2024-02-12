@@ -14,6 +14,7 @@ import utils.exceptions.EntityContainedException;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class TestHotel {
@@ -59,6 +60,8 @@ public class TestHotel {
                 System.out.println("Удалось заселить");
             } catch (InvalidDataException e) {
                 System.out.println("Не удалось заселить");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             Thread.sleep(5000);
             try {
@@ -66,6 +69,8 @@ public class TestHotel {
                 System.out.println("Удалось заселить в пустую комнату");
             } catch (InvalidDataException e) {
                 System.out.println("Не удалось заселить в пустую комнату");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             try {
                 rs.evict(room1, client1);
@@ -74,6 +79,8 @@ public class TestHotel {
                 System.out.println("Удалось выселить без клиентов");
             } catch (InvalidDataException e) {
                 System.out.println("Не удалось выселить без клиентов");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             rs.addStarsToRoom(room1, 4);
             System.out.println("Удалось поставить оценку");
@@ -86,14 +93,18 @@ public class TestHotel {
             System.out.println("Комнаты по звёздам: " + rs.roomsByStars());
             System.out.println(rs.roomsByCapacity());
             System.out.println(rs.roomsByPrice());
-            rs.checkIn(room1, client1);
-            System.out.println("Свободные комнаты по звёздам: " + rs.availableRoomsByStars());
-            System.out.println(rs.availableRoomsByCapacity());
-            System.out.println(rs.availableRoomsByPrice());
-            System.out.println("Количество свободных комнат: " + rs.countAvailableRooms());
-            rs.evict(room1, client1);
-            Thread.sleep(2000);
-            rs.checkIn(room2, client1, client2);
+            try {
+                rs.checkIn(room1, client1);
+                System.out.println("Свободные комнаты по звёздам: " + rs.availableRoomsByStars());
+                System.out.println(rs.availableRoomsByCapacity());
+                System.out.println(rs.availableRoomsByPrice());
+                System.out.println("Количество свободных комнат: " + rs.countAvailableRooms());
+                rs.evict(room1, client1);
+                Thread.sleep(2000);
+                rs.checkIn(room2, client1, client2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             System.out.println("История комнаты 1: ");
             System.out.println(rs.getRoomLastClients(room1, 2));

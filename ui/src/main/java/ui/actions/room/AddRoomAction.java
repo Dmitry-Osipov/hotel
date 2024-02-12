@@ -5,10 +5,10 @@ import essence.room.Room;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
-import utils.id.IdFileManager;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
 import utils.validators.ArrayDigitsValidator;
 import utils.validators.UniqueIdValidator;
 

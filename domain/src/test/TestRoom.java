@@ -3,6 +3,7 @@ import essence.room.RoomStatusTypes;
 import utils.comparators.RoomCapacityComparator;
 import utils.comparators.RoomPriceComparator;
 
+import java.io.IOException;
 import java.util.TreeSet;
 
 public class TestRoom {
@@ -10,7 +11,11 @@ public class TestRoom {
         Room room = new Room(1, 110, 2, 200);
         Room newRoom = new Room(2, 111, 5, 3000);
         Room room1 = new Room(3, 112, 3, 3000);
-        room.setStatus(RoomStatusTypes.REPAIR);
+        try {
+            room.setStatus(RoomStatusTypes.REPAIR);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println(room.getStatus());
         room.setPrice(2500);
         System.out.println(room.getPrice());

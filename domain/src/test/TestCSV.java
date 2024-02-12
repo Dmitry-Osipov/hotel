@@ -11,8 +11,8 @@ import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
-import utils.csv.ExportCSV;
-import utils.csv.ImportCSV;
+import utils.file.csv.ExportCSV;
+import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
 
@@ -62,13 +62,17 @@ public class TestCSV {
         clientService.addClient(client4);
         clientService.addClient(client5);
 
-        roomService.checkIn(room1, client1, client2);
-        roomService.addStarsToRoom(room3, 5);
-        roomService.addStarsToRoom(room5, 4);
-        roomService.addStarsToRoom(room4, 3);
-        roomService.addStarsToRoom(room1, 5);
-        roomService.addStarsToRoom(room2, 4);
-        roomService.checkIn(room2, client3);
+        try {
+            roomService.checkIn(room1, client1, client2);
+            roomService.addStarsToRoom(room3, 5);
+            roomService.addStarsToRoom(room5, 4);
+            roomService.addStarsToRoom(room4, 3);
+            roomService.addStarsToRoom(room1, 5);
+            roomService.addStarsToRoom(room2, 4);
+            roomService.checkIn(room2, client3);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         serviceService.provideService(client1, service1);
         serviceService.provideService(client3, service4);

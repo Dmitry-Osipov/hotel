@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 import repository.service.ProvidedServicesRepository;
 import repository.service.ServiceRepository;
 import utils.comparators.ServiceTimeComparator;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
-import utils.id.IdFileManager;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;

@@ -1,15 +1,19 @@
 package essence.room;
 
 import essence.Identifiable;
+import utils.exceptions.AccessDeniedException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 public interface AbstractRoom extends Identifiable {
     /**
      * Метод установки нового статуса комнаты.
      * @param status Новый статус.
+     * @throws IOException Ошибка ввода/вывода.
+     * @throws AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    void setStatus(RoomStatusTypes status);
+    void setStatus(RoomStatusTypes status) throws IOException, AccessDeniedException;
 
     /**
      * Метод получения статуса комнаты.

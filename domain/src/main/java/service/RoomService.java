@@ -14,11 +14,11 @@ import utils.comparators.RoomCapacityComparator;
 import utils.comparators.RoomCheckOutTimeComparator;
 import utils.comparators.RoomNumberComparator;
 import utils.comparators.RoomPriceComparator;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
-import utils.id.IdFileManager;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
@@ -65,8 +65,10 @@ public class RoomService extends AbstractFavorService {
      * Метод обновляет данные по комнате.
      * @param room Новые данные комнаты, собранные в классе комнаты.
      * @return {@code true}, если обновить удалось, иначе {@code false}.
+     * @throws IOException Ошибка ввода/вывода.
+     * @throws utils.exceptions.AccessDeniedException Ошибка изменения статуса комнаты.
      */
-    public boolean updateRoom(AbstractRoom room) {
+    public boolean updateRoom(AbstractRoom room) throws IOException {
         int roomId = room.getId();
         roomLogger.info("Вызван метод обновления комнаты с ID {}", roomId);
         for (AbstractRoom currentRoom : roomRepository.getRooms()) {
@@ -127,10 +129,12 @@ public class RoomService extends AbstractFavorService {
      * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
+     * @throws IOException Ошибка ввода/вывода.
      * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "свободен").
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    public void checkIn(AbstractRoom room, AbstractClient...clients) throws InvalidDataException {
+    public void checkIn(AbstractRoom room, AbstractClient...clients) throws IOException, InvalidDataException {
         String startMessage = "Вызван метод заселения в комнату с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
@@ -188,10 +192,12 @@ public class RoomService extends AbstractFavorService {
      * Метод выселения из комнаты.
      * @param room Комната, из которой требуется выселить клиентов.
      * @param clients Клиенты, которых требуется выселить.
+     * @throws IOException Ошибка ввода/вывода.
      * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "занят").
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    public void evict(AbstractRoom room, AbstractClient ...clients) throws InvalidDataException {
+    public void evict(AbstractRoom room, AbstractClient ...clients) throws IOException, InvalidDataException {
         String startMessage = "Вызван метод выселения из комнаты с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
@@ -205,9 +211,9 @@ public class RoomService extends AbstractFavorService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        List.of(clients).forEach(client -> getReservationByRoom(room).forEach(reservation ->
-            client.setCheckOutTime(now)
-        ));
+        for (AbstractClient client : clients) {
+            client.setCheckOutTime(now);
+        }
 
         room.setStatus(RoomStatusTypes.AVAILABLE);
         room.setCheckOutTime(now);

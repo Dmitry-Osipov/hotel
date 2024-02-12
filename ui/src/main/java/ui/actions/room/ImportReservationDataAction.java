@@ -5,9 +5,10 @@ import essence.reservation.RoomReservation;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
-import utils.csv.ImportCSV;
+import utils.exceptions.AccessDeniedException;
 import utils.exceptions.ErrorMessages;
+import utils.file.FileAdditionResult;
+import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,6 +51,8 @@ public class ImportReservationDataAction implements IAction {
             }
         } catch (IOException | CsvValidationException e) {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
+        } catch (AccessDeniedException e) {
+            System.out.println("\n" + e.getMessage());
         }
     }
 }

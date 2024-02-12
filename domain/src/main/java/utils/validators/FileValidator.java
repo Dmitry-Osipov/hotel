@@ -1,7 +1,7 @@
 package utils.validators;
 
-import utils.csv.CsvHeaderArrays;
-import utils.csv.CsvHeaderLength;
+import utils.file.csv.CsvHeaderArrays;
+import utils.file.csv.CsvHeaderLength;
 
 import java.util.Arrays;
 
