@@ -11,14 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 public class ProvidedService implements Identifiable {
-    private final int id;
-    @Setter
+    private int id;
     private List<AbstractClient> beneficiaries = new ArrayList<>();
-    @Setter
     private AbstractService service;
-    @Setter
     private LocalDateTime serviceTime;
+
+    public ProvidedService() {
+    }
 
     public ProvidedService(int id, AbstractService service, LocalDateTime serviceTime, AbstractClient client) {
         this.id = id;

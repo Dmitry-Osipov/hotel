@@ -1,12 +1,19 @@
 package essence.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public abstract class AbstractFavor {
-    private final int id;
+    private int id;
     private int price;
-    private final int MIN_PRICE = 1500;
+    @JsonIgnore
+    @Setter
+    private int MIN_PRICE = 1500;
+
+    protected AbstractFavor() {
+    }
 
     protected AbstractFavor(int id, int price) {
         this.id = id;

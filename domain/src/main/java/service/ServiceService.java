@@ -5,6 +5,7 @@ import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.service.ProvidedServicesRepository;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 /**
  * Класс отвечает за обработку данных по услугам.
  */
+@Getter
 public class ServiceService extends AbstractFavorService {
     private static final Logger serviceLogger = LoggerFactory.getLogger(ServiceService.class);
     private static final Logger providedServiceLogger = LoggerFactory.getLogger("service.ProvidedServiceService");
@@ -86,7 +88,7 @@ public class ServiceService extends AbstractFavorService {
     public void addProvidedService(ProvidedService providedService) {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод добавления новой оказанной услуги с ID {}", providedServiceId);
-        providedServicesRepository.getServices().add(providedService);
+        providedServicesRepository.getProvidedServices().add(providedService);
         providedServiceLogger.info("Добавлена новая оказанная услуга с ID {}", providedServiceId);
     }
 
@@ -98,7 +100,7 @@ public class ServiceService extends AbstractFavorService {
     public boolean updateProvidedService(ProvidedService providedService) {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод обновления оказанной услуги с ID {}", providedServiceId);
-        for (ProvidedService currentProvidedService : providedServicesRepository.getServices()) {
+        for (ProvidedService currentProvidedService : providedServicesRepository.getProvidedServices()) {
             if (currentProvidedService.getId() == providedServiceId) {
                 currentProvidedService.setService(providedService.getService());
                 currentProvidedService.setServiceTime(providedService.getServiceTime());
@@ -196,7 +198,7 @@ public class ServiceService extends AbstractFavorService {
      */
     public List<ProvidedService> getProvidedServices() {
         providedServiceLogger.info("Вызван метод получения списка оказанных услуг");
-        return providedServicesRepository.getServices();
+        return providedServicesRepository.getProvidedServices();
     }
 
     /**
@@ -206,7 +208,7 @@ public class ServiceService extends AbstractFavorService {
      * @return Отфильтрованный стрим.
      */
     private Stream<AbstractService> streamClientServices(AbstractClient client) {
-        return providedServicesRepository.getServices()
+        return providedServicesRepository.getProvidedServices()
                 .stream()
                 .filter(service -> service.getBeneficiaries().contains(client)
                         && service.getService().getStatus() == ServiceStatusTypes.RENDERED)

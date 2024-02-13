@@ -35,7 +35,7 @@ public class ImportReservationDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
+            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
             List<RoomReservation> reservations = ImportCSV.importReservationsData(path);
             String result;
             for (RoomReservation reservation : reservations) {

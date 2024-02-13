@@ -32,8 +32,8 @@ public class ExportClientsDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
-            String choice = InputHandler.getUserOverwriteChoice(path);
+            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
+            String choice = InputHandler.getUserOverwriteChoice(path + ".csv");
             if (choice.equals("да")) {
                 ExportCSV.exportClientsData(path, clientService.getClients());
                 System.out.println("\n" + FileAdditionResult.SUCCESS.getMessage());

@@ -36,7 +36,7 @@ public class ImportServiceDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
+            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
             List<AbstractService> services = ImportCSV.importServicesData(path);
             String result;
             for (AbstractService service : services) {

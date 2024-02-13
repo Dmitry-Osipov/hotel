@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Getter
 public class ProvidedServicesRepository {
-    private final List<ProvidedService> services = new ArrayList<>();
+    private final List<ProvidedService> providedServices = new ArrayList<>();
 
     /**
      * Получение экземпляра репозитория. Метод следует использовать для получения доступа к репозиторию клиентов.

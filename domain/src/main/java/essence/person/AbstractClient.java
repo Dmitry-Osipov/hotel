@@ -1,9 +1,13 @@
 package essence.person;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import essence.Identifiable;
 
 import java.time.LocalDateTime;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({@JsonSubTypes.Type(value = Client.class, name = "Client")})
 public interface AbstractClient extends Identifiable {
     /**
      * Метод получения номера телефона.

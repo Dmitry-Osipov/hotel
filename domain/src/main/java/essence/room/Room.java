@@ -22,6 +22,9 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
 
+    public Room() {
+    }
+
     public Room(int id, int number, int capacity, int price) {
         super(id, price);
         this.number = number;

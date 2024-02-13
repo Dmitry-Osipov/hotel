@@ -151,7 +151,7 @@ public final class InputHandler {
      * @return Решение пользователя о перезаписи файла или дозаписи данных в пустой файл.
      */
     public static String getUserOverwriteChoice(String fileName) {
-        File file = new File(fileName + ".csv");
+        File file = new File(fileName);
         String choice = "да";
 
         if (file.exists()) {

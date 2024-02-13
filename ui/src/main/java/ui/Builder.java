@@ -7,12 +7,16 @@ import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
 import ui.actions.client.AddClientAction;
+import ui.actions.client.DeserializeClientRepoAction;
 import ui.actions.client.ExportClientsDataAction;
 import ui.actions.client.GetClientsAction;
 import ui.actions.client.ImportClientsDataAction;
+import ui.actions.client.SerializeClientRepoAction;
 import ui.actions.room.AddRoomAction;
 import ui.actions.room.AddStarsAction;
 import ui.actions.room.CheckInAction;
+import ui.actions.room.DeserializeReservationRepoAction;
+import ui.actions.room.DeserializeRoomRepoAction;
 import ui.actions.room.EvictAction;
 import ui.actions.room.ExportReservationsDataAction;
 import ui.actions.room.ExportRoomsDataAction;
@@ -30,7 +34,11 @@ import ui.actions.room.GetRoomsByPriceAction;
 import ui.actions.room.GetRoomsByStarsAction;
 import ui.actions.room.ImportReservationDataAction;
 import ui.actions.room.ImportRoomsDataAction;
+import ui.actions.room.SerializeReservationRepoAction;
+import ui.actions.room.SerializeRoomRepoAction;
 import ui.actions.service.AddServiceAction;
+import ui.actions.service.DeserializeProvidedServiceRepoAction;
+import ui.actions.service.DeserializeServiceRepoAction;
 import ui.actions.service.ExportProvidedServicesDataAction;
 import ui.actions.service.ExportServicesDataAction;
 import ui.actions.service.GetClientServicesByPriceAction;
@@ -40,6 +48,8 @@ import ui.actions.service.GetServicesAction;
 import ui.actions.service.ImportProvidedServicesDataAction;
 import ui.actions.service.ImportServiceDataAction;
 import ui.actions.service.ProvideServiceAction;
+import ui.actions.service.SerializeProvidedServiceRepoAction;
+import ui.actions.service.SerializeServiceRepoAction;
 
 
 /**
@@ -105,6 +115,18 @@ public class Builder {
         MenuItem importReservationsData = new MenuItem("Импортировать данные по резервациям из CSV",
                 new ImportReservationDataAction(roomService), null);
 
+        MenuItem serializeRoomsData = new MenuItem("Сериализовать данные по комнатам в JSON",
+                new SerializeRoomRepoAction(roomService), null);
+
+        MenuItem serializeReservationsData = new MenuItem("Сериализовать данные по резервациям в JSON",
+                new SerializeReservationRepoAction(roomService), null);
+
+        MenuItem deserializeRoomsData = new MenuItem("Десериализовать данные по комнатам из JSON",
+                new DeserializeRoomRepoAction(roomService), null);
+
+        MenuItem deserializeReservationsData = new MenuItem("Десериализовать данные по резервациям из JSON",
+                new DeserializeReservationRepoAction(roomService), null);
+
         MenuItem getPrice = new MenuItem("Вывести стоимость комнаты", new GetRoomPriceAction(roomService),
                 null);
 
@@ -160,8 +182,9 @@ public class Builder {
 
         logger.info("Меню комнат сформировано");
         return new Menu("Управление комнатами", new MenuItem[]{addRoom, importRoomsData, importReservationsData,
-                exportRoomsData, exportReservationsData, getPrice, addStars, checkIn, evict, roomsByStars, roomsByPrice,
-                roomsByCapacity, availableRoomsByStars, availableRoomsByPrice, availableRoomsByCapacity,
+                exportRoomsData, exportReservationsData, serializeRoomsData, serializeReservationsData,
+                deserializeRoomsData, deserializeReservationsData, getPrice, addStars, checkIn, evict, roomsByStars,
+                roomsByPrice, roomsByCapacity, availableRoomsByStars, availableRoomsByPrice, availableRoomsByCapacity,
                 countAvailableRooms, getRoomLastClients, getRoomInfo, getClientRoomsByNumbers,
                 getClientRoomsByCheckOutTime, getAvailableRoomsByTime});
     }
@@ -186,6 +209,18 @@ public class Builder {
         MenuItem importProvidedServicesData = new MenuItem("Импортировать данные по проведённым услугам из CSV",
                 new ImportProvidedServicesDataAction(serviceService), null);
 
+        MenuItem serializeServicesData = new MenuItem("Сериализовать данные по услугам в JSON",
+                new SerializeServiceRepoAction(serviceService), null);
+
+        MenuItem serializeProvidedServicesData = new MenuItem("Сериализовать данные по проведённым услугам в JSON",
+                new SerializeProvidedServiceRepoAction(serviceService), null);
+
+        MenuItem deserializeServicesData = new MenuItem("Десериализовать данные по услугам из JSON",
+                new DeserializeServiceRepoAction(serviceService), null);
+
+        MenuItem deserializeProvidedServicesData = new MenuItem("Десериализовать данные по проведённым услугам " +
+                "из JSON", new DeserializeProvidedServiceRepoAction(serviceService), null);
+
         MenuItem getPrice = new MenuItem("Вывести стоимость услуги", new GetServicePriceAction(serviceService),
                 null);
 
@@ -205,8 +240,9 @@ public class Builder {
 
         logger.info("Меню услуг сформировано");
         return new Menu("Управление услугами", new MenuItem[]{addService, importServicesData,
-                importProvidedServicesData, exportServicesData, exportProvidedServicesData, getPrice, getServices,
-                provideService, getClientServicesByPrice, getClientServicesByTime});
+                importProvidedServicesData, exportServicesData, exportProvidedServicesData, serializeServicesData,
+                serializeProvidedServicesData, deserializeServicesData, deserializeProvidedServicesData, getPrice,
+                getServices, provideService, getClientServicesByPrice, getClientServicesByTime});
     }
 
     /**
@@ -223,6 +259,12 @@ public class Builder {
         MenuItem importClientsData = new MenuItem("Импортировать данные по клиентам из CSV",
                 new ImportClientsDataAction(clientService), null);
 
+        MenuItem serializeClientsData = new MenuItem("Сериализовать данные по клиентам в JSON",
+                new SerializeClientRepoAction(clientService), null);
+
+        MenuItem deserializeClientsData = new MenuItem("Десериализовать данные по клиентам из JSON",
+                new DeserializeClientRepoAction(clientService), null);
+
         MenuItem getClients = new MenuItem("Вывести список всех клиентов", new GetClientsAction(clientService),
                 null);
 
@@ -232,6 +274,6 @@ public class Builder {
 
         logger.info("Меню клиентов сформировано");
         return new Menu("Управление клиентами", new MenuItem[]{addClient, importClientsData, exportClientsData,
-                getClients, countClients});
+                serializeClientsData, deserializeClientsData, getClients, countClients});
     }
 }

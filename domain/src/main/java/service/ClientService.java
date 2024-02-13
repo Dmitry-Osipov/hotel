@@ -1,6 +1,7 @@
 package service;
 
 import essence.person.AbstractClient;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.client.ClientRepository;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Класс отвечает за обработку данных по клиентам.
  */
+@Getter
 public class ClientService {
     private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
     private final ClientRepository clientRepository;

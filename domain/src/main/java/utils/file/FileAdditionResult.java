@@ -13,25 +13,26 @@ public enum FileAdditionResult {
     FAILURE("Файл не был перезаписан");
 
     private final String message;
-    private static final String DATA_DIRECTORY = "domain/src/main/java/utils/file/csv/data/";
+    private static final String CSV_DIRECTORY = "domain/src/main/java/utils/file/csv/data/";
     private static final String ID_DIRECTORY = "domain/src/main/java/utils/file/id/data/";
     private static final String PROPERTY_FILE = "domain/src/main/resources/config.properties";
+    private static final String SERIALIZE_DIRECTORY = "domain/src/main/java/utils/file/serialize/data/";
 
     FileAdditionResult(String message) {
         this.message = message;
     }
 
     /**
-     * Метод получения директории данных, где хранятся файлы.
-     * @return Директория данных.
+     * Метод получения директории данных, где хранятся CSV файлы.
+     * @return Директория CSV.
      */
-    public static String getDataDirectory() {
-        return DATA_DIRECTORY;
+    public static String getCsvDirectory() {
+        return CSV_DIRECTORY;
     }
 
     /**
-     * Метод получения пути к файлу, содержащему ID.
-     * @return Путь к файлу с ID.
+     * Метод получения директории к файлу, содержащему ID.
+     * @return Директория файлов с ID.
      */
     public static String getIdDirectory() {
         return ID_DIRECTORY;
@@ -43,5 +44,13 @@ public enum FileAdditionResult {
      */
     public static String getPropertyFile() {
         return PROPERTY_FILE;
+    }
+
+    /**
+     * Метод получения директории к файлу сериализации.
+     * @return Директория файлов сериализации.
+     */
+    public static String getSerializeDirectory() {
+        return SERIALIZE_DIRECTORY;
     }
 }

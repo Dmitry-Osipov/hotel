@@ -36,7 +36,7 @@ public class ImportClientsDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
+            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
             List<AbstractClient> clients = ImportCSV.importClientsData(path);
             String result;
             for (AbstractClient client : clients) {

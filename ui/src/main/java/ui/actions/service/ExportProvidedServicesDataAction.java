@@ -32,8 +32,8 @@ public class ExportProvidedServicesDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
-            String choice = InputHandler.getUserOverwriteChoice(path);
+            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
+            String choice = InputHandler.getUserOverwriteChoice(path + ".csv");
             if (choice.equals("да")) {
                 ExportCSV.exportProvidedServicesData(path, serviceService.getProvidedServices());
                 System.out.println("\n" + FileAdditionResult.SUCCESS.getMessage());

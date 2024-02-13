@@ -1,11 +1,15 @@
 package essence.room;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import essence.Identifiable;
 import utils.exceptions.AccessDeniedException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({@JsonSubTypes.Type(value = Room.class, name = "Room")})
 public interface AbstractRoom extends Identifiable {
     /**
      * Метод установки нового статуса комнаты.

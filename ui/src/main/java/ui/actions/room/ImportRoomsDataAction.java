@@ -36,7 +36,7 @@ public class ImportRoomsDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
+            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
             List<AbstractRoom> rooms = ImportCSV.importRoomsData(path);
             String result;
             for (AbstractRoom room : rooms) {
