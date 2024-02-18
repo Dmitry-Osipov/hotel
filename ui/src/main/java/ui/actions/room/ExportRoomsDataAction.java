@@ -4,6 +4,7 @@ import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.ErrorMessages;
+import utils.file.DataPath;
 import utils.file.FileAdditionResult;
 import utils.file.csv.ExportCSV;
 
@@ -32,7 +33,7 @@ public class ExportRoomsDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
+            String path = DataPath.CSV_DIRECTORY.getPath() + InputHandler.getFileNameFromUser();
             String choice = InputHandler.getUserOverwriteChoice(path + ".csv");
             if (choice.equals("да")) {
                 ExportCSV.exportRoomsData(path, roomService.roomsByStars());

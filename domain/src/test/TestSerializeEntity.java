@@ -6,7 +6,7 @@ import essence.room.RoomStatusTypes;
 import essence.service.Service;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
-import utils.file.FileAdditionResult;
+import utils.file.DataPath;
 import utils.file.serialize.SerializationUtils;
 
 import java.io.IOException;
@@ -36,34 +36,34 @@ public class TestSerializeEntity {
             ProvidedService providedService =
                     new ProvidedService(1, service, LocalDateTime.now(), client);
 
-            SerializationUtils.serialize(room, FileAdditionResult.getSerializeDirectory() + "room.json");
+            SerializationUtils.serialize(room, DataPath.SERIALIZE_DIRECTORY.getPath() + "room.json");
             Room newRoom =
                     SerializationUtils.deserialize(Room.class,
-                            FileAdditionResult.getSerializeDirectory() + "room.json");
+                            DataPath.SERIALIZE_DIRECTORY.getPath() + "room.json");
             System.out.println(newRoom);
 
-            SerializationUtils.serialize(service, FileAdditionResult.getSerializeDirectory() + "service.json");
+            SerializationUtils.serialize(service, DataPath.SERIALIZE_DIRECTORY.getPath() + "service.json");
             Service newService =
                     SerializationUtils.deserialize(Service.class,
-                            FileAdditionResult.getSerializeDirectory() + "service.json");
+                            DataPath.SERIALIZE_DIRECTORY.getPath() + "service.json");
             System.out.println(newService);
 
-            SerializationUtils.serialize(client, FileAdditionResult.getSerializeDirectory() + "client.json");
+            SerializationUtils.serialize(client, DataPath.SERIALIZE_DIRECTORY.getPath() + "client.json");
             Client newClient =
                     SerializationUtils.deserialize(Client.class,
-                            FileAdditionResult.getSerializeDirectory() + "client.json");
+                            DataPath.SERIALIZE_DIRECTORY.getPath() + "client.json");
             System.out.println(newClient);
 
-            SerializationUtils.serialize(reservation, FileAdditionResult.getSerializeDirectory() +
+            SerializationUtils.serialize(reservation, DataPath.SERIALIZE_DIRECTORY.getPath() +
                     "reservation.json");
             RoomReservation newReservation = SerializationUtils.deserialize(RoomReservation.class,
-                    FileAdditionResult.getSerializeDirectory() + "reservation.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "reservation.json");
             System.out.println(newReservation);
 
             SerializationUtils.serialize(providedService,
-                    FileAdditionResult.getSerializeDirectory() + "providedService.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "providedService.json");
             ProvidedService newProvidedService = SerializationUtils.deserialize(ProvidedService.class,
-                    FileAdditionResult.getSerializeDirectory() + "providedService.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "providedService.json");
             System.out.println(newProvidedService);
         } catch (IOException e) {
             e.printStackTrace();

@@ -13,7 +13,7 @@ import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
-import utils.file.FileAdditionResult;
+import utils.file.DataPath;
 import utils.file.serialize.SerializationUtils;
 
 import java.io.IOException;
@@ -58,33 +58,33 @@ public class TestSerializeRepo {
             ss.provideService(client2, service2);
 
             SerializationUtils.serialize(rs.roomsByStars(),
-                    FileAdditionResult.getSerializeDirectory() + "roomTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "roomTest.json");
             List roomTest = SerializationUtils.deserialize(List.class,
-                    FileAdditionResult.getSerializeDirectory() + "roomTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "roomTest.json");
             System.out.println(roomTest);
 
             SerializationUtils.serialize(rs.getReservations(),
-                    FileAdditionResult.getSerializeDirectory() + "reservationTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "reservationTest.json");
             List reservationTest = SerializationUtils.deserialize(List.class,
-                    FileAdditionResult.getSerializeDirectory() + "reservationTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "reservationTest.json");
             System.out.println(reservationTest);
 
             SerializationUtils.serialize(ss.getServices(),
-                    FileAdditionResult.getSerializeDirectory() + "serviceTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "serviceTest.json");
             List serviceTest = SerializationUtils.deserialize(List.class,
-                    FileAdditionResult.getSerializeDirectory() + "serviceTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "serviceTest.json");
             System.out.println(serviceTest);
 
             SerializationUtils.serialize(ss.getProvidedServices(),
-                    FileAdditionResult.getSerializeDirectory() + "providedServiceTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "providedServiceTest.json");
             List providedServicesTest = SerializationUtils.deserialize(List.class,
-                    FileAdditionResult.getSerializeDirectory() + "providedServiceTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "providedServiceTest.json");
             System.out.println(providedServicesTest);
 
             SerializationUtils.serialize(cs.getClients(),
-                    FileAdditionResult.getSerializeDirectory() + "clientTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "clientTest.json");
             List clientTest = SerializationUtils.deserialize(List.class,
-                    FileAdditionResult.getSerializeDirectory() + "clientTest.json");
+                    DataPath.SERIALIZE_DIRECTORY.getPath() + "clientTest.json");
             System.out.println(clientTest);
         } catch (IOException e) {
             e.printStackTrace();

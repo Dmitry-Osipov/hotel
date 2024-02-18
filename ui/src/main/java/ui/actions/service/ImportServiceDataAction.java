@@ -7,7 +7,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
-import utils.file.FileAdditionResult;
+import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class ImportServiceDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
+            String path = DataPath.CSV_DIRECTORY.getPath() + InputHandler.getFileNameFromUser();
             List<AbstractService> services = ImportCSV.importServicesData(path);
             String result;
             for (AbstractService service : services) {

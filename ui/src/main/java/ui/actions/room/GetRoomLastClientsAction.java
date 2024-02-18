@@ -7,7 +7,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
-import utils.file.FileAdditionResult;
+import utils.file.DataPath;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class GetRoomLastClientsAction implements IAction {
      */
     private int getNumClientsFromPropertyFile() throws IOException {
         Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(FileAdditionResult.getPropertyFile())) {
+        try (FileInputStream fis = new FileInputStream(DataPath.PROPERTY_FILE.getPath())) {
             properties.load(fis);
             return Integer.parseInt(properties.getProperty("number_last_clients"));
         }

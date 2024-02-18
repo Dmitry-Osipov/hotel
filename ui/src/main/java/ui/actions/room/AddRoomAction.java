@@ -7,6 +7,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.file.DataPath;
 import utils.file.FileAdditionResult;
 import utils.file.id.IdFileManager;
 import utils.validators.ArrayDigitsValidator;
@@ -35,7 +36,7 @@ public class AddRoomAction implements IAction {
      */
     @Override
     public void execute() {
-        String path = FileAdditionResult.getIdDirectory() + "room_id.txt";
+        String path = DataPath.ID_DIRECTORY.getPath() + "room_id.txt";
         int id = IdFileManager.readMaxId(path);
         if (!UniqueIdValidator.validateUniqueId(roomService.roomsByStars(), id)) {
             id = roomService.roomsByStars().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;

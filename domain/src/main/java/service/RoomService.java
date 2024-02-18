@@ -18,6 +18,7 @@ import utils.comparators.RoomPriceComparator;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
+import utils.file.DataPath;
 import utils.file.FileAdditionResult;
 import utils.file.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
@@ -153,7 +154,7 @@ public class RoomService extends AbstractFavorService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime checkOutPlan = now.plusHours(22);
 
-        String path = FileAdditionResult.getIdDirectory() + "reservation_id.text";
+        String path = DataPath.ID_DIRECTORY.getPath() + "reservation_id.text";
         int id = IdFileManager.readMaxId(path);
         if (!UniqueIdValidator.validateUniqueId(getReservations(), id)) {
             id = getReservations().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;

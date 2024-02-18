@@ -4,7 +4,7 @@ import essence.service.AbstractFavor;
 import lombok.Getter;
 import lombok.Setter;
 import utils.exceptions.AccessDeniedException;
-import utils.file.FileAdditionResult;
+import utils.file.DataPath;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
      */
     private boolean getStatusChangePermissionFromPropertyFile() throws IOException {
         Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(FileAdditionResult.getPropertyFile())) {
+        try (FileInputStream fis = new FileInputStream(DataPath.PROPERTY_FILE.getPath())) {
             properties.load(fis);
             return Boolean.parseBoolean(properties.getProperty("enable_room_status_change"));
         }

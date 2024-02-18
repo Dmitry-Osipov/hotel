@@ -14,6 +14,7 @@ import utils.comparators.ServiceTimeComparator;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
+import utils.file.DataPath;
 import utils.file.FileAdditionResult;
 import utils.file.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
@@ -134,7 +135,7 @@ public class ServiceService extends AbstractFavorService {
             throw new NoEntityException(ErrorMessages.NO_SERVICE.getMessage());
         }
 
-        String path = FileAdditionResult.getIdDirectory() + "provided_service_id.txt";
+        String path = DataPath.ID_DIRECTORY.getPath() + "provided_service_id.txt";
         int id = IdFileManager.readMaxId(path);
         if (!UniqueIdValidator.validateUniqueId(getProvidedServices(), id)) {
             id = getProvidedServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;

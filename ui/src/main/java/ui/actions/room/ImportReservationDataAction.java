@@ -7,7 +7,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.AccessDeniedException;
 import utils.exceptions.ErrorMessages;
-import utils.file.FileAdditionResult;
+import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class ImportReservationDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getCsvDirectory() + InputHandler.getFileNameFromUser();
+            String path = DataPath.CSV_DIRECTORY.getPath() + InputHandler.getFileNameFromUser();
             List<RoomReservation> reservations = ImportCSV.importReservationsData(path);
             String result;
             for (RoomReservation reservation : reservations) {
