@@ -21,6 +21,7 @@ import utils.exceptions.InvalidDataException;
 import utils.file.DataPath;
 import utils.file.FileAdditionResult;
 import utils.file.id.IdFileManager;
+import utils.file.serialize.SerializationUtils;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
@@ -395,6 +396,88 @@ public class RoomService extends AbstractFavorService {
     public List<RoomReservation> getReservations() {
         reservationLogger.info("Вызов метода получения списка резерваций");
         return reservationRepository.getReservations();
+    }
+
+    /**
+     * Метод производит сериализацию данных по комнатам и резервациям.
+     */
+    public void serializeRoomsData() {
+        serializeRoomRepo();
+        serializeReservationRepo();
+    }
+
+    /**
+     * Метод производит десериализацию данных по комнатам и резервациям.
+     */
+    public void deserializeRoomsData() {
+        deserializeRoomRepo();
+        deserializeReservationRepo();
+    }
+
+    /**
+     * Служебный метод производит десериализацию данных по комнатам.
+     */
+    private void deserializeRoomRepo() {
+        roomLogger.info("Происходит десериализация данных по комнатам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "rooms";
+            RoomRepository repo = SerializationUtils.deserialize(RoomRepository.class, path);
+            for (AbstractRoom room : repo.getRooms()) {
+                if (!updateRoom(room)) {
+                    addRoom(room);
+                }
+            }
+        } catch (IOException e) {
+            roomLogger.error("Десериализация данных по комнатам не произошла");
+        }
+        roomLogger.info("Десериализация данных по комнатам завершена");
+    }
+
+    /**
+     * Служебный метод производит десериализацию данных по резервациям.
+     */
+    private void deserializeReservationRepo() {
+        reservationLogger.info("Происходит десериализация данных по резервациям");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "reservations";
+            RoomReservationRepository repo = SerializationUtils.deserialize(RoomReservationRepository.class, path);
+            for (RoomReservation reservation : repo.getReservations()) {
+                if (!updateReservation(reservation)) {
+                    addReservation(reservation);
+                }
+            }
+        } catch (IOException e) {
+            reservationLogger.error("Десериализация данных по резервациям не произошла");
+        }
+        reservationLogger.info("Десериализация данных по резервациям завершена");
+    }
+
+    /**
+     * Служебный метод производит сериализацию данных по комнатам.
+     */
+    private void serializeRoomRepo() {
+        roomLogger.info("Происходит сериализация данных по комнатам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "rooms";
+            SerializationUtils.serialize(roomRepository, path);
+        } catch (IOException e) {
+            roomLogger.error("Сериализация данных по комнатам не произошла");
+        }
+        roomLogger.info("Сериализация данных по комнатам завершена");
+    }
+
+    /**
+     * Служебный метод производит сериализацию данных по резервациям.
+     */
+    private void serializeReservationRepo() {
+        reservationLogger.info("Происходит сериализация данных по резервациям");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "reservations";
+            SerializationUtils.serialize(reservationRepository, path);
+        } catch (IOException e) {
+            reservationLogger.error("Сериализация данных по резервациям не произошла");
+        }
+        reservationLogger.info("Сериализация данных по резервациям завершена");
     }
 
     /**

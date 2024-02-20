@@ -44,9 +44,9 @@ import ui.actions.service.ProvideServiceAction;
 /**
  * Класс отвечает за формирование меню.
  */
-@Getter
 public class Builder {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
+    @Getter
     private Menu rootMenu;
     private final RoomService roomService;
     private final ServiceService serviceService;
