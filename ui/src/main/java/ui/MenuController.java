@@ -2,11 +2,6 @@ package ui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repository.client.ClientRepository;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -21,17 +16,18 @@ public class MenuController {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     private final Builder builder;
     private final Navigator navigator;
+    private final RoomService roomService;
+    private final ServiceService serviceService;
+    private final ClientService clientService;
 
     /**
      * Класс отвечает за работу UI.
      */
-    public MenuController() {
-        builder = new Builder(
-                new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance()),
-                new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance()),
-                new ClientService(ClientRepository.getInstance())
-        );
-
+    public MenuController(RoomService roomService, ServiceService serviceService, ClientService clientService) {
+        this.roomService = roomService;
+        this.serviceService = serviceService;
+        this.clientService = clientService;
+        builder = new Builder(roomService, serviceService, clientService);
         builder.buildMenu();
         navigator = new Navigator(builder.getRootMenu());
     }
@@ -41,6 +37,9 @@ public class MenuController {
      */
     public void run() {
         logger.info("Запуск приложения");
+        roomService.deserializeRoomsData();
+        serviceService.deserializeServicesData();
+        clientService.deserializeClientsData();
         while (true) {
             navigator.printMenu();
             int choice = getUserInput() - 1;
@@ -76,5 +75,8 @@ public class MenuController {
     private void exit() {
         logger.info("Выход из приложения");
         System.out.println("\nВыход из программы...");
+        roomService.serializeRoomsData();
+        serviceService.serializeServicesData();
+        clientService.serializeClientsData();
     }
 }

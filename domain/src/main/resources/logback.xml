@@ -145,15 +145,15 @@
         <appender-ref ref="PROVIDED_SERVICE_FILE" />
     </logger>
 
-    <logger name="ui.utils.id.IdFileManager" level="debug" additivity="false">
+    <logger name="ui.utils.file.id.IdFileManager" level="debug" additivity="false">
         <appender-ref ref="ID_FILE_MANAGER_FILE" />
     </logger>
 
-    <logger name="ui.utils.csv.ExportCSV" level="debug" additivity="false">
+    <logger name="ui.utils.file.csv.ExportCSV" level="debug" additivity="false">
         <appender-ref ref="EXPORT_CSV_FILE" />
     </logger>
 
-    <logger name="ui.utils.csv.ImportCSV" level="debug" additivity="false">
+    <logger name="ui.utils.file.csv.ImportCSV" level="debug" additivity="false">
         <appender-ref ref="IMPORT_CSV_FILE" />
     </logger>
 

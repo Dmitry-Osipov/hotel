@@ -1,9 +1,13 @@
 package essence.service;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import essence.Identifiable;
 
 import java.time.LocalDateTime;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({@JsonSubTypes.Type(value = Service.class, name = "Service")})
 public interface AbstractService extends Identifiable {
     /**
      * Метод устанавливает новый статус исполнения услуги.

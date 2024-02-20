@@ -1,4 +1,4 @@
-package utils.csv;
+package utils.file.csv;
 
 import com.opencsv.CSVWriter;
 import essence.person.AbstractClient;

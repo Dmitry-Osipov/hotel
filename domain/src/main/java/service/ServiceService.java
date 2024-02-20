@@ -5,16 +5,19 @@ import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.service.ProvidedServicesRepository;
 import repository.service.ServiceRepository;
 import utils.comparators.ServiceTimeComparator;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
-import utils.id.IdFileManager;
+import utils.file.DataPath;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
+import utils.file.serialize.SerializationUtils;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
@@ -25,6 +28,7 @@ import java.util.stream.Stream;
 /**
  * Класс отвечает за обработку данных по услугам.
  */
+@Getter
 public class ServiceService extends AbstractFavorService {
     private static final Logger serviceLogger = LoggerFactory.getLogger(ServiceService.class);
     private static final Logger providedServiceLogger = LoggerFactory.getLogger("service.ProvidedServiceService");
@@ -86,7 +90,7 @@ public class ServiceService extends AbstractFavorService {
     public void addProvidedService(ProvidedService providedService) {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод добавления новой оказанной услуги с ID {}", providedServiceId);
-        providedServicesRepository.getServices().add(providedService);
+        providedServicesRepository.getProvidedServices().add(providedService);
         providedServiceLogger.info("Добавлена новая оказанная услуга с ID {}", providedServiceId);
     }
 
@@ -98,7 +102,7 @@ public class ServiceService extends AbstractFavorService {
     public boolean updateProvidedService(ProvidedService providedService) {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод обновления оказанной услуги с ID {}", providedServiceId);
-        for (ProvidedService currentProvidedService : providedServicesRepository.getServices()) {
+        for (ProvidedService currentProvidedService : providedServicesRepository.getProvidedServices()) {
             if (currentProvidedService.getId() == providedServiceId) {
                 currentProvidedService.setService(providedService.getService());
                 currentProvidedService.setServiceTime(providedService.getServiceTime());
@@ -132,7 +136,7 @@ public class ServiceService extends AbstractFavorService {
             throw new NoEntityException(ErrorMessages.NO_SERVICE.getMessage());
         }
 
-        String path = FileAdditionResult.getIdDirectory() + "provided_service_id.txt";
+        String path = DataPath.ID_DIRECTORY.getPath() + "provided_service_id.txt";
         int id = IdFileManager.readMaxId(path);
         if (!UniqueIdValidator.validateUniqueId(getProvidedServices(), id)) {
             id = getProvidedServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
@@ -196,7 +200,89 @@ public class ServiceService extends AbstractFavorService {
      */
     public List<ProvidedService> getProvidedServices() {
         providedServiceLogger.info("Вызван метод получения списка оказанных услуг");
-        return providedServicesRepository.getServices();
+        return providedServicesRepository.getProvidedServices();
+    }
+
+    /**
+     * Метод производит сериализацию данных по услугам и проведённым услугам.
+     */
+    public void serializeServicesData() {
+        serializeServiceRepo();
+        serializeProvidedServiceRepo();
+    }
+
+    /**
+     * Метод производит десериализацию данных по услугам и проведённым услугам.
+     */
+    public void deserializeServicesData() {
+        deserializeServiceRepo();
+        deserializeProvidedServiceRepo();
+    }
+
+    /**
+     * Служебный метод производит десериализацию данных по услугам.
+     */
+    private void deserializeServiceRepo() {
+        serviceLogger.info("Происходит десериализация данных по услугам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "services";
+            ServiceRepository repo = SerializationUtils.deserialize(ServiceRepository.class, path);
+            for (AbstractService service : repo.getServices()) {
+                if (!updateService(service)) {
+                    addService(service);
+                }
+            }
+        } catch (IOException e) {
+            serviceLogger.error("Десериализация данных по услугам не произошла");
+        }
+        serviceLogger.info("Десериализация данных по услугам завершена");
+    }
+
+    /**
+     * Служебный метод производит десериализацию данных по проведённым услугам.
+     */
+    private void deserializeProvidedServiceRepo() {
+        providedServiceLogger.info("Происходит десериализация данных по проведённым услугам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "provided_services";
+            ProvidedServicesRepository repo = SerializationUtils.deserialize(ProvidedServicesRepository.class, path);
+            for (ProvidedService providedService : repo.getProvidedServices()) {
+                if (!updateProvidedService(providedService)) {
+                    addProvidedService(providedService);
+                }
+            }
+        } catch (IOException e) {
+            providedServiceLogger.error("Десериализация данных по проведённым услугам не произошла");
+        }
+        providedServiceLogger.info("Десериализация данных по проведённым услугам завершена");
+    }
+
+    /**
+     * Служебный метод производит сериализацию данных по услугам.
+     */
+    private void serializeServiceRepo() {
+        serviceLogger.info("Происходит сериализация данных по услугам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "services";
+            SerializationUtils.serialize(serviceRepository, path);
+        } catch (IOException e) {
+            serviceLogger.error("Сериализация данных по услугам не произошла");
+        }
+        serviceLogger.info("Сериализация данных по услугам завершена");
+    }
+
+    /**
+     * Служебный метод производит сериализацию данных по проведённым услугам.
+     */
+    private void serializeProvidedServiceRepo() {
+        providedServiceLogger.info("Происходит сериализация данных по проведённым услугам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "provided_services";
+            SerializationUtils.serialize(providedServicesRepository, path);
+        } catch (IOException e) {
+            providedServiceLogger.error("Сериализация данных по проведённым услугам не произошла");
+        }
+        providedServiceLogger.info("Сериализация данных по проведённым услугам завершена");
     }
 
     /**
@@ -206,7 +292,7 @@ public class ServiceService extends AbstractFavorService {
      * @return Отфильтрованный стрим.
      */
     private Stream<AbstractService> streamClientServices(AbstractClient client) {
-        return providedServicesRepository.getServices()
+        return providedServicesRepository.getProvidedServices()
                 .stream()
                 .filter(service -> service.getBeneficiaries().contains(client)
                         && service.getService().getStatus() == ServiceStatusTypes.RENDERED)

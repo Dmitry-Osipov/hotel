@@ -5,10 +5,10 @@ import essence.service.AbstractService;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
-import utils.csv.ImportCSV;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.file.DataPath;
+import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +36,7 @@ public class ImportServiceDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
+            String path = DataPath.CSV_DIRECTORY.getPath() + InputHandler.getFileNameFromUser();
             List<AbstractService> services = ImportCSV.importServicesData(path);
             String result;
             for (AbstractService service : services) {

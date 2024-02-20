@@ -7,16 +7,16 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
+@Setter
 public class Client implements AbstractClient, Comparable<AbstractClient> {
-    private final int id;
-    @Setter
+    private int id;
     private String fio;
-    @Setter
     private String phoneNumber;
-    @Setter
     private LocalDateTime checkInTime;
-    @Setter
     private LocalDateTime checkOutTime;
+
+    public Client() {
+    }
 
     public Client(int id, String fio, String phoneNumber) {
         this.id = id;

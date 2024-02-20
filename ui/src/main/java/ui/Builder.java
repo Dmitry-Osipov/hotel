@@ -41,7 +41,6 @@ import ui.actions.service.ImportProvidedServicesDataAction;
 import ui.actions.service.ImportServiceDataAction;
 import ui.actions.service.ProvideServiceAction;
 
-
 /**
  * Класс отвечает за формирование меню.
  */
@@ -160,8 +159,8 @@ public class Builder {
 
         logger.info("Меню комнат сформировано");
         return new Menu("Управление комнатами", new MenuItem[]{addRoom, importRoomsData, importReservationsData,
-                exportRoomsData, exportReservationsData, getPrice, addStars, checkIn, evict, roomsByStars, roomsByPrice,
-                roomsByCapacity, availableRoomsByStars, availableRoomsByPrice, availableRoomsByCapacity,
+                exportRoomsData, exportReservationsData, getPrice, addStars, checkIn, evict, roomsByStars,
+                roomsByPrice, roomsByCapacity, availableRoomsByStars, availableRoomsByPrice, availableRoomsByCapacity,
                 countAvailableRooms, getRoomLastClients, getRoomInfo, getClientRoomsByNumbers,
                 getClientRoomsByCheckOutTime, getAvailableRoomsByTime});
     }

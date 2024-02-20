@@ -1,15 +1,23 @@
 package essence.room;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import essence.Identifiable;
+import utils.exceptions.AccessDeniedException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({@JsonSubTypes.Type(value = Room.class, name = "Room")})
 public interface AbstractRoom extends Identifiable {
     /**
      * Метод установки нового статуса комнаты.
      * @param status Новый статус.
+     * @throws IOException Ошибка ввода/вывода.
+     * @throws AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    void setStatus(RoomStatusTypes status);
+    void setStatus(RoomStatusTypes status) throws IOException, AccessDeniedException;
 
     /**
      * Метод получения статуса комнаты.

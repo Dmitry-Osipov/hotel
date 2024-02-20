@@ -6,9 +6,10 @@ import essence.service.ServiceNames;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
-import utils.id.IdFileManager;
+import utils.file.DataPath;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class AddServiceAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getIdDirectory() + "service_id.txt";
+            String path = DataPath.ID_DIRECTORY.getPath() + "service_id.txt";
             int id = IdFileManager.readMaxId(path);
             if (!UniqueIdValidator.validateUniqueId(serviceService.getServices(), id)) {
                 id = serviceService.getServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;

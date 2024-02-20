@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @ToString
 public class RoomReservation implements Identifiable {
-    private final int id;
-    @Setter
+    private int id;
     private List<AbstractClient> clients = new ArrayList<>();
-    @Setter
     private AbstractRoom room;
-    @Setter
     private LocalDateTime checkInTime;
-    @Setter
     private LocalDateTime checkOutTime;
+
+    public RoomReservation() {
+    }
 
     public RoomReservation(int id, AbstractRoom room, LocalDateTime checkInTime, LocalDateTime checkOutTime,
                            List<AbstractClient> clients) {

@@ -5,10 +5,11 @@ import essence.person.Client;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
-import utils.id.IdFileManager;
+import utils.file.DataPath;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
 import utils.validators.PhoneNumberValidator;
 import utils.validators.UniqueIdValidator;
 
@@ -35,7 +36,7 @@ public class AddClientAction implements IAction {
      */
     @Override
     public void execute() {
-        String path = FileAdditionResult.getIdDirectory() + "client_id.txt";
+        String path = DataPath.ID_DIRECTORY.getPath() + "client_id.txt";
         int id = IdFileManager.readMaxId(path);
         if (!UniqueIdValidator.validateUniqueId(clientService.getClients(), id)) {
             id = clientService.getClients().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;

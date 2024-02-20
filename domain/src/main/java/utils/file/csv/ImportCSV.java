@@ -1,4 +1,4 @@
-package utils.csv;
+package utils.file.csv;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -41,6 +41,7 @@ public class ImportCSV {
      * @return Список комнат.
      * @throws IOException Ошибка при обработке файла.
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
     public static List<AbstractRoom> importRoomsData(String fileName) throws IOException, CsvValidationException {
         List<AbstractRoom> rooms = new ArrayList<>();
@@ -174,6 +175,7 @@ public class ImportCSV {
      * @return Список резерваций.
      * @throws IOException Ошибка при обработке файла.
      * @throws CsvValidationException Ошибка валидации файла, связанная с его структурой или данными внутри.
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
     public static List<RoomReservation> importReservationsData(String fileName) throws IOException,
             CsvValidationException {
@@ -267,8 +269,10 @@ public class ImportCSV {
      * Служебный метод парсит строковое представление комнаты в объект комнаты.
      * @param room Строка комнаты.
      * @return Комната.
+     * @throws IOException Ошибка ввода/вывода.
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    private static AbstractRoom parseRoom(String room) {
+    private static AbstractRoom parseRoom(String room) throws IOException {
         room = room.substring(5, room.length() - 1);
         Map<String, String> roomMap = new HashMap<>();
         updateMapByArray(roomMap, room.split("; "));

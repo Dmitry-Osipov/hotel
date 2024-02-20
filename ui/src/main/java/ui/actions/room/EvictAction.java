@@ -6,9 +6,12 @@ import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.ListToArrayConverter;
+import utils.exceptions.AccessDeniedException;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -38,8 +41,10 @@ public class EvictAction implements IAction {
             AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
             roomService.evict(room, clients);
             System.out.println("\nВыселение прошло успешно");
-        } catch (NoEntityException | InvalidDataException e) {
+        } catch (NoEntityException | InvalidDataException | AccessDeniedException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
         }
     }
 }

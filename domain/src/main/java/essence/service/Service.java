@@ -13,6 +13,9 @@ public class Service extends AbstractFavor implements AbstractService, Comparabl
     private ServiceStatusTypes status = ServiceStatusTypes.UNPAID;
     private LocalDateTime serviceTime;
 
+    public Service() {
+    }
+
     public Service(int id, ServiceNames name, int price) {
         super(id, price);
         this.name = name;

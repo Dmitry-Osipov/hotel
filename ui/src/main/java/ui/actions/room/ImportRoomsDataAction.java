@@ -5,10 +5,11 @@ import essence.room.AbstractRoom;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.csv.FileAdditionResult;
-import utils.csv.ImportCSV;
+import utils.exceptions.AccessDeniedException;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.file.DataPath;
+import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ImportRoomsDataAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = FileAdditionResult.getDataDirectory() + InputHandler.getFileNameFromUser();
+            String path = DataPath.CSV_DIRECTORY.getPath() + InputHandler.getFileNameFromUser();
             List<AbstractRoom> rooms = ImportCSV.importRoomsData(path);
             String result;
             for (AbstractRoom room : rooms) {
@@ -51,7 +52,7 @@ public class ImportRoomsDataAction implements IAction {
             }
         } catch (IOException | CsvValidationException e) {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
-        } catch (EntityContainedException e) {
+        } catch (EntityContainedException | AccessDeniedException e) {
             System.out.println("\n" + e.getMessage());
         }
     }

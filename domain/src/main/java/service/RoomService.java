@@ -6,6 +6,7 @@ import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.room.RoomRepository;
@@ -14,11 +15,13 @@ import utils.comparators.RoomCapacityComparator;
 import utils.comparators.RoomCheckOutTimeComparator;
 import utils.comparators.RoomNumberComparator;
 import utils.comparators.RoomPriceComparator;
-import utils.csv.FileAdditionResult;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
-import utils.id.IdFileManager;
+import utils.file.DataPath;
+import utils.file.FileAdditionResult;
+import utils.file.id.IdFileManager;
+import utils.file.serialize.SerializationUtils;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
@@ -31,6 +34,7 @@ import java.util.stream.Stream;
 /**
  * Класс отвечает за обработку данных по комнатам.
  */
+@Getter
 public class RoomService extends AbstractFavorService {
     private static final Logger roomLogger = LoggerFactory.getLogger(RoomService.class);
     private static final Logger reservationLogger = LoggerFactory.getLogger("service.ReservationService");
@@ -65,8 +69,10 @@ public class RoomService extends AbstractFavorService {
      * Метод обновляет данные по комнате.
      * @param room Новые данные комнаты, собранные в классе комнаты.
      * @return {@code true}, если обновить удалось, иначе {@code false}.
+     * @throws IOException Ошибка ввода/вывода.
+     * @throws utils.exceptions.AccessDeniedException Ошибка изменения статуса комнаты.
      */
-    public boolean updateRoom(AbstractRoom room) {
+    public boolean updateRoom(AbstractRoom room) throws IOException {
         int roomId = room.getId();
         roomLogger.info("Вызван метод обновления комнаты с ID {}", roomId);
         for (AbstractRoom currentRoom : roomRepository.getRooms()) {
@@ -127,10 +133,12 @@ public class RoomService extends AbstractFavorService {
      * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
+     * @throws IOException Ошибка ввода/вывода.
      * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "свободен").
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    public void checkIn(AbstractRoom room, AbstractClient...clients) throws InvalidDataException {
+    public void checkIn(AbstractRoom room, AbstractClient...clients) throws IOException, InvalidDataException {
         String startMessage = "Вызван метод заселения в комнату с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
@@ -147,7 +155,7 @@ public class RoomService extends AbstractFavorService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime checkOutPlan = now.plusHours(22);
 
-        String path = FileAdditionResult.getIdDirectory() + "reservation_id.text";
+        String path = DataPath.ID_DIRECTORY.getPath() + "reservation_id.text";
         int id = IdFileManager.readMaxId(path);
         if (!UniqueIdValidator.validateUniqueId(getReservations(), id)) {
             id = getReservations().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
@@ -188,10 +196,12 @@ public class RoomService extends AbstractFavorService {
      * Метод выселения из комнаты.
      * @param room Комната, из которой требуется выселить клиентов.
      * @param clients Клиенты, которых требуется выселить.
+     * @throws IOException Ошибка ввода/вывода.
      * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "занят").
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    public void evict(AbstractRoom room, AbstractClient ...clients) throws InvalidDataException {
+    public void evict(AbstractRoom room, AbstractClient ...clients) throws IOException, InvalidDataException {
         String startMessage = "Вызван метод выселения из комнаты с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
@@ -205,9 +215,9 @@ public class RoomService extends AbstractFavorService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        List.of(clients).forEach(client -> getReservationByRoom(room).forEach(reservation ->
-            client.setCheckOutTime(now)
-        ));
+        for (AbstractClient client : clients) {
+            client.setCheckOutTime(now);
+        }
 
         room.setStatus(RoomStatusTypes.AVAILABLE);
         room.setCheckOutTime(now);
@@ -386,6 +396,88 @@ public class RoomService extends AbstractFavorService {
     public List<RoomReservation> getReservations() {
         reservationLogger.info("Вызов метода получения списка резерваций");
         return reservationRepository.getReservations();
+    }
+
+    /**
+     * Метод производит сериализацию данных по комнатам и резервациям.
+     */
+    public void serializeRoomsData() {
+        serializeRoomRepo();
+        serializeReservationRepo();
+    }
+
+    /**
+     * Метод производит десериализацию данных по комнатам и резервациям.
+     */
+    public void deserializeRoomsData() {
+        deserializeRoomRepo();
+        deserializeReservationRepo();
+    }
+
+    /**
+     * Служебный метод производит десериализацию данных по комнатам.
+     */
+    private void deserializeRoomRepo() {
+        roomLogger.info("Происходит десериализация данных по комнатам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "rooms";
+            RoomRepository repo = SerializationUtils.deserialize(RoomRepository.class, path);
+            for (AbstractRoom room : repo.getRooms()) {
+                if (!updateRoom(room)) {
+                    addRoom(room);
+                }
+            }
+        } catch (IOException e) {
+            roomLogger.error("Десериализация данных по комнатам не произошла");
+        }
+        roomLogger.info("Десериализация данных по комнатам завершена");
+    }
+
+    /**
+     * Служебный метод производит десериализацию данных по резервациям.
+     */
+    private void deserializeReservationRepo() {
+        reservationLogger.info("Происходит десериализация данных по резервациям");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "reservations";
+            RoomReservationRepository repo = SerializationUtils.deserialize(RoomReservationRepository.class, path);
+            for (RoomReservation reservation : repo.getReservations()) {
+                if (!updateReservation(reservation)) {
+                    addReservation(reservation);
+                }
+            }
+        } catch (IOException e) {
+            reservationLogger.error("Десериализация данных по резервациям не произошла");
+        }
+        reservationLogger.info("Десериализация данных по резервациям завершена");
+    }
+
+    /**
+     * Служебный метод производит сериализацию данных по комнатам.
+     */
+    private void serializeRoomRepo() {
+        roomLogger.info("Происходит сериализация данных по комнатам");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "rooms";
+            SerializationUtils.serialize(roomRepository, path);
+        } catch (IOException e) {
+            roomLogger.error("Сериализация данных по комнатам не произошла");
+        }
+        roomLogger.info("Сериализация данных по комнатам завершена");
+    }
+
+    /**
+     * Служебный метод производит сериализацию данных по резервациям.
+     */
+    private void serializeReservationRepo() {
+        reservationLogger.info("Происходит сериализация данных по резервациям");
+        try {
+            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "reservations";
+            SerializationUtils.serialize(reservationRepository, path);
+        } catch (IOException e) {
+            reservationLogger.error("Сериализация данных по резервациям не произошла");
+        }
+        reservationLogger.info("Сериализация данных по резервациям завершена");
     }
 
     /**
