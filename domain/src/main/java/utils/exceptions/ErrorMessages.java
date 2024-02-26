@@ -26,7 +26,9 @@ public enum ErrorMessages {
     NO_CLIENT("Такого клиента нет в отеле"),
     NO_RESERVATION("Такой резервации нет в отеле"),
     NO_PROVIDED_SERVICE("Такой проведённой услуги нет в отеле"),
-    INVALID_DATA("Поступили некорректные данные");
+    INVALID_DATA("Поступили некорректные данные"),
+    NOT_ALLOWED_CHANGE_ROOM_STATUS("Запрещено изменение статуса комнаты"),
+    PROGRAM_START_ERROR("Невозможно запустить программу");
 
     private final String message;
 

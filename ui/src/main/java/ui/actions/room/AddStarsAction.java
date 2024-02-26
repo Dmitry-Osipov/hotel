@@ -29,7 +29,7 @@ public class AddStarsAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractRoom room = InputHandler.getRoomByInput();
+            AbstractRoom room = InputHandler.getRoomByInput(roomService);
             System.out.println("\nВведите количество звёзд (от 1 до 5): ");
             int stars = InputHandler.getUserIntegerInput();
             roomService.addStarsToRoom(room, stars);

@@ -1,5 +1,12 @@
 package ui;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import annotations.factory.InitializeComponent;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.exceptions.ErrorMessages;
@@ -7,18 +14,35 @@ import utils.exceptions.ErrorMessages;
 /**
  * Класс отвечает за навигацию по меню.
  */
-public class Navigator {
+@Component
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+public class Navigator implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     private Menu currentMenu;
-    private final Menu rootMenu;
+    private Menu rootMenu;
+    @Autowired
+    private Builder builder;
 
     /**
      * Класс отвечает за навигацию по меню.
      * @param currentMenu Меню.
      */
+    @Deprecated(forRemoval = true)
     public Navigator(Menu currentMenu) {
         this.currentMenu = currentMenu;
         this.rootMenu = currentMenu;
+    }
+
+    /**
+     * Метод проводит инициализацию главного и текущего меню.
+     */
+    @Override
+    public void init() {
+        currentMenu = builder.getRootMenu();
+        rootMenu = currentMenu;
     }
 
     /**

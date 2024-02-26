@@ -5,11 +5,11 @@ import essence.room.Room;
 import essence.service.AbstractService;
 import essence.service.Service;
 import essence.service.ServiceNames;
-import repository.client.ClientRepository;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
+import repository.ClientRepository;
+import repository.ProvidedServicesRepository;
+import repository.RoomRepository;
+import repository.RoomReservationRepository;
+import repository.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -34,9 +34,9 @@ public class TestSerializeRepo {
             AbstractClient client2 = new Client(2, "Musofranova N.S.", "+7(953)180-00-61");
             AbstractClient client3 = new Client(3, "Soshin V.S.", "+7(901)901-91-11");
 
-            RoomService rs = new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance());
-            ServiceService ss = new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance());
-            ClientService cs = new ClientService(ClientRepository.getInstance());
+            RoomService rs = new RoomService(new RoomRepository(), new RoomReservationRepository());
+            ServiceService ss = new ServiceService(new ServiceRepository(), new ProvidedServicesRepository());
+            ClientService cs = new ClientService(new ClientRepository());
 
             rs.addRoom(room1);
             rs.addRoom(room2);

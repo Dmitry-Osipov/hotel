@@ -28,7 +28,7 @@ public class GetRoomInfoAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractRoom room = InputHandler.getRoomByInput();
+            AbstractRoom room = InputHandler.getRoomByInput(roomService);
             System.out.println("\nПолная информация о комнате - " + roomService.getRoomInfo((Room) room));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());

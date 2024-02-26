@@ -4,11 +4,6 @@ import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
 import essence.service.AbstractService;
-import repository.client.ClientRepository;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -57,9 +52,8 @@ public final class InputHandler {
      * @return Номер.
      * @throws NoEntityException Ошибка связана с отсутствием комнат.
      */
-    public static AbstractRoom getRoomByInput() throws NoEntityException {
-        List<AbstractRoom> rooms =
-                new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance()).roomsByStars();
+    public static AbstractRoom getRoomByInput(RoomService roomService) throws NoEntityException {
+        List<AbstractRoom> rooms = roomService.roomsByStars();
         if (rooms.isEmpty()) {
             throw new NoEntityException(ErrorMessages.NO_ROOMS.getMessage());
         }
@@ -78,8 +72,8 @@ public final class InputHandler {
      * @return Список клиентов.
      * @throws NoEntityException Ошибка связана с отсутствием клиентов.
      */
-    private static List<AbstractClient> getClients() throws NoEntityException {
-        List<AbstractClient> clients = new ClientService(ClientRepository.getInstance()).getClients();
+    private static List<AbstractClient> getClients(ClientService clientService) throws NoEntityException {
+        List<AbstractClient> clients = clientService.getClients();
         if (clients.isEmpty()) {
             throw new NoEntityException(ErrorMessages.NO_CLIENTS.getMessage());
         }
@@ -96,9 +90,9 @@ public final class InputHandler {
      * @return Клиент.
      * @throws NoEntityException Ошибка связана с отсутствием клиентов.
      */
-    public static AbstractClient getClientByInput() {
+    public static AbstractClient getClientByInput(ClientService clientService) {
         System.out.println("\nВыберите клиента: ");
-        List<AbstractClient> clients = getClients();
+        List<AbstractClient> clients = getClients(clientService);
         int choice = getEntityByInput(clients, false);
         return clients.get(choice);
     }
@@ -108,9 +102,9 @@ public final class InputHandler {
      * @return Список клиентов.
      * @throws NoEntityException Ошибка связана с отсутствием клиентов.
      */
-    public static List<AbstractClient> getManyClientsByInput() {
+    public static List<AbstractClient> getManyClientsByInput(ClientService clientService) {
         System.out.println("\nСписок всех клиентов: ");
-        List<AbstractClient> clients = getClients();
+        List<AbstractClient> clients = getClients(clientService);
 
         List<AbstractClient> guests = new ArrayList<>(2);
         while (true) {
@@ -130,10 +124,8 @@ public final class InputHandler {
      * @return Услуга.
      * @throws NoEntityException Ошибка связана с отсутствием услуг.
      */
-    public static AbstractService getServiceByInput() throws NoEntityException {
-        List<AbstractService> services =
-                new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance())
-                        .getServices();
+    public static AbstractService getServiceByInput(ServiceService serviceService) throws NoEntityException {
+        List<AbstractService> services = serviceService.getServices();
 
         if (services.isEmpty()) {
             throw new NoEntityException(ErrorMessages.NO_SERVICES.getMessage());

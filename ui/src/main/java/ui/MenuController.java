@@ -1,5 +1,11 @@
 package ui;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ClientService;
@@ -12,17 +18,28 @@ import java.util.Scanner;
 /**
  * Класс отвечает за работу UI.
  */
+@Component
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class MenuController {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
-    private final Builder builder;
-    private final Navigator navigator;
-    private final RoomService roomService;
-    private final ServiceService serviceService;
-    private final ClientService clientService;
+    @Autowired
+    private Builder builder;
+    @Autowired
+    private Navigator navigator;
+    @Autowired
+    private RoomService roomService;
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Класс отвечает за работу UI.
      */
+    @Deprecated(forRemoval = true)
     public MenuController(RoomService roomService, ServiceService serviceService, ClientService clientService) {
         this.roomService = roomService;
         this.serviceService = serviceService;

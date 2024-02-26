@@ -1,22 +1,26 @@
 package program;
 
-import repository.client.ClientRepository;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
-import service.ClientService;
-import service.RoomService;
-import service.ServiceService;
+import annotations.factory.ApplicationContext;
 import ui.MenuController;
+import utils.AllowedSetStatusRoomConfigurator;
+import utils.exceptions.ErrorMessages;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 public class Program {
     public static void main(String[] args) {
-        MenuController controller = new MenuController(
-                new RoomService(RoomRepository.getInstance(), RoomReservationRepository.getInstance()),
-                new ServiceService(ServiceRepository.getInstance(), ProvidedServicesRepository.getInstance()),
-                new ClientService(ClientRepository.getInstance())
-        );
-        controller.run();
+        ApplicationContext context = null;
+        try {
+            context = new ApplicationContext(List.of("ui", "service", "repository"),
+                    new AllowedSetStatusRoomConfigurator());
+        } catch (IOException | InstantiationException | URISyntaxException | ClassNotFoundException |
+                 InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            System.out.println(ErrorMessages.PROGRAM_START_ERROR.getMessage());
+        }
+        MenuController temp = (MenuController) context.getComponent("menuController");
+        temp.run();
     }
 }

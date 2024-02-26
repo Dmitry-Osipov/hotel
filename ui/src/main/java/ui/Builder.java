@@ -1,6 +1,12 @@
 package ui;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import annotations.factory.InitializeComponent;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ClientService;
@@ -44,13 +50,20 @@ import ui.actions.service.ProvideServiceAction;
 /**
  * Класс отвечает за формирование меню.
  */
-public class Builder {
+@Component
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+public class Builder implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
-    @Getter
     private Menu rootMenu;
-    private final RoomService roomService;
-    private final ServiceService serviceService;
-    private final ClientService clientService;
+    @Autowired
+    private RoomService roomService;
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Класс отвечает за формирование меню.
@@ -58,6 +71,7 @@ public class Builder {
      * @param serviceService Класс обработки данных по услугам.
      * @param clientService Класс обработки данных по клиентам.
      */
+    @Deprecated(forRemoval = true)
     public Builder(RoomService roomService, ServiceService serviceService, ClientService clientService) {
         this.roomService = roomService;
         this.serviceService = serviceService;
@@ -65,8 +79,17 @@ public class Builder {
     }
 
     /**
+     * Метод проводит настройку главного меню.
+     */
+    @Override
+    public void init() {
+        rootMenu = buildMainMenu();
+    }
+
+    /**
      * Метод формирует меню.
      */
+    @Deprecated(forRemoval = true)
     public void buildMenu() {
         rootMenu = buildMainMenu();
     }
@@ -109,10 +132,11 @@ public class Builder {
 
         MenuItem addStars = new MenuItem("Добавить звёзд комнате", new AddStarsAction(roomService), null);
 
-        MenuItem checkIn = new MenuItem("Заселить клиентов в комнату", new CheckInAction(roomService),
-                null);
+        MenuItem checkIn = new MenuItem("Заселить клиентов в комнату",
+                new CheckInAction(roomService, clientService), null);
 
-        MenuItem evict = new MenuItem("Выселить клиентов из комнаты", new EvictAction(roomService), null);
+        MenuItem evict = new MenuItem("Выселить клиентов из комнаты", new EvictAction(roomService, clientService),
+                null);
 
         MenuItem roomsByStars = new MenuItem("Вывести список всех комнат, отсортированных по убыванию звёзд",
                 new GetRoomsByStarsAction(roomService), null);
@@ -148,11 +172,11 @@ public class Builder {
 
         MenuItem getClientRoomsByNumbers = new MenuItem(
                 "Вывести список всех комнат клиента, отсортированных по возрастанию номера комнаты",
-                new GetClientRoomsByNumbersAction(roomService), null);
+                new GetClientRoomsByNumbersAction(roomService, clientService), null);
 
         MenuItem getClientRoomsByCheckOutTime = new MenuItem(
                 "Вывести список всех комнат клиента, отсортированных по убыванию времени выезда",
-                new GetClientRoomsByCheckOutTimeAction(roomService), null);
+                new GetClientRoomsByCheckOutTimeAction(roomService, clientService), null);
 
         MenuItem getAvailableRoomsByTime = new MenuItem("Вывести список свободных комнат с конкретного времени",
                 new GetAvailableRoomsByTimeAction(roomService), null);
@@ -191,16 +215,16 @@ public class Builder {
         MenuItem getServices = new MenuItem("Вывести список всех услуг", new GetServicesAction(serviceService),
                 null);
 
-        MenuItem provideService = new MenuItem("Провести услугу клиенту", new ProvideServiceAction(serviceService),
-                null);
+        MenuItem provideService = new MenuItem("Провести услугу клиенту",
+                new ProvideServiceAction(serviceService, clientService), null);
 
         MenuItem getClientServicesByPrice = new MenuItem(
                 "Вывести список услуг, оказанных клиенту и отсортированных по возрастанию цены",
-                new GetClientServicesByPriceAction(serviceService), null);
+                new GetClientServicesByPriceAction(serviceService, clientService), null);
 
         MenuItem getClientServicesByTime = new MenuItem(
                 "Вывести список услуг, оказанных клиенту и отсортированных по убыванию времени оказания",
-                new GetClientServicesByTimeAction(serviceService), null);
+                new GetClientServicesByTimeAction(serviceService, clientService), null);
 
         logger.info("Меню услуг сформировано");
         return new Menu("Управление услугами", new MenuItem[]{addService, importServicesData,

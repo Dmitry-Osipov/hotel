@@ -27,7 +27,7 @@ public class GetRoomPriceAction implements IAction {
     @Override
     public void execute() {
         try {
-            Room room = (Room) InputHandler.getRoomByInput();
+            Room room = (Room) InputHandler.getRoomByInput(roomService);
             System.out.println("\nСтоимость комнаты - " + roomService.getFavorPrice(room));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());

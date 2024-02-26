@@ -28,7 +28,7 @@ public class GetServicePriceAction implements IAction {
     @Override
     public void execute() {
         try {
-            Service service = (Service) InputHandler.getServiceByInput();
+            Service service = (Service) InputHandler.getServiceByInput(serviceService);
             System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());

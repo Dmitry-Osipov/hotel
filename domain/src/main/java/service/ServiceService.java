@@ -1,15 +1,20 @@
 package service;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
+import repository.ProvidedServicesRepository;
+import repository.ServiceRepository;
 import utils.comparators.ServiceTimeComparator;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
@@ -28,13 +33,20 @@ import java.util.stream.Stream;
 /**
  * Класс отвечает за обработку данных по услугам.
  */
+@Component
 @Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class ServiceService extends AbstractFavorService {
     private static final Logger serviceLogger = LoggerFactory.getLogger(ServiceService.class);
     private static final Logger providedServiceLogger = LoggerFactory.getLogger("service.ProvidedServiceService");
-    private final ServiceRepository serviceRepository;
-    private final ProvidedServicesRepository providedServicesRepository;
+    @Autowired
+    private ServiceRepository serviceRepository;
+    @Autowired
+    private ProvidedServicesRepository providedServicesRepository;
 
+    @Deprecated(forRemoval = true)
     public ServiceService(ServiceRepository serviceRepository, ProvidedServicesRepository providedServicesRepository) {
         this.serviceRepository = serviceRepository;
         this.providedServicesRepository = providedServicesRepository;

@@ -2,11 +2,11 @@ import essence.person.Client;
 import essence.room.Room;
 import essence.service.Service;
 import essence.service.ServiceNames;
-import repository.client.ClientRepository;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
-import repository.service.ProvidedServicesRepository;
-import repository.service.ServiceRepository;
+import repository.ClientRepository;
+import repository.ProvidedServicesRepository;
+import repository.RoomRepository;
+import repository.RoomReservationRepository;
+import repository.ServiceRepository;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -14,13 +14,12 @@ import utils.exceptions.EntityContainedException;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class TestHotel {
     public static void main(String[] args) {
         try {
-            ClientRepository clients = ClientRepository.getInstance();
+            ClientRepository clients = new ClientRepository();
             ClientService cs = new ClientService(clients);
             Client client1 = new Client(1, "Osipov Dmitry Romanovich", "8-902-902-98-11");
             Client client2 = new Client(2, "Musofranova Nadezhda Sergeevna", "8-961-120-09-91");
@@ -33,8 +32,8 @@ public class TestHotel {
             System.out.println("Количество клиентов: " + cs.countClients());
             System.out.println("Все клиенты: " + cs.getClients());
 
-            RoomReservationRepository reservations = RoomReservationRepository.getInstance();
-            RoomRepository rooms = RoomRepository.getInstance();
+            RoomReservationRepository reservations = new RoomReservationRepository();
+            RoomRepository rooms = new RoomRepository();
             RoomService rs = new RoomService(rooms, reservations);
             Room room1 = new Room(1, 110, 2, 1000);
             String result = room1.getPrice() == room1.getMIN_PRICE() ? "Установлена цена по умолчанию"
@@ -60,8 +59,6 @@ public class TestHotel {
                 System.out.println("Удалось заселить");
             } catch (InvalidDataException e) {
                 System.out.println("Не удалось заселить");
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             Thread.sleep(5000);
             try {
@@ -69,8 +66,6 @@ public class TestHotel {
                 System.out.println("Удалось заселить в пустую комнату");
             } catch (InvalidDataException e) {
                 System.out.println("Не удалось заселить в пустую комнату");
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             try {
                 rs.evict(room1, client1);
@@ -79,8 +74,6 @@ public class TestHotel {
                 System.out.println("Удалось выселить без клиентов");
             } catch (InvalidDataException e) {
                 System.out.println("Не удалось выселить без клиентов");
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             rs.addStarsToRoom(room1, 4);
             System.out.println("Удалось поставить оценку");
@@ -93,18 +86,14 @@ public class TestHotel {
             System.out.println("Комнаты по звёздам: " + rs.roomsByStars());
             System.out.println(rs.roomsByCapacity());
             System.out.println(rs.roomsByPrice());
-            try {
-                rs.checkIn(room1, client1);
-                System.out.println("Свободные комнаты по звёздам: " + rs.availableRoomsByStars());
-                System.out.println(rs.availableRoomsByCapacity());
-                System.out.println(rs.availableRoomsByPrice());
-                System.out.println("Количество свободных комнат: " + rs.countAvailableRooms());
-                rs.evict(room1, client1);
-                Thread.sleep(2000);
-                rs.checkIn(room2, client1, client2);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            rs.checkIn(room1, client1);
+            System.out.println("Свободные комнаты по звёздам: " + rs.availableRoomsByStars());
+            System.out.println(rs.availableRoomsByCapacity());
+            System.out.println(rs.availableRoomsByPrice());
+            System.out.println("Количество свободных комнат: " + rs.countAvailableRooms());
+            rs.evict(room1, client1);
+            Thread.sleep(2000);
+            rs.checkIn(room2, client1, client2);
 
             System.out.println("История комнаты 1: ");
             System.out.println(rs.getRoomLastClients(room1, 2));
@@ -122,8 +111,8 @@ public class TestHotel {
                     LocalDateTime.of(2024, 1, 8, 21, 0)));
             System.out.println("Цена комнаты: " + rs.getFavorPrice(room1));
 
-            ProvidedServicesRepository providedServicesRepository = ProvidedServicesRepository.getInstance();
-            ServiceRepository serviceRepository = ServiceRepository.getInstance();
+            ProvidedServicesRepository providedServicesRepository = new ProvidedServicesRepository();
+            ServiceRepository serviceRepository = new ServiceRepository();
             ServiceService ss = new ServiceService(serviceRepository, providedServicesRepository);
             Service service1 = new Service(1, ServiceNames.CLEANING, 4000);
             Service service2 = new Service(2, ServiceNames.BREAKFAST, 2000);

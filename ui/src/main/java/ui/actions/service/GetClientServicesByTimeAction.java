@@ -1,6 +1,7 @@
 package ui.actions.service;
 
 import essence.person.AbstractClient;
+import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -13,14 +14,16 @@ import utils.printers.ServicesPrinter;
  */
 public class GetClientServicesByTimeAction implements IAction {
     private final ServiceService serviceService;
+    private final ClientService clientService;
 
     /**
      * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по убыванию времени
      * оказания.
      * @param serviceService Класс обработки данных по услугам.
      */
-    public GetClientServicesByTimeAction(ServiceService serviceService) {
+    public GetClientServicesByTimeAction(ServiceService serviceService, ClientService clientService) {
         this.serviceService = serviceService;
+        this.clientService = clientService;
     }
 
     /**
@@ -32,7 +35,7 @@ public class GetClientServicesByTimeAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractClient client = InputHandler.getClientByInput();
+            AbstractClient client = InputHandler.getClientByInput(clientService);
             System.out.println("Список услуг, оказанных клиенту, по убыванию времени оказания: ");
             ServicesPrinter.printServices(serviceService.getClientServicesByTime(client));
         } catch (NoEntityException e) {

@@ -36,7 +36,7 @@ public class GetRoomLastClientsAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractRoom room = InputHandler.getRoomByInput();
+            AbstractRoom room = InputHandler.getRoomByInput(roomService);
             int count = getNumClientsFromPropertyFile();
             List<AbstractClient> clients = roomService.getRoomLastClients(room, count);
             System.out.println("\nПоследние клиенты комнаты: ");
