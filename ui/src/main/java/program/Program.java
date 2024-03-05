@@ -2,7 +2,7 @@ package program;
 
 import annotations.factory.ApplicationContext;
 import ui.MenuController;
-import utils.AllowedSetStatusRoomConfigurator;
+import utils.PropertyFileConfigurator;
 import utils.exceptions.ErrorMessages;
 
 import java.io.IOException;
@@ -14,8 +14,8 @@ public class Program {
     public static void main(String[] args) {
         ApplicationContext context = null;
         try {
-            context = new ApplicationContext(List.of("ui", "service", "repository"),
-                    new AllowedSetStatusRoomConfigurator());
+            context = new ApplicationContext(List.of("ui", "service", "repository"));
+            context.run(new PropertyFileConfigurator());
         } catch (IOException | InstantiationException | URISyntaxException | ClassNotFoundException |
                  InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             System.out.println(ErrorMessages.PROGRAM_START_ERROR.getMessage());

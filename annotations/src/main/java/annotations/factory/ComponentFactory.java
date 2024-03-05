@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -92,24 +91,19 @@ public class ComponentFactory {
 
     /**
      * Метод устанавливает зависимости компонентов.
-     * @throws NoSuchMethodException Выбрасывается, когда определенный метод не может быть найден.
-     * @throws InvocationTargetException Проверяемое исключение, которое оборачивает исключение, брошенное вызванным
-     * методом или конструктором.
      * @throws IllegalAccessException Исключение выбрасывается, когда приложение пытается рефлексивно создать экземпляр
      * (кроме массива), установить или получить поле или вызвать метод, но выполняющийся в данный момент метод не имеет
      * доступа к определению указанного класса, поля, метода или конструктора.
      */
-    public void dependencySetting() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void dependencySetting() throws IllegalAccessException {
         Collection<Object> objects = singletons.values();
         for (Object component : objects) {
             for (Field field : component.getClass().getDeclaredFields()) {
                 if (field.isAnnotationPresent(Autowired.class)) {
                     for (Object dependency : objects) {
                         if (dependency.getClass().equals(field.getType())) {
-                            String setterName = "set" + field.getName().substring(0, 1).toUpperCase() +
-                                    field.getName().substring(1);
-                            Method setter = component.getClass().getMethod(setterName, dependency.getClass());
-                            setter.invoke(component, dependency);
+                            field.setAccessible(true);
+                            field.set(component, dependency);
                         }
                     }
                 }

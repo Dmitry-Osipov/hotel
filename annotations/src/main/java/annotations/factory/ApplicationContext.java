@@ -10,10 +10,18 @@ import java.util.List;
  */
 public class ApplicationContext {
     private final ComponentFactory factory = new ComponentFactory();
+    private final List<String> packages;
 
     /**
-     * Конструктор принимает пакет(-ы), инициализирует в них компоненты, внедряет зависимости и настраивает компоненты.
+     * Конструктор принимает пакет(-ы) для сканирования.
      * @param packages Пакет(-ы). Важно: вложенные пакеты не сканируются.
+     */
+    public ApplicationContext(List<String> packages) {
+        this.packages = packages;
+    }
+
+    /**
+     * Метод инициализирует в принятых конструктором пакетах компоненты, внедряет зависимости и настраивает компоненты.
      * @param configs Конфигураторы.
      * @throws IllegalArgumentException Ошибка выбрасывается, когда не было передано пакетов для сканирования.
      * @throws IOException Низкоуровневая ошибка ввода/вывода.
@@ -32,9 +40,8 @@ public class ApplicationContext {
      * <p>- объект класса представляет собой абстрактный класс, интерфейс, класс массива, примитивный тип или void
      * <p>- класс не имеет нулевого конструктора
      */
-    public ApplicationContext(List<String> packages, Config ...configs) throws IOException, URISyntaxException,
-            ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException,
-            InstantiationException {
+    public void run(Config ...configs) throws IOException, URISyntaxException, ClassNotFoundException,
+            InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         if (packages.isEmpty()) {
             throw new IllegalArgumentException("Не было передано пакетов для сканирования");
         }
