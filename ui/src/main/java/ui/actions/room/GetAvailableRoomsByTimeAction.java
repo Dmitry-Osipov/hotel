@@ -1,5 +1,10 @@
 package ui.actions.room;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -14,8 +19,13 @@ import java.util.Arrays;
 /**
  * Класс предоставляет логику выполнения действия по выводу списка свободных комнат с конкретного времени.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class GetAvailableRoomsByTimeAction implements IAction {
-    private final RoomService roomService;
+    @Autowired
+    private RoomService roomService;
 
     /**
      * Класс предоставляет логику выполнения действия по выводу списка свободных комнат с конкретного времени.

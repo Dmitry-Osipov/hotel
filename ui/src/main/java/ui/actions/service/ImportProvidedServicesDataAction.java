@@ -1,7 +1,12 @@
 package ui.actions.service;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.provided.ProvidedService;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -15,8 +20,13 @@ import java.util.List;
 /**
  * Класс представляет собой действие по импорту данных о проведенных услугах.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class ImportProvidedServicesDataAction implements IAction {
-    private final ServiceService serviceService;
+    @Autowired
+    private ServiceService serviceService;
 
     /**
      * Класс представляет собой действие по импорту данных о проведенных услугах.

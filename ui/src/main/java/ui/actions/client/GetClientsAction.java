@@ -1,6 +1,11 @@
 package ui.actions.client;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.person.AbstractClient;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
@@ -10,8 +15,13 @@ import java.util.List;
 /**
  * Класс предоставляет логику выполнения действия по получению списка всех клиентов.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class GetClientsAction implements IAction {
-    private final ClientService clientService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Класс предоставляет логику выполнения действия по получению списка всех клиентов.

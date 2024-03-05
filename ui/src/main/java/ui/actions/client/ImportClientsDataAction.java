@@ -1,7 +1,12 @@
 package ui.actions.client;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.person.AbstractClient;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -16,8 +21,13 @@ import java.util.List;
 /**
  * Класс представляет собой действие по импорту данных о клиентах.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class ImportClientsDataAction implements IAction {
-    private final ClientService clientService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Класс представляет собой действие по импорту данных о клиентах.

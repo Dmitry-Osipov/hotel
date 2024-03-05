@@ -14,13 +14,14 @@ public class Program {
     public static void main(String[] args) {
         ApplicationContext context = null;
         try {
-            context = new ApplicationContext(List.of("ui", "service", "repository"));
+            context = new ApplicationContext(List.of("ui", "ui.actions.room", "ui.actions.client", "ui.actions.service",
+                    "repository", "service"));
             context.run(new PropertyFileConfigurator());
         } catch (IOException | InstantiationException | URISyntaxException | ClassNotFoundException |
                  InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             System.out.println(ErrorMessages.PROGRAM_START_ERROR.getMessage());
         }
-        MenuController temp = (MenuController) context.getComponent("menuController");
-        temp.run();
+        MenuController controller = (MenuController) context.getComponent("menuController");
+        controller.run();
     }
 }

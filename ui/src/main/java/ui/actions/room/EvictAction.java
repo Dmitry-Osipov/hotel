@@ -1,7 +1,12 @@
 package ui.actions.room;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.ClientService;
 import service.RoomService;
 import ui.actions.IAction;
@@ -16,9 +21,15 @@ import java.util.List;
 /**
  * Класс предоставляет логику выполнения действия по выселению клиентов из комнаты.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class EvictAction implements IAction {
-    private final RoomService roomService;
-    private final ClientService clientService;
+    @Autowired
+    private RoomService roomService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Класс предоставляет логику выполнения действия по выселению клиентов из комнаты.

@@ -3,6 +3,7 @@ package annotations.factory;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import annotations.annotation.ConfigProperty;
+import annotations.annotation.InjectByInterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,6 +107,14 @@ public class ComponentFactory {
                             field.set(component, dependency);
                         }
                     }
+                } else if (field.isAnnotationPresent(InjectByInterface.class)) {
+                    for (Object dependency : objects) {
+                        Class<?> interfaceType = field.getAnnotation(InjectByInterface.class).clazz();
+                        if (interfaceType.isAssignableFrom(dependency.getClass())) {
+                            field.setAccessible(true);
+                            field.set(component, dependency);
+                        }
+                    }
                 }
             }
         }
@@ -134,7 +143,8 @@ public class ComponentFactory {
      * Метод проводит двухфакторную инициализацию для компонентов.
      */
     public void secondStepComponentInitialization() {
-        for (Object component : singletons.values()) {
+        Collection<Object> values = singletons.values().stream().toList().reversed();
+        for (Object component : values) {
             if (component instanceof InitializeComponent obj) {
                 obj.init();
             }
