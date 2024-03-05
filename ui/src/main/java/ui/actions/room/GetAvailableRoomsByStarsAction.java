@@ -22,14 +22,6 @@ public class GetAvailableRoomsByStarsAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу списка свободных комнат в порядке убывания звёзд.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetAvailableRoomsByStarsAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод выполняет действие по выводу списка свободных комнат в порядке убывания звёзд. При выполнении
      * действия выводится список свободных комнат, отсортированный по убыванию звёзд. Если свободных комнат
      * нет, пользователю выводится соответствующее сообщение.

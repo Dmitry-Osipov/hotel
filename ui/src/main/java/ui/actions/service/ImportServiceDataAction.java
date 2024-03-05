@@ -30,14 +30,6 @@ public class ImportServiceDataAction implements IAction {
     private ServiceService serviceService;
 
     /**
-     * Класс представляет собой действие по импорту данных по услугам.
-     * @param serviceService Сервис для работы с данными по услугам.
-     */
-    public ImportServiceDataAction(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
-
-    /**
      * Метод execute выполняет действие по импорту данных по услугам.
      * Пользователю предлагается ввести название файла без расширения.
      * Данные считываются из CSV файла, затем обновляются или добавляются в сервис услуг.

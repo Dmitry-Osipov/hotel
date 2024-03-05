@@ -30,14 +30,6 @@ public class ImportReservationDataAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс представляет собой действие по импорту данных о резервациях.
-     * @param roomService Сервис для работы с данными о комнатах и резервациях.
-     */
-    public ImportReservationDataAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод execute выполняет действие по импорту данных о резервациях. Пользователю предлагается ввести название файла
      * без расширения. Происходит импорт данных из CSV файла. Для каждой резервации производится попытка обновления
      * данных. В случае неудачи производится попытка добавления. Выводится результат операции на консоль.

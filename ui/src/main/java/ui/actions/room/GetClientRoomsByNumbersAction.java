@@ -27,15 +27,6 @@ public class GetClientRoomsByNumbersAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу списка комнат клиента по возрастанию номера.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetClientRoomsByNumbersAction(RoomService roomService, ClientService clientService) {
-        this.roomService = roomService;
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод выполняет действие по выводу списка комнат клиента по возрастанию номера комнаты. При выполнении действия
      * выводится список комнат клиента, отсортированный по возрастанию номера комнат. Если в отеле нет клиентов,
      * выводится соответствующее сообщение.

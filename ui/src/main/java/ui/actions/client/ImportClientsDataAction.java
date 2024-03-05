@@ -30,14 +30,6 @@ public class ImportClientsDataAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс представляет собой действие по импорту данных о клиентах.
-     * @param clientService Сервис для работы с данными о клиентах.
-     */
-    public ImportClientsDataAction(ClientService clientService) {
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод execute выполняет действие по импорту данных о клиентах. Пользователю предлагается ввести название файла
      * без расширения. Данные о клиентах импортируются из указанного файла, после чего происходит обновление или
      * добавление каждого клиента. Выводится результат каждой операции на консоль.

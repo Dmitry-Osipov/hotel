@@ -22,14 +22,6 @@ public class GetRoomsByPriceAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу списка всех комнат по возрастанию цены.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetRoomsByPriceAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод выполняет действие по выводу списка всех комнат по возрастанию цены. При выполнении действия
      * выводится список всех комнат отеля, упорядоченный по возрастанию цены. Если в отеле отсутствуют комнаты,
      * выводится соответствующее сообщение.

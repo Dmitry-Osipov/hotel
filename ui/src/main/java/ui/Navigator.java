@@ -27,16 +27,6 @@ public class Navigator implements InitializeComponent {
     private Builder builder;
 
     /**
-     * Класс отвечает за навигацию по меню.
-     * @param currentMenu Меню.
-     */
-    @Deprecated(forRemoval = true)
-    public Navigator(Menu currentMenu) {
-        this.currentMenu = currentMenu;
-        this.rootMenu = currentMenu;
-    }
-
-    /**
      * Метод проводит инициализацию главного и текущего меню.
      */
     @Override

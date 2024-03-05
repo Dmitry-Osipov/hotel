@@ -32,15 +32,6 @@ public class CheckInAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс предоставляет логику выполнения действия по заселению клиентов в комнату.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public CheckInAction(RoomService roomService, ClientService clientService) {
-        this.roomService = roomService;
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод выполняет действие по заселению клиентов в комнату. При выполнении действия пользователю предлагается
      * выбрать комнату, затем выбрать клиентов, которых необходимо заселить в данную комнату. После валидации данных
      * происходит заселение выбранных клиентов в комнату. Пользователю выводится соответствующий результат операции.

@@ -27,15 +27,6 @@ public class ProvideServiceAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс предоставляет логику выполнения действия по предоставлению услуги клиенту.
-     * @param serviceService Класс обработки данных по услугам.
-     */
-    public ProvideServiceAction(ServiceService serviceService, ClientService clientService) {
-        this.serviceService = serviceService;
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод выполняет действие по предоставлению услуги клиенту. При выполнении действия проверяется наличие клиента и
      * услуги, затем выполняется предоставление услуги клиенту с выводом результата.
      */

@@ -32,14 +32,6 @@ public class AddClientAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс предоставляет логику выполнения действия по добавлению нового клиента.
-     * @param clientService Класс обработки данных по клиентам.
-     */
-    public AddClientAction(ClientService clientService) {
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод выполняет действие по добавлению нового клиента. Пользователю предлагается ввести ФИО и номер телефона
      * клиента. В случае успешного добавления клиента в репозиторий выводится соответствующее сообщение, иначе выводится
      * сообщение об ошибке.

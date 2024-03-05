@@ -31,11 +31,6 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    @Deprecated(forRemoval = true)
-    public ClientService(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
-    }
-
     /**
      * Метод добавляет нового клиента в список всех клиентов отеля.
      * @param client Новый клиент.

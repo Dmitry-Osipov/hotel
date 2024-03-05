@@ -32,14 +32,6 @@ public class GetRoomLastClientsAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу последних клиентов комнаты.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetRoomLastClientsAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод выполняет действие по выводу последних клиентов комнаты. При выполнении действия выводится указанное
      * количество последних клиентов комнаты. Если комнат в отеле нет, выводится соответствующее сообщение.
      */

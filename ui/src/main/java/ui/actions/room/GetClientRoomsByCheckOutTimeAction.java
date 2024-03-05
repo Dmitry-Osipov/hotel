@@ -27,15 +27,6 @@ public class GetClientRoomsByCheckOutTimeAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу списка комнат клиента по убыванию времени выезда.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetClientRoomsByCheckOutTimeAction(RoomService roomService, ClientService clientService) {
-        this.roomService = roomService;
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод выполняет действие по выводу списка комнат клиента по убыванию времени выезда. При выполнении действия
      * выводится список комнат клиента, отсортированный по убыванию времени выезда. Если клиентов в отеле нет, выводится
      * соответствующее сообщение.

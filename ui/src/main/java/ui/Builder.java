@@ -1,6 +1,5 @@
 package ui;
 
-import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import annotations.annotation.InjectByInterface;
 import annotations.factory.InitializeComponent;
@@ -10,9 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.ClientService;
-import service.RoomService;
-import service.ServiceService;
 import ui.actions.IAction;
 import ui.actions.client.AddClientAction;
 import ui.actions.client.CountClientsAction;
@@ -62,12 +58,6 @@ import ui.actions.service.ProvideServiceAction;
 public class Builder implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     private Menu rootMenu;
-    @Autowired
-    private RoomService roomService;
-    @Autowired
-    private ServiceService serviceService;
-    @Autowired
-    private ClientService clientService;
     @InjectByInterface(clazz = AddRoomAction.class)
     private IAction addRoomAction;
     @InjectByInterface(clazz = AddStarsAction.class)
@@ -142,31 +132,10 @@ public class Builder implements InitializeComponent {
     private IAction importClientsDataAction;
 
     /**
-     * Класс отвечает за формирование меню.
-     * @param roomService Класс обработки данных по комнатам.
-     * @param serviceService Класс обработки данных по услугам.
-     * @param clientService Класс обработки данных по клиентам.
-     */
-    @Deprecated(forRemoval = true)
-    public Builder(RoomService roomService, ServiceService serviceService, ClientService clientService) {
-        this.roomService = roomService;
-        this.serviceService = serviceService;
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод проводит настройку главного меню.
      */
     @Override
     public void init() {
-        rootMenu = buildMainMenu();
-    }
-
-    /**
-     * Метод формирует меню.
-     */
-    @Deprecated(forRemoval = true)
-    public void buildMenu() {
         rootMenu = buildMainMenu();
     }
 

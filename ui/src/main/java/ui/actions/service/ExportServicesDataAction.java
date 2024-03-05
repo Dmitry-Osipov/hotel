@@ -27,14 +27,6 @@ public class ExportServicesDataAction implements IAction {
     private ServiceService serviceService;
 
     /**
-     * Класс представляет собой действие по экспорту данных об услугах.
-     * @param serviceService Сервис для работы с данными об услугах.
-     */
-    public ExportServicesDataAction(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
-
-    /**
      * Метод execute выполняет действие по экспорту данных об услугах. Пользователю предлагается ввести название файла
      * без расширения. Перед экспортом проверяется, не существует ли уже файл с таким именем. Пользователю
      * предоставляется выбор перезаписи файла. В случае согласия происходит экспорт данных в CSV файл.

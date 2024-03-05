@@ -46,12 +46,6 @@ public class ServiceService extends AbstractFavorService {
     @Autowired
     private ProvidedServicesRepository providedServicesRepository;
 
-    @Deprecated(forRemoval = true)
-    public ServiceService(ServiceRepository serviceRepository, ProvidedServicesRepository providedServicesRepository) {
-        this.serviceRepository = serviceRepository;
-        this.providedServicesRepository = providedServicesRepository;
-    }
-
     /**
      * Метод добавляет новую услугу в список всех услуг отеля.
      * @param service Новая услуга.

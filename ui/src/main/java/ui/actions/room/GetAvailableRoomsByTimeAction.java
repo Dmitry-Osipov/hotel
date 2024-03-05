@@ -28,14 +28,6 @@ public class GetAvailableRoomsByTimeAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу списка свободных комнат с конкретного времени.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetAvailableRoomsByTimeAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод выполняет действие по выводу списка свободных комнат с конкретного времени. При выполнении
      * действия выводится список свободных комнат. Если свободных комнат нет, пользователю выводится соответствующее
      * сообщение.

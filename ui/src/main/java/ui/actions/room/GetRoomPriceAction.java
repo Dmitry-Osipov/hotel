@@ -23,14 +23,6 @@ public class GetRoomPriceAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу стоимости комнаты.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetRoomPriceAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод выполняет действие по выводу стоимости комнаты. При выполнении действия выводится стоимость указанной
      * комнаты. Если в отеле отсутствуют комнаты, выводится соответствующее сообщение.
      */

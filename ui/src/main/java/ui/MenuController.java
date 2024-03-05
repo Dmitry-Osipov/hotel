@@ -37,19 +37,6 @@ public class MenuController {
     private ClientService clientService;
 
     /**
-     * Класс отвечает за работу UI.
-     */
-    @Deprecated(forRemoval = true)
-    public MenuController(RoomService roomService, ServiceService serviceService, ClientService clientService) {
-        this.roomService = roomService;
-        this.serviceService = serviceService;
-        this.clientService = clientService;
-        builder = new Builder(roomService, serviceService, clientService);
-        builder.buildMenu();
-        navigator = new Navigator(builder.getRootMenu());
-    }
-
-    /**
      * Метод запускает приложение отеля.
      */
     public void run() {

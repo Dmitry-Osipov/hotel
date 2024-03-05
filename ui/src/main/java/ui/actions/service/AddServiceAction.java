@@ -31,14 +31,6 @@ public class AddServiceAction implements IAction {
     private ServiceService serviceService;
 
     /**
-     * Класс предоставляет логику выполнения действия по добавлению новой услуги в отель.
-     * @param serviceService Класс обработки данных по услугам.
-     */
-    public AddServiceAction(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
-
-    /**
      * Метод выполняет действие по добавлению новой услуги в отель. При выполнении действия пользователю предлагается
      * выбрать название услуги из списка и ввести стоимость. Затем происходит добавление услуги, и выводится результат
      * операции.

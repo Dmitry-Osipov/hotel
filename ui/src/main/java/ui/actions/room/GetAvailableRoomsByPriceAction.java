@@ -22,14 +22,6 @@ public class GetAvailableRoomsByPriceAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выводу списка свободных комнат в порядке возрастания цены.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetAvailableRoomsByPriceAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод выполняет действие по выводу списка свободных комнат в порядке возрастания цены. При выполнении
      * действия выводится список свободных комнат, отсортированный по возрастанию цены. Если свободных комнат
      * нет, пользователю выводится соответствующее сообщение.

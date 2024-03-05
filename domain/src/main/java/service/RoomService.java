@@ -56,12 +56,6 @@ public class RoomService extends AbstractFavorService {
     @ConfigProperty(propertyName = "enable_room_status_change", type = Boolean.class)
     private boolean allowSetStatusRoom;
 
-    @Deprecated(forRemoval = true)
-    public RoomService(RoomRepository roomRepository, RoomReservationRepository reservationRepository) {
-        this.roomRepository = roomRepository;
-        this.reservationRepository = reservationRepository;
-    }
-
     /**
      * Метод добавляет новую комнату в список всех комнат отеля.
      * @param room Новая комната.

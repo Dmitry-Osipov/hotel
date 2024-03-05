@@ -32,15 +32,6 @@ public class EvictAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс предоставляет логику выполнения действия по выселению клиентов из комнаты.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public EvictAction(RoomService roomService, ClientService clientService) {
-        this.roomService = roomService;
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод выполняет действие по выселению клиентов из комнаты. При выполнении действия пользователю предлагается
      * выбрать комнату, затем выбрать клиентов, которых необходимо выселить из данной комнаты. После валидации данных
      * происходит выселение выбранных клиентов из комнаты. Пользователю выводится соответствующий результат операции.

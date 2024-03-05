@@ -28,16 +28,6 @@ public class GetClientServicesByTimeAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по убыванию времени
-     * оказания.
-     * @param serviceService Класс обработки данных по услугам.
-     */
-    public GetClientServicesByTimeAction(ServiceService serviceService, ClientService clientService) {
-        this.serviceService = serviceService;
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод выполняет действие по получению списка услуг, оказанных клиенту, по убыванию времени оказания. При
      * выполнении действия пользователю предлагается выбрать клиента, для которого требуется вывести услуги, и затем
      * выводится список услуг по убыванию времени оказания, если клиенты есть в отеле, иначе выводится сообщение об

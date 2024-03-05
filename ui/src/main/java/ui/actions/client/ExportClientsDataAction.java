@@ -27,14 +27,6 @@ public class ExportClientsDataAction implements IAction {
     private ClientService clientService;
 
     /**
-     * Класс представляет собой действие по экспорту данных о клиентах.
-     * @param clientService Сервис для работы с данными о клиентах.
-     */
-    public ExportClientsDataAction(ClientService clientService) {
-        this.clientService = clientService;
-    }
-
-    /**
      * Метод execute выполняет действие по экспорту данных о клиентах. Пользователю предлагается ввести название файла
      * без расширения. Данные о клиентах экспортируются в указанный файл в формате CSV.
      * Перед экспортом пользователю предоставляется выбор: перезаписать существующий файл или создать новый.

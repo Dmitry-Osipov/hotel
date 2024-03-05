@@ -27,14 +27,6 @@ public class ExportReservationsDataAction implements IAction {
     private RoomService roomService;
 
     /**
-     * Класс представляет собой действие по экспорту данных о резервациях.
-     * @param roomService Сервис для работы с данными о комнатах и резервациях.
-     */
-    public ExportReservationsDataAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    /**
      * Метод execute выполняет действие по экспорту данных о резервациях. Пользователю предлагается ввести название
      * файла без расширения. Пользователю также предоставляется выбор: перезаписать существующий файл или нет.
      * В зависимости от выбора пользователя происходит экспорт данных или вывод сообщения об отмене операции.
