@@ -1,5 +1,10 @@
 package ui.actions.room;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.exceptions.NoEntityException;
@@ -8,16 +13,13 @@ import utils.printers.RoomsPrinter;
 /**
  * Класс предоставляет логику выполнения действия по выводу списка свободных комнат в порядке возрастания цены.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class GetAvailableRoomsByPriceAction implements IAction {
-    private final RoomService roomService;
-
-    /**
-     * Класс предоставляет логику выполнения действия по выводу списка свободных комнат в порядке возрастания цены.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetAvailableRoomsByPriceAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
+    @Autowired
+    private RoomService roomService;
 
     /**
      * Метод выполняет действие по выводу списка свободных комнат в порядке возрастания цены. При выполнении

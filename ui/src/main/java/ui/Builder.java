@@ -1,18 +1,24 @@
 package ui;
 
+import annotations.annotation.Component;
+import annotations.annotation.InjectByInterface;
+import annotations.factory.InitializeComponent;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.ClientService;
-import service.RoomService;
-import service.ServiceService;
+import ui.actions.IAction;
 import ui.actions.client.AddClientAction;
+import ui.actions.client.CountClientsAction;
 import ui.actions.client.ExportClientsDataAction;
 import ui.actions.client.GetClientsAction;
 import ui.actions.client.ImportClientsDataAction;
 import ui.actions.room.AddRoomAction;
 import ui.actions.room.AddStarsAction;
 import ui.actions.room.CheckInAction;
+import ui.actions.room.CountAvailableRoomsAction;
 import ui.actions.room.EvictAction;
 import ui.actions.room.ExportReservationsDataAction;
 import ui.actions.room.ExportRoomsDataAction;
@@ -44,30 +50,92 @@ import ui.actions.service.ProvideServiceAction;
 /**
  * Класс отвечает за формирование меню.
  */
-public class Builder {
+@Component
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+public class Builder implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
-    @Getter
     private Menu rootMenu;
-    private final RoomService roomService;
-    private final ServiceService serviceService;
-    private final ClientService clientService;
+    @InjectByInterface(clazz = AddRoomAction.class)
+    private IAction addRoomAction;
+    @InjectByInterface(clazz = AddStarsAction.class)
+    private IAction addStarsAction;
+    @InjectByInterface(clazz = CheckInAction.class)
+    private IAction checkInAction;
+    @InjectByInterface(clazz = CountAvailableRoomsAction.class)
+    private IAction countAvailableRoomsAction;
+    @InjectByInterface(clazz = EvictAction.class)
+    private IAction evictAction;
+    @InjectByInterface(clazz = ExportReservationsDataAction.class)
+    private IAction exportReservationsDataAction;
+    @InjectByInterface(clazz = ExportRoomsDataAction.class)
+    private IAction exportRoomsDataAction;
+    @InjectByInterface(clazz = GetAvailableRoomsByCapacityAction.class)
+    private IAction getAvailableRoomsByCapacityAction;
+    @InjectByInterface(clazz = GetAvailableRoomsByPriceAction.class)
+    private IAction getAvailableRoomsByPriceAction;
+    @InjectByInterface(clazz = GetAvailableRoomsByStarsAction.class)
+    private IAction getAvailableRoomsByStarsAction;
+    @InjectByInterface(clazz = GetAvailableRoomsByTimeAction.class)
+    private IAction getAvailableRoomsByTimeAction;
+    @InjectByInterface(clazz = GetClientRoomsByCheckOutTimeAction.class)
+    private IAction getClientRoomsByCheckOutTimeAction;
+    @InjectByInterface(clazz = GetClientRoomsByNumbersAction.class)
+    private IAction getClientRoomsByNumbersAction;
+    @InjectByInterface(clazz = GetRoomInfoAction.class)
+    private IAction getRoomInfoAction;
+    @InjectByInterface(clazz = GetRoomLastClientsAction.class)
+    private IAction getRoomLastClientsAction;
+    @InjectByInterface(clazz = GetRoomPriceAction.class)
+    private IAction getRoomPriceAction;
+    @InjectByInterface(clazz = GetRoomsByCapacityAction.class)
+    private IAction getRoomsByCapacityAction;
+    @InjectByInterface(clazz = GetRoomsByPriceAction.class)
+    private IAction getRoomsByPriceAction;
+    @InjectByInterface(clazz = GetRoomsByStarsAction.class)
+    private IAction getRoomsByStarsAction;
+    @InjectByInterface(clazz = ImportReservationDataAction.class)
+    private IAction importReservationDataAction;
+    @InjectByInterface(clazz = ImportRoomsDataAction.class)
+    private IAction importRoomsDataAction;
+    @InjectByInterface(clazz = AddServiceAction.class)
+    private IAction addServiceAction;
+    @InjectByInterface(clazz = ExportProvidedServicesDataAction.class)
+    private IAction exportProvidedServicesDataAction;
+    @InjectByInterface(clazz = ExportServicesDataAction.class)
+    private IAction exportServicesDataAction;
+    @InjectByInterface(clazz = GetClientServicesByPriceAction.class)
+    private IAction getClientServicesByPriceAction;
+    @InjectByInterface(clazz = GetClientServicesByTimeAction.class)
+    private IAction getClientServicesByTimeAction;
+    @InjectByInterface(clazz = GetServicePriceAction.class)
+    private IAction getServicePriceAction;
+    @InjectByInterface(clazz = GetServicesAction.class)
+    private IAction getServicesAction;
+    @InjectByInterface(clazz = ImportProvidedServicesDataAction.class)
+    private IAction importProvidedServicesDataAction;
+    @InjectByInterface(clazz = ImportServiceDataAction.class)
+    private IAction importServiceDataAction;
+    @InjectByInterface(clazz = ProvideServiceAction.class)
+    private IAction provideServiceAction;
+    @InjectByInterface(clazz = AddClientAction.class)
+    private IAction addClientAction;
+    @InjectByInterface(clazz = CountClientsAction.class)
+    private IAction countClientsAction;
+    @InjectByInterface(clazz = ExportClientsDataAction.class)
+    private IAction exportClientsDataAction;
+    @InjectByInterface(clazz = GetClientsAction.class)
+    private IAction getClientsAction;
+    @InjectByInterface(clazz = ImportClientsDataAction.class)
+    private IAction importClientsDataAction;
 
     /**
-     * Класс отвечает за формирование меню.
-     * @param roomService Класс обработки данных по комнатам.
-     * @param serviceService Класс обработки данных по услугам.
-     * @param clientService Класс обработки данных по клиентам.
+     * Метод проводит настройку главного меню.
      */
-    public Builder(RoomService roomService, ServiceService serviceService, ClientService clientService) {
-        this.roomService = roomService;
-        this.serviceService = serviceService;
-        this.clientService = clientService;
-    }
-
-    /**
-     * Метод формирует меню.
-     */
-    public void buildMenu() {
+    @Override
+    public void init() {
         rootMenu = buildMainMenu();
     }
 
@@ -90,72 +158,69 @@ public class Builder {
      */
     private Menu buildRoomsMenu() {
         logger.info("Формирование меню комнат");
-        MenuItem addRoom = new MenuItem("Добавить комнату", new AddRoomAction(roomService), null);
+        MenuItem addRoom = new MenuItem("Добавить комнату", addRoomAction, null);
 
         MenuItem exportRoomsData = new MenuItem("Экспортировать данные по комнатам в CSV",
-                new ExportRoomsDataAction(roomService), null);
+                exportRoomsDataAction, null);
 
         MenuItem exportReservationsData = new MenuItem("Экспортировать данные по резервациям в CSV",
-                new ExportReservationsDataAction(roomService), null);
+                exportReservationsDataAction, null);
 
         MenuItem importRoomsData = new MenuItem("Импортировать данные по комнатам из CSV",
-                new ImportRoomsDataAction(roomService), null);
+                importRoomsDataAction, null);
 
         MenuItem importReservationsData = new MenuItem("Импортировать данные по резервациям из CSV",
-                new ImportReservationDataAction(roomService), null);
+                importReservationDataAction, null);
 
-        MenuItem getPrice = new MenuItem("Вывести стоимость комнаты", new GetRoomPriceAction(roomService),
-                null);
+        MenuItem getPrice = new MenuItem("Вывести стоимость комнаты", getRoomPriceAction, null);
 
-        MenuItem addStars = new MenuItem("Добавить звёзд комнате", new AddStarsAction(roomService), null);
+        MenuItem addStars = new MenuItem("Добавить звёзд комнате", addStarsAction, null);
 
-        MenuItem checkIn = new MenuItem("Заселить клиентов в комнату", new CheckInAction(roomService),
-                null);
+        MenuItem checkIn = new MenuItem("Заселить клиентов в комнату", checkInAction, null);
 
-        MenuItem evict = new MenuItem("Выселить клиентов из комнаты", new EvictAction(roomService), null);
+        MenuItem evict = new MenuItem("Выселить клиентов из комнаты", evictAction, null);
 
         MenuItem roomsByStars = new MenuItem("Вывести список всех комнат, отсортированных по убыванию звёзд",
-                new GetRoomsByStarsAction(roomService), null);
+                getRoomsByStarsAction, null);
 
         MenuItem roomsByPrice = new MenuItem("Вывести список всех комнат, отсортированных по возрастанию цены",
-                new GetRoomsByPriceAction(roomService), null);
+                getRoomsByPriceAction, null);
 
         MenuItem roomsByCapacity = new MenuItem(
                 "Вывести список всех комнат, отсортированных по возрастанию вместимости",
-                new GetRoomsByCapacityAction(roomService), null);
+                getRoomsByCapacityAction, null);
 
         MenuItem availableRoomsByStars = new MenuItem(
                 "Вывести список свободных комнат, отсортированных по убыванию звёзд",
-                new GetAvailableRoomsByStarsAction(roomService), null);
+                getAvailableRoomsByStarsAction, null);
 
         MenuItem availableRoomsByPrice = new MenuItem(
                 "Вывести список свободных комнат, отсортированных по возрастанию цены",
-                new GetAvailableRoomsByPriceAction(roomService), null);
+                getAvailableRoomsByPriceAction, null);
 
         MenuItem availableRoomsByCapacity = new MenuItem(
                 "Вывести список свободных комнат, отсортированных по возрастанию вместимости",
-                new GetAvailableRoomsByCapacityAction(roomService), null);
+                getAvailableRoomsByCapacityAction, null);
 
         MenuItem countAvailableRooms = new MenuItem("Вывести количество свободных комнат",
-                () -> System.out.println("\nКоличество свободных комнат - " + roomService.countAvailableRooms()),
-                null);
+                countAvailableRoomsAction, null);
 
         MenuItem getRoomLastClients = new MenuItem("Вывести список последних клиентов комнаты",
-                new GetRoomLastClientsAction(roomService), null);
+                getRoomLastClientsAction, null);
 
         MenuItem getRoomInfo = new MenuItem("Вывести полную информацию о комнате",
-                new GetRoomInfoAction(roomService), null);
+                getRoomInfoAction, null);
 
         MenuItem getClientRoomsByNumbers = new MenuItem(
                 "Вывести список всех комнат клиента, отсортированных по возрастанию номера комнаты",
-                new GetClientRoomsByNumbersAction(roomService), null);
+                getClientRoomsByNumbersAction, null);
 
         MenuItem getClientRoomsByCheckOutTime = new MenuItem(
                 "Вывести список всех комнат клиента, отсортированных по убыванию времени выезда",
-                new GetClientRoomsByCheckOutTimeAction(roomService), null);
+                getClientRoomsByCheckOutTimeAction, null);
 
         MenuItem getAvailableRoomsByTime = new MenuItem("Вывести список свободных комнат с конкретного времени",
-                new GetAvailableRoomsByTimeAction(roomService), null);
+                getAvailableRoomsByTimeAction, null);
 
         logger.info("Меню комнат сформировано");
         return new Menu("Управление комнатами", new MenuItem[]{addRoom, importRoomsData, importReservationsData,
@@ -171,36 +236,33 @@ public class Builder {
      */
     private Menu buildServicesMenu() {
         logger.info("Формирование меню услуг");
-        MenuItem addService = new MenuItem("Добавить услугу", new AddServiceAction(serviceService), null);
+        MenuItem addService = new MenuItem("Добавить услугу", addServiceAction, null);
 
         MenuItem exportServicesData = new MenuItem("Экспортировать данные по услугам в CSV",
-                new ExportServicesDataAction(serviceService), null);
+                exportServicesDataAction, null);
 
         MenuItem exportProvidedServicesData = new MenuItem("Экспортировать данные по проведённым услугам в CSV",
-                new ExportProvidedServicesDataAction(serviceService), null);
+                exportProvidedServicesDataAction, null);
 
         MenuItem importServicesData = new MenuItem("Импортировать данные по услугам из CSV",
-                new ImportServiceDataAction(serviceService), null);
+                importServiceDataAction, null);
 
         MenuItem importProvidedServicesData = new MenuItem("Импортировать данные по проведённым услугам из CSV",
-                new ImportProvidedServicesDataAction(serviceService), null);
+                importProvidedServicesDataAction, null);
 
-        MenuItem getPrice = new MenuItem("Вывести стоимость услуги", new GetServicePriceAction(serviceService),
-                null);
+        MenuItem getPrice = new MenuItem("Вывести стоимость услуги", getServicePriceAction, null);
 
-        MenuItem getServices = new MenuItem("Вывести список всех услуг", new GetServicesAction(serviceService),
-                null);
+        MenuItem getServices = new MenuItem("Вывести список всех услуг", getServicesAction, null);
 
-        MenuItem provideService = new MenuItem("Провести услугу клиенту", new ProvideServiceAction(serviceService),
-                null);
+        MenuItem provideService = new MenuItem("Провести услугу клиенту", provideServiceAction, null);
 
         MenuItem getClientServicesByPrice = new MenuItem(
                 "Вывести список услуг, оказанных клиенту и отсортированных по возрастанию цены",
-                new GetClientServicesByPriceAction(serviceService), null);
+                getClientServicesByPriceAction, null);
 
         MenuItem getClientServicesByTime = new MenuItem(
                 "Вывести список услуг, оказанных клиенту и отсортированных по убыванию времени оказания",
-                new GetClientServicesByTimeAction(serviceService), null);
+                getClientServicesByTimeAction, null);
 
         logger.info("Меню услуг сформировано");
         return new Menu("Управление услугами", new MenuItem[]{addService, importServicesData,
@@ -214,20 +276,17 @@ public class Builder {
      */
     private Menu buildClientsMenu() {
         logger.info("Формирование меню клиентов");
-        MenuItem addClient = new MenuItem("Добавить клиента", new AddClientAction(clientService), null);
+        MenuItem addClient = new MenuItem("Добавить клиента", addClientAction, null);
 
         MenuItem exportClientsData = new MenuItem("Экспортировать данные по клиентам в CSV",
-                new ExportClientsDataAction(clientService), null);
+                exportClientsDataAction, null);
 
         MenuItem importClientsData = new MenuItem("Импортировать данные по клиентам из CSV",
-                new ImportClientsDataAction(clientService), null);
+                importClientsDataAction, null);
 
-        MenuItem getClients = new MenuItem("Вывести список всех клиентов", new GetClientsAction(clientService),
-                null);
+        MenuItem getClients = new MenuItem("Вывести список всех клиентов", getClientsAction, null);
 
-        MenuItem countClients = new MenuItem("Вывести количество клиентов",
-                () -> System.out.println("\nКоличество клиентов - " + clientService.countClients()),
-                null);
+        MenuItem countClients = new MenuItem("Вывести количество клиентов", countClientsAction, null);
 
         logger.info("Меню клиентов сформировано");
         return new Menu("Управление клиентами", new MenuItem[]{addClient, importClientsData, exportClientsData,

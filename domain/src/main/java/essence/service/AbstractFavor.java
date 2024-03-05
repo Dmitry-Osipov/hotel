@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Setter
 public abstract class AbstractFavor {
     private int id;
     private int price;
     @JsonIgnore
-    @Setter
     private int MIN_PRICE = 1500;
 
     protected AbstractFavor() {

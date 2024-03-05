@@ -1,6 +1,12 @@
 package ui.actions.service;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.person.AbstractClient;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -10,16 +16,15 @@ import utils.printers.ServicesPrinter;
 /**
  * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по возрастанию цены.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class GetClientServicesByPriceAction implements IAction {
-    private final ServiceService serviceService;
-
-    /**
-     * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по возрастанию цены.
-     * @param serviceService Класс обработки данных по услугам.
-     */
-    public GetClientServicesByPriceAction(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Метод выполняет действие по получению списка услуг, оказанных клиенту, по возрастанию цены. При выполнении
@@ -29,7 +34,7 @@ public class GetClientServicesByPriceAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractClient client = InputHandler.getClientByInput();
+            AbstractClient client = InputHandler.getClientByInput(clientService);
             System.out.println("\nСписок услуг, оказанных клиенту, по возрастанию цены: ");
             ServicesPrinter.printServices(serviceService.getClientServicesByPrice(client));
         } catch (NoEntityException e) {

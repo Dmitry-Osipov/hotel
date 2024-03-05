@@ -1,5 +1,10 @@
 package ui.actions.service;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -13,16 +18,13 @@ import java.io.IOException;
 /**
  * Класс представляет собой действие по экспорту данных об услугах.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class ExportServicesDataAction implements IAction {
-    private final ServiceService serviceService;
-
-    /**
-     * Класс представляет собой действие по экспорту данных об услугах.
-     * @param serviceService Сервис для работы с данными об услугах.
-     */
-    public ExportServicesDataAction(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
+    @Autowired
+    private ServiceService serviceService;
 
     /**
      * Метод execute выполняет действие по экспорту данных об услугах. Пользователю предлагается ввести название файла

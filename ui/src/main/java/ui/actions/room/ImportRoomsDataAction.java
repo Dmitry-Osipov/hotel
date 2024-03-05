@@ -1,7 +1,12 @@
 package ui.actions.room;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.room.AbstractRoom;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -17,16 +22,13 @@ import java.util.List;
 /**
  * Класс представляет собой действие по импорту данных о комнатах.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class ImportRoomsDataAction implements IAction {
-    private final RoomService roomService;
-
-    /**
-     * Класс представляет собой действие по импорту данных о комнатах.
-     * @param roomService Сервис для работы с данными о комнатах.
-     */
-    public ImportRoomsDataAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
+    @Autowired
+    private RoomService roomService;
 
     /**
      * Метод execute выполняет действие по импорту данных о комнатах. Пользователю предлагается ввести название файла

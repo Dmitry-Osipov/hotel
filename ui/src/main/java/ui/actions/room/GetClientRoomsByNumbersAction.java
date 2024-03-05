@@ -1,6 +1,12 @@
 package ui.actions.room;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.person.AbstractClient;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import service.ClientService;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -10,16 +16,15 @@ import utils.printers.RoomsPrinter;
 /**
  * Класс предоставляет логику выполнения действия по выводу списка комнат клиента по возрастанию номера.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class GetClientRoomsByNumbersAction implements IAction {
-    private final RoomService roomService;
-
-    /**
-     * Класс предоставляет логику выполнения действия по выводу списка комнат клиента по возрастанию номера.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetClientRoomsByNumbersAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
+    @Autowired
+    private RoomService roomService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Метод выполняет действие по выводу списка комнат клиента по возрастанию номера комнаты. При выполнении действия
@@ -29,7 +34,7 @@ public class GetClientRoomsByNumbersAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractClient client = InputHandler.getClientByInput();
+            AbstractClient client = InputHandler.getClientByInput(clientService);
             System.out.println("\nСписок всех комнат клиента по возрастанию номера: ");
             RoomsPrinter.printRooms(roomService.getClientRoomsByNumbers(client));
         } catch (NoEntityException e) {

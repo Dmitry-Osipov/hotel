@@ -1,7 +1,12 @@
 package ui.actions.client;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.Identifiable;
 import essence.person.Client;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -18,16 +23,13 @@ import java.io.IOException;
 /**
  * Класс предоставляет логику выполнения действия по добавлению нового клиента.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class AddClientAction implements IAction {
-    private final ClientService clientService;
-
-    /**
-     * Класс предоставляет логику выполнения действия по добавлению нового клиента.
-     * @param clientService Класс обработки данных по клиентам.
-     */
-    public AddClientAction(ClientService clientService) {
-        this.clientService = clientService;
-    }
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Метод выполняет действие по добавлению нового клиента. Пользователю предлагается ввести ФИО и номер телефона

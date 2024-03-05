@@ -1,7 +1,12 @@
 package ui.actions.room;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -18,16 +23,13 @@ import java.util.Properties;
 /**
  * Класс предоставляет логику выполнения действия по выводу последних клиентов комнаты.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class GetRoomLastClientsAction implements IAction {
-    private final RoomService roomService;
-
-    /**
-     * Класс предоставляет логику выполнения действия по выводу последних клиентов комнаты.
-     * @param roomService Класс обработки данных по комнатам.
-     */
-    public GetRoomLastClientsAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
+    @Autowired
+    private RoomService roomService;
 
     /**
      * Метод выполняет действие по выводу последних клиентов комнаты. При выполнении действия выводится указанное
@@ -36,7 +38,7 @@ public class GetRoomLastClientsAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractRoom room = InputHandler.getRoomByInput();
+            AbstractRoom room = InputHandler.getRoomByInput(roomService);
             int count = getNumClientsFromPropertyFile();
             List<AbstractClient> clients = roomService.getRoomLastClients(room, count);
             System.out.println("\nПоследние клиенты комнаты: ");

@@ -3,14 +3,9 @@ package essence.room;
 import essence.service.AbstractFavor;
 import lombok.Getter;
 import lombok.Setter;
-import utils.exceptions.AccessDeniedException;
-import utils.file.DataPath;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Properties;
 
 @Setter
 @Getter
@@ -29,33 +24,6 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
         super(id, price);
         this.number = number;
         this.capacity = capacity;
-    }
-
-    /**
-     * Метод установки нового статуса.
-     * @param status Новый статус.
-     * @throws IOException Ошибка ввода/вывода.
-     * @throws AccessDeniedException Ошибка запрета изменения статуса комнаты.
-     */
-    public void setStatus(RoomStatusTypes status) throws IOException, AccessDeniedException {
-        if (getStatusChangePermissionFromPropertyFile()) {
-            this.status = status;
-        } else {
-            throw new AccessDeniedException("Запрещено изменение статуса комнаты");
-        }
-    }
-
-    /**
-     * Метод получает данные по возможности изменения статуса номера.
-     * @return Булево-значение.
-     * @throws IOException Ошибка ввода/вывода.
-     */
-    private boolean getStatusChangePermissionFromPropertyFile() throws IOException {
-        Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(DataPath.PROPERTY_FILE.getPath())) {
-            properties.load(fis);
-            return Boolean.parseBoolean(properties.getProperty("enable_room_status_change"));
-        }
     }
 
     @Override

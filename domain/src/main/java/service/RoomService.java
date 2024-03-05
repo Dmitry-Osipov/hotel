@@ -1,5 +1,8 @@
 package service;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import annotations.annotation.ConfigProperty;
 import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.reservation.RoomReservation;
@@ -7,14 +10,18 @@ import essence.room.AbstractRoom;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repository.room.RoomRepository;
-import repository.room.RoomReservationRepository;
+import repository.RoomRepository;
+import repository.RoomReservationRepository;
 import utils.comparators.RoomCapacityComparator;
 import utils.comparators.RoomCheckOutTimeComparator;
 import utils.comparators.RoomNumberComparator;
 import utils.comparators.RoomPriceComparator;
+import utils.exceptions.AccessDeniedException;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
@@ -34,17 +41,20 @@ import java.util.stream.Stream;
 /**
  * Класс отвечает за обработку данных по комнатам.
  */
+@Component
 @Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class RoomService extends AbstractFavorService {
     private static final Logger roomLogger = LoggerFactory.getLogger(RoomService.class);
     private static final Logger reservationLogger = LoggerFactory.getLogger("service.ReservationService");
-    private final RoomRepository roomRepository;
-    private final RoomReservationRepository reservationRepository;
-
-    public RoomService(RoomRepository roomRepository, RoomReservationRepository reservationRepository) {
-        this.roomRepository = roomRepository;
-        this.reservationRepository = reservationRepository;
-    }
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private RoomReservationRepository reservationRepository;
+    @ConfigProperty(propertyName = "enable_room_status_change", type = Boolean.class)
+    private boolean allowSetStatusRoom;
 
     /**
      * Метод добавляет новую комнату в список всех комнат отеля.
@@ -69,12 +79,17 @@ public class RoomService extends AbstractFavorService {
      * Метод обновляет данные по комнате.
      * @param room Новые данные комнаты, собранные в классе комнаты.
      * @return {@code true}, если обновить удалось, иначе {@code false}.
-     * @throws IOException Ошибка ввода/вывода.
-     * @throws utils.exceptions.AccessDeniedException Ошибка изменения статуса комнаты.
      */
-    public boolean updateRoom(AbstractRoom room) throws IOException {
+    public boolean updateRoom(AbstractRoom room) {
         int roomId = room.getId();
         roomLogger.info("Вызван метод обновления комнаты с ID {}", roomId);
+
+        if (!allowSetStatusRoom) {
+            roomLogger.error("Не удалось обновить комнату с ID {} из-за невозможности изменения статуса комнаты",
+                    roomId);
+            throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
+        }
+
         for (AbstractRoom currentRoom : roomRepository.getRooms()) {
             if (currentRoom.getId() == roomId) {
                 currentRoom.setNumber(room.getNumber());
@@ -133,22 +148,28 @@ public class RoomService extends AbstractFavorService {
      * Метод заселяет клиентов в определённую комнату.
      * @param room Комната, в которую требуется заселить клиентов.
      * @param clients Клиенты, которым потребовалось забронировать комнату.
-     * @throws IOException Ошибка ввода/вывода.
      * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "свободен").
-     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
+     * @throws AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    public void checkIn(AbstractRoom room, AbstractClient...clients) throws IOException, InvalidDataException {
+    public void checkIn(AbstractRoom room, AbstractClient...clients) throws InvalidDataException {
         String startMessage = "Вызван метод заселения в комнату с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
         roomLogger.info(startMessage, roomId, clientsString);
         reservationLogger.info(startMessage, roomId, clientsString);
+
+        String failureMessage = "Провалена попытка заселения в комнату с ID {} следующих клиентов: {}";
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.AVAILABLE)) {
-            String message = "Провалена попытка заселения в комнату с ID {} следующих клиентов: {}";
-            roomLogger.error(message, roomId, clientsString);
-            reservationLogger.error(message, roomId, clientsString);
+            roomLogger.error(failureMessage, roomId, clientsString);
+            reservationLogger.error(failureMessage, roomId, clientsString);
             throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
+        }
+
+        if (!allowSetStatusRoom) {
+            roomLogger.error(failureMessage, roomId, clientsString);
+            reservationLogger.error(failureMessage, roomId, clientsString);
+            throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
         }
 
         List<AbstractClient> guests = List.of(clients);
@@ -196,22 +217,28 @@ public class RoomService extends AbstractFavorService {
      * Метод выселения из комнаты.
      * @param room Комната, из которой требуется выселить клиентов.
      * @param clients Клиенты, которых требуется выселить.
-     * @throws IOException Ошибка ввода/вывода.
      * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "занят").
      * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      */
-    public void evict(AbstractRoom room, AbstractClient ...clients) throws IOException, InvalidDataException {
+    public void evict(AbstractRoom room, AbstractClient ...clients) throws InvalidDataException {
         String startMessage = "Вызван метод выселения из комнаты с ID {} следующих клиентов: {}";
         int roomId = room.getId();
         String clientsString = Arrays.toString(clients);
         roomLogger.info(startMessage, roomId, clientsString);
         reservationLogger.info(startMessage, roomId, clientsString);
+
+        String failureMessage = "Провалена попытка выселения из комнаты с ID {} следующих клиентов: {}";
         if (!isValidRoomAndClientsData(room, clients) || !room.getStatus().equals(RoomStatusTypes.OCCUPIED)) {
-            String message = "Провалена попытка выселения из комнаты с ID {} следующих клиентов: {}";
-            roomLogger.error(message, roomId, clientsString);
-            reservationLogger.error(message, roomId, clientsString);
+            roomLogger.error(failureMessage, roomId, clientsString);
+            reservationLogger.error(failureMessage, roomId, clientsString);
             throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
+        }
+
+        if (!allowSetStatusRoom) {
+            roomLogger.error(failureMessage, roomId, clientsString);
+            reservationLogger.error(failureMessage, roomId, clientsString);
+            throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
         }
 
         LocalDateTime now = LocalDateTime.now();

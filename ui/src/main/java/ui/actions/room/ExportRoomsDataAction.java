@@ -1,5 +1,10 @@
 package ui.actions.room;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -13,16 +18,13 @@ import java.io.IOException;
 /**
  * Класс представляет собой действие по экспорту данных о комнатах.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class ExportRoomsDataAction implements IAction {
-    private final RoomService roomService;
-
-    /**
-     * Класс представляет собой действие по экспорту данных о комнатах.
-     * @param roomService Сервис для работы с данными о комнатах.
-     */
-    public ExportRoomsDataAction(RoomService roomService) {
-        this.roomService = roomService;
-    }
+    @Autowired
+    private RoomService roomService;
 
     /**
      * Метод execute выполняет действие по экспорту данных о комнатах. Пользователю предлагается ввести название файла

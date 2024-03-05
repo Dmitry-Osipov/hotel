@@ -1,7 +1,13 @@
 package ui.actions.service;
 
+import annotations.annotation.Autowired;
+import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import essence.service.AbstractService;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -10,16 +16,15 @@ import utils.exceptions.NoEntityException;
 /**
  * Класс предоставляет логику выполнения действия по предоставлению услуги клиенту.
  */
+@Component
+@Getter
+@Setter
+@NoArgsConstructor
 public class ProvideServiceAction implements IAction {
-    private final ServiceService serviceService;
-
-    /**
-     * Класс предоставляет логику выполнения действия по предоставлению услуги клиенту.
-     * @param serviceService Класс обработки данных по услугам.
-     */
-    public ProvideServiceAction(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * Метод выполняет действие по предоставлению услуги клиенту. При выполнении действия проверяется наличие клиента и
@@ -28,8 +33,8 @@ public class ProvideServiceAction implements IAction {
     @Override
     public void execute() {
         try {
-            AbstractClient client = InputHandler.getClientByInput();
-            AbstractService service = InputHandler.getServiceByInput();
+            AbstractClient client = InputHandler.getClientByInput(clientService);
+            AbstractService service = InputHandler.getServiceByInput(serviceService);
             serviceService.provideService(client, service);
             System.out.println("\nУдалось провести услугу");
         } catch (NoEntityException e) {
