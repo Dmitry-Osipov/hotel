@@ -2,13 +2,18 @@ package essence.room;
 
 import essence.service.AbstractFavor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Класс комнаты.
+ */
 @Setter
 @Getter
+@NoArgsConstructor
 public class Room extends AbstractFavor implements AbstractRoom, Comparable<AbstractRoom> {
     private int number;
     private int capacity;
@@ -16,9 +21,6 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
     private int stars;
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
-
-    public Room() {
-    }
 
     public Room(int id, int number, int capacity, int price) {
         super(id, price);

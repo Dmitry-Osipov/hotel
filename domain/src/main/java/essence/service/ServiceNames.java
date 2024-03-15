@@ -1,5 +1,8 @@
 package essence.service;
 
+/**
+ * Перечисление констант возможных названий услуг.
+ */
 public enum ServiceNames {
     WI_FI,
     PARKING,

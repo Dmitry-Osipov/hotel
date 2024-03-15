@@ -1,22 +1,24 @@
 package essence.person;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Класс клиента.
+ */
 @Getter
 @Setter
+@NoArgsConstructor
 public class Client implements AbstractClient, Comparable<AbstractClient> {
     private int id;
     private String fio;
     private String phoneNumber;
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
-
-    public Client() {
-    }
 
     public Client(int id, String fio, String phoneNumber) {
         this.id = id;

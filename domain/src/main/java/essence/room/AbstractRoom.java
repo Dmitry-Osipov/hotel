@@ -6,6 +6,9 @@ import essence.Identifiable;
 
 import java.time.LocalDateTime;
 
+/**
+ * Интерфейс требует реализации методов комнаты.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({@JsonSubTypes.Type(value = Room.class, name = "Room")})
 public interface AbstractRoom extends Identifiable {

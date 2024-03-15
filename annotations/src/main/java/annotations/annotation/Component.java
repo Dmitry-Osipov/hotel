@@ -1,7 +1,9 @@
 package annotations.annotation;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Указывает, что класс является компонентом, управляемым контейнером внедрения зависимостей.
@@ -12,5 +14,6 @@ import java.lang.annotation.RetentionPolicy;
  * По умолчанию аннотация Component сохраняется во время выполнения.
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface Component {
 }

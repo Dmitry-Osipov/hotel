@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Абстрактный класс услуги. Фиксирует минимальную цену услуги, имеет реализацию установки цены. Забирает на себя
+ * стандартные поля для каждой услуги (id, price).
+ */
 @Getter
 @Setter
 public abstract class AbstractFavor {

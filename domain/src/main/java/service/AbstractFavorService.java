@@ -2,6 +2,9 @@ package service;
 
 import essence.service.AbstractFavor;
 
+/**
+ * Абстрактный класс сервиса. Сервиса, наследующие этот класс, должны оперировать с наследниками класса AbstractFavor.
+ */
 public abstract class AbstractFavorService {
     /**
      * Метод подсчитывает цену конкретного номера или услуги.

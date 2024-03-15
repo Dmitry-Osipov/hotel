@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Класс импорта данных из CSV файла.
  */
-public class ImportCSV {
+public final class ImportCSV {
     private static final Logger logger = LoggerFactory.getLogger(ImportCSV.class);
 
     private ImportCSV() {
