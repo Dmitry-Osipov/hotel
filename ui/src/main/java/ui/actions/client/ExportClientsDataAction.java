@@ -2,9 +2,6 @@ package ui.actions.client;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -19,9 +16,6 @@ import java.io.IOException;
  * Класс представляет собой действие по экспорту данных о клиентах.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class ExportClientsDataAction implements IAction {
     @Autowired
     private ClientService clientService;

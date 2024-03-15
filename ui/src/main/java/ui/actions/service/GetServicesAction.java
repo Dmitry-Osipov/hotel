@@ -2,9 +2,6 @@ package ui.actions.service;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.exceptions.NoEntityException;
@@ -14,9 +11,6 @@ import utils.printers.ServicesPrinter;
  * Класс предоставляет логику выполнения действия по получению списка всех услуг.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetServicesAction implements IAction {
     @Autowired
     private ServiceService serviceService;

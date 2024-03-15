@@ -4,9 +4,6 @@ import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import essence.Identifiable;
 import essence.person.Client;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -24,9 +21,6 @@ import java.io.IOException;
  * Класс предоставляет логику выполнения действия по добавлению нового клиента.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class AddClientAction implements IAction {
     @Autowired
     private ClientService clientService;

@@ -9,9 +9,6 @@ import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +39,6 @@ import java.util.stream.Stream;
  * Класс отвечает за обработку данных по комнатам.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 @ToString
 public class RoomService extends AbstractFavorService {
     private static final Logger roomLogger = LoggerFactory.getLogger(RoomService.class);

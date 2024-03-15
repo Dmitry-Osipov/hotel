@@ -3,9 +3,6 @@ package ui.actions.service;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import essence.service.Service;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -15,9 +12,6 @@ import utils.exceptions.NoEntityException;
  * Класс предоставляет логику получения стоимости услуги.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetServicePriceAction implements IAction {
     @Autowired
     private ServiceService serviceService;

@@ -7,9 +7,6 @@ import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +31,6 @@ import java.util.stream.Stream;
  * Класс отвечает за обработку данных по услугам.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 @ToString
 public class ServiceService extends AbstractFavorService {
     private static final Logger serviceLogger = LoggerFactory.getLogger(ServiceService.class);

@@ -4,9 +4,6 @@ import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.service.AbstractService;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -22,9 +19,6 @@ import java.util.List;
  * Класс представляет собой действие по импорту данных по услугам.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class ImportServiceDataAction implements IAction {
     @Autowired
     private ServiceService serviceService;

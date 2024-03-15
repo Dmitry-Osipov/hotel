@@ -3,9 +3,6 @@ package ui.actions.service;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import essence.person.AbstractClient;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
@@ -17,9 +14,6 @@ import utils.printers.ServicesPrinter;
  * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по возрастанию цены.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetClientServicesByPriceAction implements IAction {
     @Autowired
     private ServiceService serviceService;

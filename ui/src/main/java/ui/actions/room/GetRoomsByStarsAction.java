@@ -2,9 +2,6 @@ package ui.actions.room;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.exceptions.NoEntityException;
@@ -14,9 +11,6 @@ import utils.printers.RoomsPrinter;
  * Класс предоставляет логику выполнения действия по выводу списка всех комнат по убыванию звёзд.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetRoomsByStarsAction implements IAction {
     @Autowired
     private RoomService roomService;

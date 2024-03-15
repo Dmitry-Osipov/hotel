@@ -4,8 +4,6 @@ import annotations.annotation.Component;
 import annotations.annotation.InjectByInterface;
 import annotations.factory.InitializeComponent;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,12 +49,10 @@ import ui.actions.service.ProvideServiceAction;
  * Класс отвечает за формирование меню.
  */
 @Component
-@Getter
-@Setter
 @ToString
-@NoArgsConstructor
 public class Builder implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
+    @Getter
     private Menu rootMenu;
     @InjectByInterface(clazz = AddRoomAction.class)
     private IAction addRoomAction;

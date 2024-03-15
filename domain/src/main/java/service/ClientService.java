@@ -3,9 +3,6 @@ package service;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import essence.person.AbstractClient;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +19,6 @@ import java.util.List;
  * Класс отвечает за обработку данных по клиентам.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 @ToString
 public class ClientService {
     private static final Logger logger = LoggerFactory.getLogger(ClientService.class);

@@ -3,9 +3,6 @@ package ui.actions.room;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import essence.person.AbstractClient;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ClientService;
 import service.RoomService;
 import ui.actions.IAction;
@@ -17,9 +14,6 @@ import utils.printers.RoomsPrinter;
  * Класс предоставляет логику выполнения действия по выводу списка комнат клиента по убыванию времени выезда.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetClientRoomsByCheckOutTimeAction implements IAction {
     @Autowired
     private RoomService roomService;

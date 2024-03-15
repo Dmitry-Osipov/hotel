@@ -4,9 +4,6 @@ import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.reservation.RoomReservation;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -22,9 +19,6 @@ import java.util.List;
  * Класс представляет собой действие по импорту данных о резервациях.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class ImportReservationDataAction implements IAction {
     @Autowired
     private RoomService roomService;

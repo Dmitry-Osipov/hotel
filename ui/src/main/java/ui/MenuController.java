@@ -2,9 +2,6 @@ package ui;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +16,7 @@ import java.util.Scanner;
  * Класс отвечает за работу UI.
  */
 @Component
-@Getter
-@Setter
 @ToString
-@NoArgsConstructor
 public class MenuController {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     @Autowired
