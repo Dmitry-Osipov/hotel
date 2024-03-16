@@ -14,12 +14,15 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 public class Service extends AbstractFavor implements AbstractService, Comparable<AbstractService> {
+    private int id;
+    private int price;
     private ServiceNames name;
     private ServiceStatusTypes status = ServiceStatusTypes.UNPAID;
     private LocalDateTime serviceTime;
 
     public Service(int id, ServiceNames name, int price) {
-        super(id, price);
+        this.id = id;
+        this.price = price;
         this.name = name;
     }
 
