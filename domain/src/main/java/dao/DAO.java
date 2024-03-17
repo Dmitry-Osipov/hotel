@@ -3,6 +3,10 @@ package dao;
 import annotations.annotation.Component;
 import annotations.annotation.ConfigProperty;
 import essence.Identifiable;
+import essence.person.AbstractClient;
+import essence.person.Client;
+import essence.provided.ProvidedService;
+import essence.reservation.RoomReservation;
 import essence.room.RoomStatusTypes;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
@@ -142,18 +146,49 @@ public class DAO implements IDAO {
             if (resultSet.next()) {
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = parseStringFromSnakeCaseToCamelCase(metaData.getColumnName(i));
-                    // TODO: продумать, что если одно из полей - это внешний ключ
-
-                    Object columnValue = parseValueFromDB(columnName, table, resultSet, i);
+                    Object columnValue;
+                    if (columnName.contains("Id")) {
+                        columnName = columnName.substring(0, columnName.lastIndexOf("Id"));
+                        // TODO: что-то придумать с костылями
+                        // Преобразование названия стоит оставить здесь
+                        String classField = columnName.substring(0, 1).toUpperCase() +
+                                columnName.substring(1);
+                        // Мб ниже стоит вынести в метод
+                        if (classField.equals("Room")) {
+                            columnValue = getOne(i,
+                                    (Class<T>) Class.forName("essence.room." + classField));
+                        } else if (classField.equals("Service")) {
+                            columnValue = getOne(i,
+                                    (Class<T>) Class.forName("essence.service." + classField));
+                        } else if (classField.equals("Client") && clazz.equals(ProvidedService.class)) {
+                            columnName = "beneficiaries";
+                            columnValue = List.of(getOne(i,
+                                    (Class<T>) Class.forName("essence.person." + classField)));
+                        } else {
+                            throw new TechnicalException("Для данного класса нет специального обработчика");
+                        }
+                    } else {
+                        columnValue = parseValueFromDB(columnName, table, resultSet, i);
+                    }
                     Field field = clazz.getDeclaredField(columnName);
                     field.setAccessible(true);
                     field.set(entity, columnValue);
+                }
+
+                if (clazz.equals(RoomReservation.class)) {
+                    List<AbstractClient> clients = getClientsToRoomReservation(id, "reservation_client");
+                    Field field = clazz.getDeclaredField("clients");
+                    field.setAccessible(true);
+                    field.set(entity, clients);
                 }
             } else {
                 throw new NoEntityException("В БД отсутствует сущность с id = " + id);
             }
 
             return entity;
+        } catch (ClassNotFoundException e) {
+            // TODO: заглушка
+            throw new RuntimeException(e);
         }
     }
 
@@ -191,6 +226,24 @@ public class DAO implements IDAO {
         return list;
     }
 
+    public <T extends Identifiable> List<T> getClientsToRoomReservation(int reservationId, String table) throws
+            SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
+        try (
+                Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s WHERE reservation_id = %d",
+                        table, reservationId))
+        ) {
+            List<T> list = new ArrayList<>();
+            while (resultSet.next()) {
+                list.add((T) getOne((Integer) resultSet.getObject(2), Client.class));
+            }
+
+            return list;
+        }
+    }
+
     /**
      * Преобразует строку из формата camelCase в snake_case.
      * @param columnName строка в формате camelCase.
@@ -226,7 +279,7 @@ public class DAO implements IDAO {
             columnValue = ServiceNames.valueOf((String) resultSet.getObject(index));
         } else if (columnName.contains("Time")) {
             columnValue = parseTimeValueFromDB(resultSet, index);
-        }  else {
+        } else {
             columnValue = resultSet.getObject(index);
         }
 

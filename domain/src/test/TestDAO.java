@@ -1,5 +1,6 @@
 import dao.DAO;
 import essence.person.Client;
+import essence.provided.ProvidedService;
 import essence.reservation.RoomReservation;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
@@ -16,25 +17,37 @@ import java.util.List;
 public class TestDAO {
     @SneakyThrows
     public static void main(String[] args) {
-//        try {
-//            testGetOneRoom();
-//            testGetOneService();
-//            testGetOneClient();
-//            testGetAllRooms();
-//            testGetAllServices();
-//            testGetAllClients();
-//            testSaveRoom();
-//            testSaveService();
-//            testSaveClient();
-//            testUpdateRoom();
-//            testUpdateService();
-//            testUpdateClient();
-//        } finally {
-//            testDeleteRoom();
-//            testDeleteService();
-//            testDeleteClient();
-//        }
-        testGetOneRoomReservation();
+        try {
+            testGetOneRoom();
+            testGetOneService();
+            testGetOneClient();
+            testGetOneRoomReservation();
+            testGetOneProvidedService();
+            testGetAllRooms();
+            testGetAllServices();
+            testGetAllClients();
+            testGetAllRoomReservations();
+            testGetAllProvidedServices();
+            testSaveRoom();
+            testSaveService();
+            testSaveClient();
+            testUpdateRoom();
+            testUpdateService();
+            testUpdateClient();
+        } finally {
+            testDeleteRoom();
+            testDeleteService();
+            testDeleteClient();
+        }
+    }
+
+    public static void temp() throws SQLException, NoSuchFieldException, InvocationTargetException,
+            NoSuchMethodException, InstantiationException, IllegalAccessException {
+        DAO dao = new DAO();
+        dao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        dao.setDbUser("hotel_user");
+        dao.setDbPassword("R7hB2fK9sL6e");
+        System.out.println(dao.getClientsToRoomReservation(1, "reservation_client"));
     }
 
     public static void testGetOneRoom() throws SQLException, NoSuchFieldException, InvocationTargetException,
@@ -64,6 +77,26 @@ public class TestDAO {
         dao.setDbUser("hotel_user");
         dao.setDbPassword("R7hB2fK9sL6e");
         System.out.println(dao.getOne(1, Client.class));
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testGetOneRoomReservation() throws SQLException, NoSuchFieldException, InvocationTargetException,
+            NoSuchMethodException, InstantiationException, IllegalAccessException {
+        DAO dao = new DAO();
+        dao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        dao.setDbUser("hotel_user");
+        dao.setDbPassword("R7hB2fK9sL6e");
+        System.out.println(dao.getOne(1, RoomReservation.class));
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testGetOneProvidedService() throws SQLException, NoSuchFieldException, InvocationTargetException,
+            NoSuchMethodException, InstantiationException, IllegalAccessException {
+        DAO dao = new DAO();
+        dao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        dao.setDbUser("hotel_user");
+        dao.setDbPassword("R7hB2fK9sL6e");
+        System.out.println(dao.getOne(1, ProvidedService.class));
         System.out.println("--------------------------------------");
     }
 
@@ -102,6 +135,32 @@ public class TestDAO {
         List<Client> clients = dao.getAll(Client.class);
         for (Client client : clients) {
             System.out.println(client);
+        }
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testGetAllRoomReservations() throws SQLException, NoSuchFieldException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        DAO dao = new DAO();
+        dao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        dao.setDbUser("hotel_user");
+        dao.setDbPassword("R7hB2fK9sL6e");
+        List<RoomReservation> reservations = dao.getAll(RoomReservation.class);
+        for (RoomReservation reservation : reservations) {
+            System.out.println(reservation);
+        }
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testGetAllProvidedServices() throws SQLException, NoSuchFieldException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        DAO dao = new DAO();
+        dao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        dao.setDbUser("hotel_user");
+        dao.setDbPassword("R7hB2fK9sL6e");
+        List<ProvidedService> providedServices = dao.getAll(ProvidedService.class);
+        for (ProvidedService providedService : providedServices) {
+            System.out.println(providedService);
         }
         System.out.println("--------------------------------------");
     }
@@ -216,16 +275,6 @@ public class TestDAO {
         dao.update(client);
         System.out.println("Удалось обновить сущность. Новые данные по сущности: "
                 + dao.getOne(client.getId(), Client.class));
-        System.out.println("--------------------------------------");
-    }
-
-    public static void testGetOneRoomReservation() throws SQLException, NoSuchFieldException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException {
-        DAO dao = new DAO();
-        dao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
-        dao.setDbUser("hotel_user");
-        dao.setDbPassword("R7hB2fK9sL6e");
-        System.out.println(dao.getOne(1, RoomReservation.class));
         System.out.println("--------------------------------------");
     }
 }
