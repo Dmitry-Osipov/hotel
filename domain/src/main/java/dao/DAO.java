@@ -23,7 +23,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: дока
+/**
+ * Реализация интерфейса {@link IDAO}, предоставляющая методы доступа к базе данных. Класс выполняет операции
+ * сохранения, обновления, удаления и получения объектов из базы данных. Для взаимодействия с базой данных используется
+ * JDBC.
+ */
 @Component
 @Setter  // TODO: убрать сеттеры после тестов
 public class DAO implements IDAO {
@@ -34,6 +38,13 @@ public class DAO implements IDAO {
     @ConfigProperty(configName = "db_password")
     private String dbPassword;
 
+    /**
+     * Сохраняет указанный объект в базе данных.
+     * @param essence объект, который нужно сохранить в базе данных.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
+     * @throws TechnicalException если не удалось вставить данные в БД.
+     */
     @Override
     public <T extends Identifiable> void save(T essence) throws SQLException, IllegalAccessException {
         Field[] fields = essence.getClass().getDeclaredFields();
@@ -44,7 +55,7 @@ public class DAO implements IDAO {
         ) {
             for (int i = 0; i < fields.length; i++) {
                 fields[i].setAccessible(true);
-                Object value = parseValueFromApplication(essence, fields, i);
+                Object value = parseValueFromApplication(essence, fields[i]);
                 statement.setObject(i + 1, value);
             }
 
@@ -54,6 +65,13 @@ public class DAO implements IDAO {
         }
     }
 
+    /**
+     * Обновляет указанный объект в базе данных.
+     * @param essence объект, который нужно обновить в базе данных.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
+     * @throws TechnicalException если не удалось обновить данные в БД.
+     */
     @Override
     public <T extends Identifiable> void update(T essence) throws SQLException, IllegalAccessException {
         String sql = sqlUpdateBuilder(essence);
@@ -64,7 +82,7 @@ public class DAO implements IDAO {
         ) {
             for (int i = 0; i < fields.length; i++) {
                 fields[i].setAccessible(true);
-                Object value = parseValueFromApplication(essence, fields, i);
+                Object value = parseValueFromApplication(essence, fields[i]);
                 statement.setObject(i + 1, value);
             }
 
@@ -74,6 +92,12 @@ public class DAO implements IDAO {
         }
     }
 
+    /**
+     * Удаляет указанный объект из базы данных.
+     * @param essence объект, который нужно удалить из базы данных.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если не удалось удалить данные из БД.
+     */
     @Override
     public <T extends Identifiable> void delete(T essence) throws SQLException {
         String table = parseStringFromCamelCaseToSnakeCase(essence.getClass().getSimpleName());
@@ -88,6 +112,20 @@ public class DAO implements IDAO {
         }
     }
 
+    /**
+     * Возвращает один объект из базы данных по его идентификатору.
+     * @param id идентификатор объекта.
+     * @param clazz класс объекта.
+     * @return объект из базы данных.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws NoSuchMethodException если запрашиваемый метод не существует.
+     * @throws InvocationTargetException если вызванный метод вызывает исключение.
+     * @throws InstantiationException если попытка создать экземпляр класса абстрактного класса, интерфейса, массива
+     * абстрактных классов или интерфейсов, или если класс, указанный в параметре типа, является абстрактным.
+     * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
+     * @throws NoSuchFieldException если запрашиваемое поле не существует.
+     * @throws NoEntityException если сущность с переданным id отсутствует в БД.
+     */
     @Override
     public <T extends Identifiable> T getOne(int id, Class<T> clazz) throws SQLException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
@@ -104,19 +142,33 @@ public class DAO implements IDAO {
             if (resultSet.next()) {
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = parseStringFromSnakeCaseToCamelCase(metaData.getColumnName(i));
+                    // TODO: продумать, что если одно из полей - это внешний ключ
+
                     Object columnValue = parseValueFromDB(columnName, table, resultSet, i);
                     Field field = clazz.getDeclaredField(columnName);
                     field.setAccessible(true);
                     field.set(entity, columnValue);
                 }
             } else {
-                throw new NoEntityException("В БД отсутствует сущность с id=" + id);
+                throw new NoEntityException("В БД отсутствует сущность с id = " + id);
             }
 
             return entity;
         }
     }
 
+    /**
+     * Возвращает список всех объектов указанного класса из базы данных.
+     * @param clazz класс объектов.
+     * @return список объектов из базы данных.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws NoSuchFieldException если запрашиваемое поле не существует.
+     * @throws InvocationTargetException если вызванный метод вызывает исключение.
+     * @throws NoSuchMethodException если запрашиваемый метод не существует.
+     * @throws InstantiationException если попытка создать экземпляр класса абстрактного класса, интерфейса, массива
+     * абстрактных классов или интерфейсов, или если класс, указанный в параметре типа, является абстрактным.
+     * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
+     */
     @Override
     public <T extends Identifiable> List<T> getAll(Class<T> clazz) throws SQLException, NoSuchFieldException,
             InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -139,6 +191,11 @@ public class DAO implements IDAO {
         return list;
     }
 
+    /**
+     * Преобразует строку из формата camelCase в snake_case.
+     * @param columnName строка в формате camelCase.
+     * @return строка в формате snake_case.
+     */
     private String parseStringFromSnakeCaseToCamelCase(String columnName) {
         String[] parts = columnName.split("_");
         StringBuilder camelCase = new StringBuilder(parts[0]);
@@ -151,6 +208,15 @@ public class DAO implements IDAO {
         return camelCase.toString();
     }
 
+    /**
+     * Преобразует значение из базы данных в соответствующий тип Java.
+     * @param columnName имя колонки в базе данных.
+     * @param table имя таблицы в базе данных.
+     * @param resultSet объект ResultSet, содержащий результат запроса.
+     * @param index индекс колонки в ResultSet.
+     * @return значение из базы данных в соответствующем типе Java.
+     * @throws SQLException если произошла ошибка SQL.
+     */
     private Object parseValueFromDB(String columnName, String table, ResultSet resultSet, int index) throws
             SQLException {
         Object columnValue;
@@ -167,9 +233,15 @@ public class DAO implements IDAO {
         return columnValue;
     }
 
+    /**
+     * Преобразует значение времени из базы данных в тип LocalDateTime.
+     * @param resultSet объект ResultSet, содержащий результат запроса.
+     * @param index индекс колонки в ResultSet.
+     * @return значение времени из базы данных в типе LocalDateTime.
+     * @throws SQLException если произошла ошибка SQL.
+     */
     private Object parseTimeValueFromDB(ResultSet resultSet, int index) throws SQLException {
-        Object columnValue;
-        columnValue = resultSet.getObject(index);
+        Object columnValue = resultSet.getObject(index);
         if (columnValue != null) {
             Timestamp timestamp = (Timestamp) columnValue;
             columnValue = timestamp.toLocalDateTime();
@@ -178,6 +250,16 @@ public class DAO implements IDAO {
         return columnValue;
     }
 
+    /**
+     * Преобразует значение статуса из базы данных в соответствующий Java enum тип.
+     * @param columnName имя колонки в базе данных.
+     * @param table имя таблицы в базе данных.
+     * @param resultSet объект ResultSet, содержащий результат запроса.
+     * @param index индекс колонки в ResultSet.
+     * @return значение статуса из базы данных в соответствующем Java enum типе.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если таблица имеет колонку статуса, но специальный обработчик для неё не предусмотрен.
+     */
     private Object parseStatusValueFromDB(String columnName, String table, ResultSet resultSet, int index) throws
             SQLException {
         Object columnValue;
@@ -192,6 +274,11 @@ public class DAO implements IDAO {
         return columnValue;
     }
 
+    /**
+     * Преобразует строку из формата camelCase в snake_case.
+     * @param columnName строка в формате camelCase.
+     * @return строка в формате snake_case.
+     */
     private String parseStringFromCamelCaseToSnakeCase(String columnName) {
         StringBuilder snakeCase = new StringBuilder();
         char[] chars = columnName.toCharArray();
@@ -209,17 +296,29 @@ public class DAO implements IDAO {
         return snakeCase.toString();
     }
 
-    private <T extends Identifiable> Object parseValueFromApplication(T essence, Field[] fields, int index) throws
+    /**
+     * Получает значение поля из объекта сущности.
+     * @param essence объект сущности.
+     * @param field поле объекта.
+     * @return значение поля.
+     * @throws IllegalAccessException если доступ к полю невозможен.
+     */
+    private <T extends Identifiable> Object parseValueFromApplication(T essence, Field field) throws
             IllegalAccessException {
         Object value;
-        if (fields[index].getType().isEnum()) {
-            value = String.valueOf(fields[index].get(essence));
+        if (field.getType().isEnum()) {
+            value = String.valueOf(field.get(essence));
         } else {
-            value = fields[index].get(essence);
+            value = field.get(essence);
         }
         return value;
     }
 
+    /**
+     * Создает SQL запрос для вставки данных в таблицу.
+     * @param essence объект, данные которого нужно вставить в таблицу.
+     * @return SQL запрос для вставки данных в таблицу.
+     */
     private <T extends Identifiable> String sqlInsertIntoBuild(T essence) {
         Class<?> clazz = essence.getClass();
         Field[] fields = clazz.getDeclaredFields();
@@ -244,13 +343,17 @@ public class DAO implements IDAO {
         return sql.toString();
     }
 
+    /**
+     * Создает SQL запрос для обновления данных в таблице.
+     * @param essence объект, данные которого нужно обновить в таблице.
+     * @return SQL запрос для обновления данных в таблице.
+     */
     private <T extends Identifiable> String sqlUpdateBuilder(T essence) {
         Class<?> clazz = essence.getClass();
         StringBuilder sql =
                 new StringBuilder("UPDATE " + parseStringFromCamelCaseToSnakeCase(clazz.getSimpleName()) + " SET ");
         Field[] fields = clazz.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
-            fields[i].setAccessible(true);
             if (i > 0) {
                 sql.append(", ");
             }

@@ -1,5 +1,6 @@
 import dao.DAO;
 import essence.person.Client;
+import essence.reservation.RoomReservation;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
 import essence.service.Service;
@@ -15,24 +16,25 @@ import java.util.List;
 public class TestDAO {
     @SneakyThrows
     public static void main(String[] args) {
-        try {
-            testGetOneRoom();
-            testGetOneService();
-            testGetOneClient();
-            testGetAllRooms();
-            testGetAllServices();
-            testGetAllClients();
-            testSaveRoom();
-            testSaveService();
-            testSaveClient();
-            testUpdateRoom();
-            testUpdateService();
-            testUpdateClient();
-        } finally {
-            testDeleteRoom();
-            testDeleteService();
-            testDeleteClient();
-        }
+//        try {
+//            testGetOneRoom();
+//            testGetOneService();
+//            testGetOneClient();
+//            testGetAllRooms();
+//            testGetAllServices();
+//            testGetAllClients();
+//            testSaveRoom();
+//            testSaveService();
+//            testSaveClient();
+//            testUpdateRoom();
+//            testUpdateService();
+//            testUpdateClient();
+//        } finally {
+//            testDeleteRoom();
+//            testDeleteService();
+//            testDeleteClient();
+//        }
+        testGetOneRoomReservation();
     }
 
     public static void testGetOneRoom() throws SQLException, NoSuchFieldException, InvocationTargetException,
@@ -186,7 +188,7 @@ public class TestDAO {
         dao.setDbPassword("R7hB2fK9sL6e");
         Room room = new Room(16, 500, 30, 100000000);
         dao.update(room);
-        System.out.println("Удалось обновить сущность " + room + ". Новые данные по сущности: "
+        System.out.println("Удалось обновить сущность. Новые данные по сущности: "
                 + dao.getOne(room.getId(), Room.class));
         System.out.println("--------------------------------------");
     }
@@ -199,7 +201,7 @@ public class TestDAO {
         dao.setDbPassword("R7hB2fK9sL6e");
         Service service = new Service(6, ServiceNames.CLEANING, 1000000000);
         dao.update(service);
-        System.out.println("Удалось обновить сущность " + service + ". Новые данные по сущности: "
+        System.out.println("Удалось обновить сущность. Новые данные по сущности: "
                 + dao.getOne(service.getId(), Service.class));
         System.out.println("--------------------------------------");
     }
@@ -212,8 +214,18 @@ public class TestDAO {
         dao.setDbPassword("R7hB2fK9sL6e");
         Client client = new Client(6, "Antadze U. M.", "+7(999)888-77-66");
         dao.update(client);
-        System.out.println("Удалось обновить сущность " + client + ". Новые данные по сущности: "
+        System.out.println("Удалось обновить сущность. Новые данные по сущности: "
                 + dao.getOne(client.getId(), Client.class));
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testGetOneRoomReservation() throws SQLException, NoSuchFieldException, InvocationTargetException,
+            NoSuchMethodException, InstantiationException, IllegalAccessException {
+        DAO dao = new DAO();
+        dao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        dao.setDbUser("hotel_user");
+        dao.setDbPassword("R7hB2fK9sL6e");
+        System.out.println(dao.getOne(1, RoomReservation.class));
         System.out.println("--------------------------------------");
     }
 }
