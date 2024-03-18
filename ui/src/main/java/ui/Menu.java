@@ -1,5 +1,6 @@
 package ui;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,17 +11,8 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
+@AllArgsConstructor
 public class Menu {
     private String name;
     private MenuItem[] menuItems;
-
-    /**
-     * Класс меню.
-     * @param name Название.
-     * @param menuItems Подменю.
-     */
-    public Menu(String name, MenuItem[] menuItems) {
-        this.name = name;
-        this.menuItems = menuItems;
-    }
 }

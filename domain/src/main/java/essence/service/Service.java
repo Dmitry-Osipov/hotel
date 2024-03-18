@@ -1,20 +1,22 @@
 package essence.service;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Класс услуги.
+ */
 @Getter
 @Setter
+@NoArgsConstructor
 public class Service extends AbstractFavor implements AbstractService, Comparable<AbstractService> {
     private ServiceNames name;
     private ServiceStatusTypes status = ServiceStatusTypes.UNPAID;
     private LocalDateTime serviceTime;
-
-    public Service() {
-    }
 
     public Service(int id, ServiceNames name, int price) {
         super(id, price);

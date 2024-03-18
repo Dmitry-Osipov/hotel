@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 /**
- * Класс проводит упрощённую создание и настройку компонентов.
+ * Класс проводит упрощённое создание и настройку компонентов.
  */
 public class ApplicationContext {
     private final ComponentFactory factory = new ComponentFactory();

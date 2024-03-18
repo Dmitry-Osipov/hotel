@@ -6,6 +6,9 @@ import essence.Identifiable;
 
 import java.time.LocalDateTime;
 
+/**
+ * Интерфейс требует реализации методов клиента.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({@JsonSubTypes.Type(value = Client.class, name = "Client")})
 public interface AbstractClient extends Identifiable {

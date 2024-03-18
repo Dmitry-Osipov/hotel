@@ -6,6 +6,9 @@ import essence.Identifiable;
 
 import java.time.LocalDateTime;
 
+/**
+ * Интерфейс требует реализации методов услуги.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({@JsonSubTypes.Type(value = Service.class, name = "Service")})
 public interface AbstractService extends Identifiable {
