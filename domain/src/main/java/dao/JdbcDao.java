@@ -423,12 +423,9 @@ public class JdbcDao implements IDao {
         sql.append(")");
 
         if (essence.getClass().equals(RoomReservation.class)) {
-            int clientsIndex = sql.lastIndexOf("clients");
-            int roomIndex = sql.lastIndexOf("room");
-            int questionMarkIndex = sql.lastIndexOf("?, ");
-            sql.delete(clientsIndex, clientsIndex + 9);
-            sql.replace(roomIndex, roomIndex + 4, "room_id");
-            sql.delete(questionMarkIndex, questionMarkIndex + 3);
+            sql.delete(sql.lastIndexOf("clients"), sql.lastIndexOf("clients") + 9);
+            sql.replace(sql.lastIndexOf("room"), sql.lastIndexOf("room") + 4, "room_id");
+            sql.delete(sql.lastIndexOf("?, "), sql.lastIndexOf("?, ") + 3);
         }
 
         return sql.toString();
