@@ -28,13 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Реализация интерфейса {@link IDAO}, предоставляющая методы доступа к базе данных. Класс выполняет операции
+ * Реализация интерфейса {@link IDao}, предоставляющая методы доступа к базе данных. Класс выполняет операции
  * сохранения, обновления, удаления и получения объектов из базы данных. Для взаимодействия с базой данных используется
  * JDBC.
  */
 @Component
 @Setter  // TODO: убрать сеттеры после тестов
-public class DAO implements IDAO {
+public class JdbcDao implements IDao {
     @ConfigProperty(configName = "db_url")
     private String dbUrl;
     @ConfigProperty(configName = "db_user")
@@ -58,9 +58,26 @@ public class DAO implements IDAO {
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             for (int i = 0; i < fields.length; i++) {
+                if (essence.getClass().equals(RoomReservation.class) && fields[i].getName().equals("room")) {
+                    continue;
+                }
+
                 fields[i].setAccessible(true);
-                Object value = parseValueFromApplication(essence, fields[i]);
-                statement.setObject(i + 1, value);
+                Object value;
+                if (fields[i].getName().equals("clients")) {
+                    value = ((ArrayList<T>) parseValueFromApplication(essence, fields[i])).getFirst().getId();
+                } else if (fields[i].getName().equals("room") || fields[i].getName().equals("service")
+                        || fields[i].getName().equals("client")) {
+                    value = ((T) parseValueFromApplication(essence, fields[i])).getId();
+                } else {
+                    value = parseValueFromApplication(essence, fields[i]);
+                }
+
+                if (i > 2 && essence.getClass().equals(RoomReservation.class)) {
+                    statement.setObject(i, value);
+                } else {
+                    statement.setObject(i + 1, value);
+                }
             }
 
             if (statement.executeUpdate() == 0) {
@@ -132,7 +149,8 @@ public class DAO implements IDAO {
      */
     @Override
     public <T extends Identifiable> T getOne(int id, Class<T> clazz) throws SQLException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+            InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException,
+            ClassNotFoundException {
         String table = parseStringFromCamelCaseToSnakeCase(clazz.getSimpleName());
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -149,11 +167,8 @@ public class DAO implements IDAO {
                     Object columnValue;
                     if (columnName.contains("Id")) {
                         columnName = columnName.substring(0, columnName.lastIndexOf("Id"));
-                        // TODO: что-то придумать с костылями
-                        // Преобразование названия стоит оставить здесь
                         String classField = columnName.substring(0, 1).toUpperCase() +
                                 columnName.substring(1);
-                        // Мб ниже стоит вынести в метод
                         if (classField.equals("Room")) {
                             columnValue = getOne(i,
                                     (Class<T>) Class.forName("essence.room." + classField));
@@ -176,19 +191,13 @@ public class DAO implements IDAO {
                 }
 
                 if (clazz.equals(RoomReservation.class)) {
-                    List<AbstractClient> clients = getClientsToRoomReservation(id, "reservation_client");
-                    Field field = clazz.getDeclaredField("clients");
-                    field.setAccessible(true);
-                    field.set(entity, clients);
+                    implementationClientListIntoReservation(entity);
                 }
             } else {
                 throw new NoEntityException("В БД отсутствует сущность с id = " + id);
             }
 
             return entity;
-        } catch (ClassNotFoundException e) {
-            // TODO: заглушка
-            throw new RuntimeException(e);
         }
     }
 
@@ -206,7 +215,8 @@ public class DAO implements IDAO {
      */
     @Override
     public <T extends Identifiable> List<T> getAll(Class<T> clazz) throws SQLException, NoSuchFieldException,
-            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
+            ClassNotFoundException {
         List<T> list = new ArrayList<>();
         String table = parseStringFromCamelCaseToSnakeCase(clazz.getSimpleName());
         try (
@@ -226,21 +236,40 @@ public class DAO implements IDAO {
         return list;
     }
 
-    public <T extends Identifiable> List<T> getClientsToRoomReservation(int reservationId, String table) throws
+    // TODO: добавляем связи по клиентам. Нужно вызывать метод после добавления резервации в БД
+    private <T extends Identifiable> void insertReservationClients(T roomReservation) throws SQLException {
+        try (
+                Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO reservation_client " +
+                        "(reservation_id, client_id) VALUES (?, ?)")
+        ) {
+            RoomReservation reservation = (RoomReservation) roomReservation;
+            for (AbstractClient client : reservation.getClients()) {
+                statement.setInt(1, reservation.getId());
+                statement.setInt(2, client.getId());
+                statement.addBatch();
+            }
+            statement.executeBatch();
+        }
+    }
+
+    private <T extends Identifiable> void implementationClientListIntoReservation(T roomReservation) throws
             SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, ClassNotFoundException {
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                 Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s WHERE reservation_id = %d",
-                        table, reservationId))
+                ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM reservation_client " +
+                        "WHERE reservation_id = %d", roomReservation.getId()))
         ) {
             List<T> list = new ArrayList<>();
             while (resultSet.next()) {
                 list.add((T) getOne((Integer) resultSet.getObject(2), Client.class));
             }
 
-            return list;
+            Field field = roomReservation.getClass().getDeclaredField("clients");
+            field.setAccessible(true);
+            field.set(roomReservation, list);
         }
     }
 
@@ -392,6 +421,15 @@ public class DAO implements IDAO {
             sql.append("?");
         }
         sql.append(")");
+
+        if (essence.getClass().equals(RoomReservation.class)) {
+            int clientsIndex = sql.lastIndexOf("clients");
+            int roomIndex = sql.lastIndexOf("room");
+            int questionMarkIndex = sql.lastIndexOf("?, ");
+            sql.delete(clientsIndex, clientsIndex + 9);
+            sql.replace(roomIndex, roomIndex + 4, "room_id");
+            sql.delete(questionMarkIndex, questionMarkIndex + 3);
+        }
 
         return sql.toString();
     }

@@ -11,7 +11,7 @@ import java.util.List;
  * {@link Identifiable}. Каждый объект, сохраняемый, обновляемый или удаляемый в базе данных, должен быть типизирован
  * классом, реализующим интерфейс {@link Identifiable}.
  */
-public interface IDAO {
+public interface IDao {
     /**
      * Сохраняет указанный объект в базе данных.
      * @param essence объект, который нужно сохранить в базе данных.
@@ -49,7 +49,7 @@ public interface IDAO {
      * @throws NoSuchFieldException если запрашиваемое поле не существует.
      */
     <T extends Identifiable> T getOne(int id, Class<T> clazz) throws SQLException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException;
+            InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException, ClassNotFoundException;
 
     /**
      * Возвращает список всех объектов указанного класса из базы данных.
@@ -64,5 +64,5 @@ public interface IDAO {
      * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
      */
     <T extends Identifiable> List<T> getAll(Class<T> clazz) throws SQLException, NoSuchFieldException,
-            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException;
 }
