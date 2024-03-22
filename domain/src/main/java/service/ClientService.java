@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import repository.ClientRepository;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
-import utils.file.DataPath;
-import utils.file.serialize.SerializationUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -89,35 +86,11 @@ public class ClientService {
     }
 
     /**
-     * Метод производит сериализацию данных по клиентам.
+     * Метод сохранения данных по клиентам в базу данных.
      */
-    public void serializeClientsData() {
-        logger.info("Происходит сериализация данных по клиентам");
-        try {
-            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "clients";
-            SerializationUtils.serialize(clientRepository, path);
-        } catch (IOException e) {
-            logger.error("Сериализация данных по клиентам не произошла");
-        }
-        logger.info("Сериализация данных по клиентам завершена");
-    }
-
-    /**
-     * Метод производит десериализацию данных по клиентам.
-     */
-    public void deserializeClientsData() {
-        logger.info("Происходит десериализация данных по клиентам");
-        try {
-            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "clients";
-            ClientRepository repo = SerializationUtils.deserialize(ClientRepository.class, path);
-            for (AbstractClient client : repo.getClients()) {
-                if (!updateClient(client)) {
-                    addClient(client);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Десериализация данных по клиентам не произошла");
-        }
-        logger.info("Десериализация данных по клиентам завершена");
+    public void saveToDb() {
+        logger.info("Вызов метода записи данных по клиентам в базу данных");
+        clientRepository.saveToDb();
+        logger.info("Запись данных по клиентам в базу данных произведена");
     }
 }

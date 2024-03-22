@@ -35,9 +35,6 @@ public class MenuController {
      */
     public void run() {
         logger.info("Запуск приложения");
-        roomService.deserializeRoomsData();
-        serviceService.deserializeServicesData();
-        clientService.deserializeClientsData();
         while (true) {
             navigator.printMenu();
             int choice = getUserInput() - 1;
@@ -71,10 +68,11 @@ public class MenuController {
      * Служебный метод производит user-friendly выход из программы.
      */
     private void exit() {
-        logger.info("Выход из приложения");
+        logger.info("Вызван метод выхода из приложения");
         System.out.println("\nВыход из программы...");
-        roomService.serializeRoomsData();
-        serviceService.serializeServicesData();
-        clientService.serializeClientsData();
+        clientService.saveToDb();
+        roomService.saveToDb();
+        serviceService.saveToDb();
+        logger.info("Выход из приложения");
     }
 }

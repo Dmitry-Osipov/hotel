@@ -62,7 +62,9 @@ public interface IDao {
      * @throws InstantiationException если попытка создать экземпляр класса абстрактного класса, интерфейса, массива
      * абстрактных классов или интерфейсов, или если класс, указанный в параметре типа, является абстрактным.
      * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
+     * @throws ClassNotFoundException если класс с указанным именем не найден.
      */
     <T extends Identifiable> List<T> getAll(Class<T> clazz) throws SQLException, NoSuchFieldException,
-            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException;
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
+            ClassNotFoundException;
 }

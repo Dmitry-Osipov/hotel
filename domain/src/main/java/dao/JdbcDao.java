@@ -10,7 +10,6 @@ import essence.reservation.RoomReservation;
 import essence.room.RoomStatusTypes;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
-import lombok.Setter;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.exceptions.TechnicalException;
@@ -34,13 +33,12 @@ import java.util.List;
  * JDBC.
  */
 @Component
-@Setter  // TODO: убрать сеттеры после тестов
 public class JdbcDao implements IDao {
-    @ConfigProperty(configName = "db_url")
+    @ConfigProperty(propertyName = "db_url")
     private String dbUrl;
-    @ConfigProperty(configName = "db_user")
+    @ConfigProperty(propertyName = "db_user")
     private String dbUser;
-    @ConfigProperty(configName = "db_password")
+    @ConfigProperty(propertyName = "db_password")
     private String dbPassword;
 
     /**
