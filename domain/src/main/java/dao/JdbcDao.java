@@ -11,6 +11,7 @@ import essence.room.RoomStatusTypes;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
 import lombok.Setter;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.exceptions.TechnicalException;
 
@@ -59,25 +60,33 @@ public class JdbcDao implements IDao {
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             for (int i = 0; i < fields.length; i++) {
-                if (fields[i].getName().equals("clients") && clazz.equals(RoomReservation.class)) {
+                String fieldName = fields[i].getName();
+                if (clazz.equals(RoomReservation.class) && fieldName.equals("clients")) {
+                    // Требуется пропустить поле clients, ибо все клиенты содержатся в таблице reservation_client по
+                    // связи many to many. Данные связи будут установлены в блоке finally.
                     continue;
                 }
 
                 fields[i].setAccessible(true);
                 Object value;
-                if (fields[i].getName().equals("beneficiaries") && essence.getClass().equals(ProvidedService.class)) {
+                if (clazz.equals(ProvidedService.class) && fieldName.equals("beneficiaries")) {
+                    // Список клиентов выполненной услуги всегда равен 1, так что требуется взять список, взять первый
+                    // элемент и взять у этого элемента id.
                     value = ((ArrayList<T>) parseValueFromApplication(essence, fields[i])).getFirst().getId();
-                } else if ((fields[i].getName().equals("room") || fields[i].getName().equals("service")
-                        || fields[i].getName().equals("client")) && essence.getClass().equals(ProvidedService.class)) {
+                } else if (clazz.equals(ProvidedService.class) && fieldName.equals("service")) {
+                    // Требуется взять id услуги.
                     value = ((ProvidedService) essence).getService().getId();
                 } else {
+                    // Стандартное получение значения из поля.
                     value = parseValueFromApplication(essence, fields[i]);
                 }
 
-                if ((i > 2 && clazz.equals(RoomReservation.class))
-                        || (fields[i].getName().equals("room") && clazz.equals(RoomReservation.class))) {
+                if (clazz.equals(RoomReservation.class) && (i > 2 || fieldName.equals("room"))) {
+                    // Т.к. переступил одну из итераций во время сохранения RoomReservation, то нет необходимости
+                    // прибавлять на единицу i.
                     statement.setObject(i, value);
                 } else {
+                    // Стандартное установление значений поля.
                     statement.setObject(i + 1, value);
                 }
             }
@@ -87,6 +96,7 @@ public class JdbcDao implements IDao {
             }
         } finally {
             if (clazz.equals(RoomReservation.class)) {
+                // Добавляем связи в таблицу reservation_client, которые пропустили во время одной из итераций выше.
                 insertReservationClients(essence);
             }
         }
@@ -109,35 +119,44 @@ public class JdbcDao implements IDao {
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             for (int i = 0; i < fields.length; i++) {
-                if (fields[i].getName().equals("clients") && clazz.equals(RoomReservation.class)) {
+                String fieldName = fields[i].getName();
+                if (clazz.equals(RoomReservation.class) && fieldName.equals("clients")) {
+                    // Требуется пропустить поле clients, ибо все клиенты содержатся в таблице reservation_client по
+                    // связи many to many. Данные связи будут обновлены в конце.
                     continue;
                 }
 
                 fields[i].setAccessible(true);
                 Object value;
-                if (clazz.equals(ProvidedService.class) && fields[i].getName().equals("service")) {
+                if (clazz.equals(ProvidedService.class) && fieldName.equals("service")) {
+                    // Требуется взять id услуги.
                     value = ((ProvidedService) essence).getService().getId();
                 } else {
+                    // Стандартное получение значения из поля.
                     value = parseValueFromApplication(essence, fields[i]);
                 }
 
-                if (i > 1 && clazz.equals(RoomReservation.class)) {
+                if (clazz.equals(RoomReservation.class) && i > 1) {
+                    // Т.к. мы пропустили одну из итераций, то прибавлять i на 1 не имеет смысла.
                     statement.setObject(i, value);
-                } else if (clazz.equals(ProvidedService.class)
-                        && fields[i].getName().equals("beneficiaries")) {
+                } else if (clazz.equals(ProvidedService.class) && fieldName.equals("beneficiaries")) {
+                    // Т.к. список получателей услуг всегда равен 1, то требуется получить список, взять первого и
+                    // получить его id.
                     statement.setObject(i + 1, ((List<T>) value).getFirst().getId());
                 } else {
+                    // Стандартное установление значения.
                     statement.setObject(i + 1, value);
                 }
             }
 
             if (clazz.equals(RoomReservation.class)) {
-                deleteReservationIdFromReservationClients(essence);
+                // Обновляем значения в связанной таблице reservation_client.
+                deleteFromReservationClientByReservation(essence);
                 insertReservationClients(essence);
             }
 
             if (statement.executeUpdate() == 0) {
-                throw new TechnicalException("Не удалось обновить данные в БД");
+                throw new TechnicalException(ErrorMessages.DB_UPDATE_EXCEPTION.getMessage());
             }
         }
     }
@@ -161,12 +180,11 @@ public class JdbcDao implements IDao {
                 table, essence.getId()))
         ) {
             if (statement.executeUpdate() == 0) {
-                throw new TechnicalException("Не удалось удалить данные из БД");
+                throw new TechnicalException(ErrorMessages.DB_DELETE_EXCEPTION.getMessage());
             }
         }
     }
 
-    // TODO: обновить документацию
     /**
      * Возвращает один объект из базы данных по его идентификатору.
      * @param id идентификатор объекта.
@@ -179,6 +197,7 @@ public class JdbcDao implements IDao {
      * абстрактных классов или интерфейсов, или если класс, указанный в параметре типа, является абстрактным.
      * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
      * @throws NoSuchFieldException если запрашиваемое поле не существует.
+     * @throws ClassNotFoundException если класс с указанным именем не найден.
      * @throws NoEntityException если сущность с переданным id отсутствует в БД.
      */
     @Override
@@ -200,6 +219,8 @@ public class JdbcDao implements IDao {
                     String columnName = parseStringFromSnakeCaseToCamelCase(metaData.getColumnName(i));
                     Object columnValue;
                     if (columnName.contains("Id")) {
+                        // Ниже находится логика установления связей со сложными объектами: Room, Client или Service.
+                        // При известном id сущности происходит получение самой сущности.
                         columnName = columnName.substring(0, columnName.lastIndexOf("Id"));
                         String classField = columnName.substring(0, 1).toUpperCase() +
                                 columnName.substring(1);
@@ -209,7 +230,7 @@ public class JdbcDao implements IDao {
                         } else if (classField.equals("Service")) {
                             columnValue = getOne(resultSet.getInt("service_id"),
                                     (Class<T>) Class.forName("essence.service." + classField));
-                        } else if (classField.equals("Client") && clazz.equals(ProvidedService.class)) {
+                        } else if (clazz.equals(ProvidedService.class) && classField.equals("Client")) {
                             columnName = "beneficiaries";
                             columnValue = List.of(getOne(resultSet.getInt("client_id"),
                                     (Class<T>) Class.forName("essence.person." + classField)));
@@ -217,6 +238,7 @@ public class JdbcDao implements IDao {
                             throw new TechnicalException("Для данного класса нет специального обработчика");
                         }
                     } else {
+                        // Получение значения для простых сущностей (которые не являются Room, Client или Service).
                         columnValue = parseValueFromDB(columnName, table, resultSet, i);
                     }
                     Field field = clazz.getDeclaredField(columnName);
@@ -225,6 +247,7 @@ public class JdbcDao implements IDao {
                 }
 
                 if (clazz.equals(RoomReservation.class)) {
+                    // Установление значений списка клиентов для резервации.
                     implementationClientListIntoReservation(entity);
                 }
             } else {
@@ -246,6 +269,7 @@ public class JdbcDao implements IDao {
      * @throws InstantiationException если попытка создать экземпляр класса абстрактного класса, интерфейса, массива
      * абстрактных классов или интерфейсов, или если класс, указанный в параметре типа, является абстрактным.
      * @throws IllegalAccessException если доступ к классу или его полям был закрыт.
+     * @throws ClassNotFoundException если класс с указанным именем не найден.
      */
     @Override
     public <T extends Identifiable> List<T> getAll(Class<T> clazz) throws SQLException, NoSuchFieldException,
@@ -270,6 +294,12 @@ public class JdbcDao implements IDao {
         return list;
     }
 
+    /**
+     * Удаляет записи из таблицы reservation_client, связанные с указанной резервацией.
+     * @param reservation объект бронирования, для которого нужно удалить связанные записи.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если не удалось удалить данные по переданной резервации.
+     */
     private <T extends Identifiable> void deleteFromReservationClientByReservation (T reservation) throws SQLException {
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -277,23 +307,16 @@ public class JdbcDao implements IDao {
                         "reservation_client WHERE reservation_id = %d", reservation.getId()))
         ) {
             if (statement.executeUpdate() == 0) {
-                throw new TechnicalException("Не удалось удалить данные из БД");
+                throw new TechnicalException(ErrorMessages.DB_DELETE_EXCEPTION.getMessage());
             }
         }
     }
 
-    private <T extends Identifiable> void deleteReservationIdFromReservationClients(T reservation) throws SQLException {
-        try (
-                Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-                PreparedStatement statement = connection.prepareStatement(String.format("DELETE FROM " +
-                        "reservation_client WHERE reservation_id = %d", reservation.getId()))
-        ) {
-            if (statement.executeUpdate() == 0) {
-                throw new TechnicalException("Не удалось удалить данные из БД");
-            }
-        }
-    }
-
+    /**
+     * Вставляет связанные записи бронирования клиентов в таблицу reservation_client.
+     * @param roomReservation объект бронирования комнаты, для которого нужно вставить записи клиентов
+     * @throws SQLException если произошла ошибка SQL
+     */
     private <T extends Identifiable> void insertReservationClients(T roomReservation) throws SQLException {
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -310,23 +333,35 @@ public class JdbcDao implements IDao {
         }
     }
 
-    private <T extends Identifiable> void implementationClientListIntoReservation(T roomReservation) throws
+    /**
+     * Реализует получение списка клиентов из таблицы reservation_client и внедрение его в объект резервации через
+     * рефлексию
+     * @param reservation объект бронирования, в который необходимо внедрить список клиентов
+     * @throws SQLException если произошла ошибка SQL
+     * @throws NoSuchFieldException если запрашиваемое поле не найдено в классе бронирования
+     * @throws InvocationTargetException если вызываемый метод, как отраженный объект, не смог быть вызван
+     * @throws NoSuchMethodException если запрашиваемый метод не найден
+     * @throws InstantiationException если создание объекта класса, интерфейса или массива не удалось
+     * @throws IllegalAccessException если доступ к запрашиваемому классу, методу или полю запрещен
+     * @throws ClassNotFoundException если класс с указанным именем не найден
+     */
+    private <T extends Identifiable> void implementationClientListIntoReservation(T reservation) throws
             SQLException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException, ClassNotFoundException {
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM reservation_client " +
-                        "WHERE reservation_id = %d", roomReservation.getId()))
+                        "WHERE reservation_id = %d", reservation.getId()))
         ) {
             List<T> list = new ArrayList<>();
             while (resultSet.next()) {
                 list.add((T) getOne((Integer) resultSet.getObject(2), Client.class));
             }
 
-            Field field = roomReservation.getClass().getDeclaredField("clients");
+            Field field = reservation.getClass().getDeclaredField("clients");
             field.setAccessible(true);
-            field.set(roomReservation, list);
+            field.set(reservation, list);
         }
     }
 
@@ -483,13 +518,20 @@ public class JdbcDao implements IDao {
         sql.append(")");
 
         if (clazz.equals(RoomReservation.class)) {
-            sql.delete(sql.lastIndexOf("clients"), sql.lastIndexOf("clients") + "clients".length() + 2);
-            sql.replace(sql.lastIndexOf("room"), sql.lastIndexOf("room") + "room".length(), "room_id");
-            sql.delete(sql.lastIndexOf("?, "), sql.lastIndexOf("?, ") + "?, ".length());
+            int clientsIndex = sql.lastIndexOf("clients");
+            sql.delete(clientsIndex, clientsIndex + "clients".length() + 2);
+
+            int roomIndex = sql.lastIndexOf("room");
+            sql.replace(roomIndex, roomIndex + "room".length(), "room_id");
+
+            int questionIndex = sql.lastIndexOf("?, ");
+            sql.delete(questionIndex, questionIndex + "?, ".length());
         } else if (clazz.equals(ProvidedService.class)) {
-            sql.replace(sql.lastIndexOf("beneficiaries"),
-                    sql.lastIndexOf("beneficiaries") + "beneficiaries".length(), "client_id");
-            sql.replace(sql.indexOf(" service"), sql.indexOf(" service") + " service".length(), " service_id");
+            int beneficiariesIndex = sql.lastIndexOf("beneficiaries");
+            sql.replace(beneficiariesIndex, beneficiariesIndex + "beneficiaries".length(), "client_id");
+
+            int serviceIndex = sql.indexOf(" service");
+            sql.replace(serviceIndex, serviceIndex + " service".length(), " service_id");
         }
 
         return sql.toString();
@@ -514,15 +556,17 @@ public class JdbcDao implements IDao {
         sql.append(" WHERE id = ").append(essence.getId());
 
         if (essence.getClass().equals(RoomReservation.class)) {
-            sql.delete(sql.lastIndexOf("clients = ?, "),
-                    sql.lastIndexOf("clients = ?, ") + "clients = ?, ".length());
-            sql.replace(sql.lastIndexOf("room"), sql.lastIndexOf("room") + "room".length(), "room_id");
-        }
+            int clientsIndex = sql.lastIndexOf("clients = ?, ");
+            sql.delete(clientsIndex, clientsIndex + "clients = ?, ".length());
 
-        if (essence.getClass().equals(ProvidedService.class)) {
-            sql.replace(sql.lastIndexOf("beneficiaries"),
-                    sql.lastIndexOf("beneficiaries") + "beneficiaries".length(), "client_id");
-            sql.replace(sql.indexOf(" service"), sql.indexOf(" service") + " service".length(), " service_id");
+            int roomIndex = sql.lastIndexOf("room");
+            sql.replace(roomIndex, roomIndex + "room".length(), "room_id");
+        } else if (essence.getClass().equals(ProvidedService.class)) {
+            int beneficiariesIndex = sql.lastIndexOf("beneficiaries");
+            sql.replace(beneficiariesIndex, beneficiariesIndex + "beneficiaries".length(), "client_id");
+
+            int serviceIndex = sql.indexOf(" service");
+            sql.replace(serviceIndex, serviceIndex + " service".length(), " service_id");
         }
 
         return sql.toString();
