@@ -17,26 +17,31 @@ import java.util.List;
 public class TestDAO {
     @SneakyThrows
     public static void main(String[] args) {
-//        testGetOneRoom();
-//        testGetOneService();
-//        testGetOneClient();
-//        testGetOneRoomReservation();
-//        testGetOneProvidedService();
-//        testGetAllRooms();
-//        testGetAllServices();
-//        testGetAllClients();
-//        testGetAllRoomReservations();
-//        testGetAllProvidedServices();
-//        testSaveRoom();
-//        testSaveService();
-//        testSaveClient();
-//        testSaveRoomReservation();
-//        testUpdateRoom();
-//        testUpdateService();
-//        testUpdateClient();
-//        testDeleteRoom();
-//        testDeleteService();
-//        testDeleteClient();
+        testGetOneRoom();
+        testGetOneService();
+        testGetOneClient();
+        testGetOneRoomReservation();
+        testGetOneProvidedService();
+        testGetAllRooms();
+        testGetAllServices();
+        testGetAllClients();
+        testGetAllRoomReservations();
+        testGetAllProvidedServices();
+        testSaveRoom();
+        testSaveService();
+        testSaveClient();
+        testSaveRoomReservation();
+        testSaveProvidedService();
+        testUpdateRoom();
+        testUpdateService();
+        testUpdateClient();
+        testUpdateRoomReservation();
+        testUpdateProvidedService();
+        testDeleteRoomReservation();
+        testDeleteProvidedService();
+        testDeleteRoom();
+        testDeleteService();
+        testDeleteClient();
     }
 
     public static void testGetOneRoom() throws SQLException, NoSuchFieldException, InvocationTargetException,
@@ -211,6 +216,19 @@ public class TestDAO {
         System.out.println("--------------------------------------");
     }
 
+    public static void testSaveProvidedService() throws SQLException, NoSuchFieldException, ClassNotFoundException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        JdbcDao jdbcDao = new JdbcDao();
+        jdbcDao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        jdbcDao.setDbUser("hotel_user");
+        jdbcDao.setDbPassword("R7hB2fK9sL6e");
+        ProvidedService providedService = new ProvidedService(88, jdbcDao.getOne(6, Service.class),
+                LocalDateTime.now(), jdbcDao.getOne(6, Client.class));
+        jdbcDao.save(providedService);
+        System.out.println("Сохранить сущность " + providedService + " удалось");
+        System.out.println("--------------------------------------");
+    }
+
     public static void testDeleteRoom() throws SQLException {
         JdbcDao jdbcDao = new JdbcDao();
         jdbcDao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
@@ -241,6 +259,30 @@ public class TestDAO {
         Client client = new Client(6, "Antadze U. M.", "+7(953)170-82-19");
         jdbcDao.delete(client);
         System.out.println("Удалить сущность " + client + " удалось");
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testDeleteRoomReservation() throws SQLException, NoSuchFieldException, ClassNotFoundException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        JdbcDao jdbcDao = new JdbcDao();
+        jdbcDao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        jdbcDao.setDbUser("hotel_user");
+        jdbcDao.setDbPassword("R7hB2fK9sL6e");
+        RoomReservation reservation = jdbcDao.getOne(3, RoomReservation.class);
+        jdbcDao.delete(reservation);
+        System.out.println("Удалить сущность " + reservation + " удалось");
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testDeleteProvidedService() throws SQLException, NoSuchFieldException, ClassNotFoundException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        JdbcDao jdbcDao = new JdbcDao();
+        jdbcDao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        jdbcDao.setDbUser("hotel_user");
+        jdbcDao.setDbPassword("R7hB2fK9sL6e");
+        ProvidedService providedService = jdbcDao.getOne(88, ProvidedService.class);
+        jdbcDao.delete(providedService);
+        System.out.println("Удалить сущность " + providedService + " удалось");
         System.out.println("--------------------------------------");
     }
 
@@ -280,6 +322,37 @@ public class TestDAO {
         jdbcDao.update(client);
         System.out.println("Удалось обновить сущность. Новые данные по сущности: "
                 + jdbcDao.getOne(client.getId(), Client.class));
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testUpdateRoomReservation() throws SQLException, NoSuchFieldException, ClassNotFoundException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        JdbcDao jdbcDao = new JdbcDao();
+        jdbcDao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        jdbcDao.setDbUser("hotel_user");
+        jdbcDao.setDbPassword("R7hB2fK9sL6e");
+        RoomReservation reservation = new RoomReservation(3, jdbcDao.getOne(16, Room.class),
+                LocalDateTime.of(2024, 1, 1, 12, 0, 0),
+                LocalDateTime.of(2024, 1, 2, 10, 0, 0),
+                List.of(jdbcDao.getOne(1, Client.class), jdbcDao.getOne(6, Client.class)));
+        jdbcDao.update(reservation);
+        System.out.println("Удалось обновить сущность. Новые данные по сущности: "
+                + jdbcDao.getOne(reservation.getId(), RoomReservation.class));
+        System.out.println("--------------------------------------");
+    }
+
+    public static void testUpdateProvidedService() throws SQLException, NoSuchFieldException, ClassNotFoundException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        JdbcDao jdbcDao = new JdbcDao();
+        jdbcDao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
+        jdbcDao.setDbUser("hotel_user");
+        jdbcDao.setDbPassword("R7hB2fK9sL6e");
+        ProvidedService providedService = jdbcDao.getOne(88, ProvidedService.class);
+        providedService.setBeneficiaries(List.of(jdbcDao.getOne(1, Client.class)));
+        providedService.setService(jdbcDao.getOne(1, Service.class));
+        jdbcDao.update(providedService);
+        System.out.println("Удалось обновить сущность. Новые данные по сущности: "
+                + jdbcDao.getOne(providedService.getId(), ProvidedService.class));
         System.out.println("--------------------------------------");
     }
 }

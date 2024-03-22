@@ -65,16 +65,17 @@ public class JdbcDao implements IDao {
 
                 fields[i].setAccessible(true);
                 Object value;
-                if (fields[i].getName().equals("clients")) {
+                if (fields[i].getName().equals("beneficiaries") && essence.getClass().equals(ProvidedService.class)) {
                     value = ((ArrayList<T>) parseValueFromApplication(essence, fields[i])).getFirst().getId();
-                } else if (fields[i].getName().equals("room") || fields[i].getName().equals("service")
-                        || fields[i].getName().equals("client")) {
-                    value = ((T) parseValueFromApplication(essence, fields[i])).getId();
+                } else if ((fields[i].getName().equals("room") || fields[i].getName().equals("service")
+                        || fields[i].getName().equals("client")) && essence.getClass().equals(ProvidedService.class)) {
+                    value = ((ProvidedService) essence).getService().getId();
                 } else {
                     value = parseValueFromApplication(essence, fields[i]);
                 }
 
-                if ((i > 2 && clazz.equals(RoomReservation.class)) || (fields[i].getName().equals("room"))) {
+                if ((i > 2 && clazz.equals(RoomReservation.class))
+                        || (fields[i].getName().equals("room") && clazz.equals(RoomReservation.class))) {
                     statement.setObject(i, value);
                 } else {
                     statement.setObject(i + 1, value);
@@ -101,15 +102,38 @@ public class JdbcDao implements IDao {
     @Override
     public <T extends Identifiable> void update(T essence) throws SQLException, IllegalAccessException {
         String sql = sqlUpdateBuilder(essence);
-        Field[] fields = essence.getClass().getDeclaredFields();
+        Class<?> clazz = essence.getClass();
+        Field[] fields = clazz.getDeclaredFields();
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             for (int i = 0; i < fields.length; i++) {
+                if (fields[i].getName().equals("clients") && clazz.equals(RoomReservation.class)) {
+                    continue;
+                }
+
                 fields[i].setAccessible(true);
-                Object value = parseValueFromApplication(essence, fields[i]);
-                statement.setObject(i + 1, value);
+                Object value;
+                if (clazz.equals(ProvidedService.class) && fields[i].getName().equals("service")) {
+                    value = ((ProvidedService) essence).getService().getId();
+                } else {
+                    value = parseValueFromApplication(essence, fields[i]);
+                }
+
+                if (i > 1 && clazz.equals(RoomReservation.class)) {
+                    statement.setObject(i, value);
+                } else if (clazz.equals(ProvidedService.class)
+                        && fields[i].getName().equals("beneficiaries")) {
+                    statement.setObject(i + 1, ((List<T>) value).getFirst().getId());
+                } else {
+                    statement.setObject(i + 1, value);
+                }
+            }
+
+            if (clazz.equals(RoomReservation.class)) {
+                deleteReservationIdFromReservationClients(essence);
+                insertReservationClients(essence);
             }
 
             if (statement.executeUpdate() == 0) {
@@ -126,6 +150,10 @@ public class JdbcDao implements IDao {
      */
     @Override
     public <T extends Identifiable> void delete(T essence) throws SQLException {
+        if (essence.getClass().equals(RoomReservation.class)) {
+            deleteFromReservationClientByReservation(essence);
+        }
+
         String table = parseStringFromCamelCaseToSnakeCase(essence.getClass().getSimpleName());
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -176,14 +204,14 @@ public class JdbcDao implements IDao {
                         String classField = columnName.substring(0, 1).toUpperCase() +
                                 columnName.substring(1);
                         if (classField.equals("Room")) {
-                            columnValue = getOne(i,
+                            columnValue = getOne(resultSet.getInt("room_id"),
                                     (Class<T>) Class.forName("essence.room." + classField));
                         } else if (classField.equals("Service")) {
-                            columnValue = getOne(i,
+                            columnValue = getOne(resultSet.getInt("service_id"),
                                     (Class<T>) Class.forName("essence.service." + classField));
                         } else if (classField.equals("Client") && clazz.equals(ProvidedService.class)) {
                             columnName = "beneficiaries";
-                            columnValue = List.of(getOne(i,
+                            columnValue = List.of(getOne(resultSet.getInt("client_id"),
                                     (Class<T>) Class.forName("essence.person." + classField)));
                         } else {
                             throw new TechnicalException("Для данного класса нет специального обработчика");
@@ -242,7 +270,30 @@ public class JdbcDao implements IDao {
         return list;
     }
 
-    // TODO: добавляем связи по клиентам. Нужно вызывать метод после добавления резервации в БД
+    private <T extends Identifiable> void deleteFromReservationClientByReservation (T reservation) throws SQLException {
+        try (
+                Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+                PreparedStatement statement = connection.prepareStatement(String.format("DELETE FROM " +
+                        "reservation_client WHERE reservation_id = %d", reservation.getId()))
+        ) {
+            if (statement.executeUpdate() == 0) {
+                throw new TechnicalException("Не удалось удалить данные из БД");
+            }
+        }
+    }
+
+    private <T extends Identifiable> void deleteReservationIdFromReservationClients(T reservation) throws SQLException {
+        try (
+                Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+                PreparedStatement statement = connection.prepareStatement(String.format("DELETE FROM " +
+                        "reservation_client WHERE reservation_id = %d", reservation.getId()))
+        ) {
+            if (statement.executeUpdate() == 0) {
+                throw new TechnicalException("Не удалось удалить данные из БД");
+            }
+        }
+    }
+
     private <T extends Identifiable> void insertReservationClients(T roomReservation) throws SQLException {
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -396,6 +447,9 @@ public class JdbcDao implements IDao {
         Object value;
         if (field.getType().isEnum()) {
             value = String.valueOf(field.get(essence));
+        } else if (field.getName().equals("room") || field.getName().equals("client")
+                || field.getName().equals("service")) {
+            value = essence.getId();
         } else {
             value = field.get(essence);
         }
@@ -428,10 +482,14 @@ public class JdbcDao implements IDao {
         }
         sql.append(")");
 
-        if (essence.getClass().equals(RoomReservation.class)) {
-            sql.delete(sql.lastIndexOf("clients"), sql.lastIndexOf("clients") + 9);
-            sql.replace(sql.lastIndexOf("room"), sql.lastIndexOf("room") + 4, "room_id");
-            sql.delete(sql.lastIndexOf("?, "), sql.lastIndexOf("?, ") + 3);
+        if (clazz.equals(RoomReservation.class)) {
+            sql.delete(sql.lastIndexOf("clients"), sql.lastIndexOf("clients") + "clients".length() + 2);
+            sql.replace(sql.lastIndexOf("room"), sql.lastIndexOf("room") + "room".length(), "room_id");
+            sql.delete(sql.lastIndexOf("?, "), sql.lastIndexOf("?, ") + "?, ".length());
+        } else if (clazz.equals(ProvidedService.class)) {
+            sql.replace(sql.lastIndexOf("beneficiaries"),
+                    sql.lastIndexOf("beneficiaries") + "beneficiaries".length(), "client_id");
+            sql.replace(sql.indexOf(" service"), sql.indexOf(" service") + " service".length(), " service_id");
         }
 
         return sql.toString();
@@ -454,6 +512,18 @@ public class JdbcDao implements IDao {
             sql.append(parseStringFromCamelCaseToSnakeCase(fields[i].getName())).append(" = ?");
         }
         sql.append(" WHERE id = ").append(essence.getId());
+
+        if (essence.getClass().equals(RoomReservation.class)) {
+            sql.delete(sql.lastIndexOf("clients = ?, "),
+                    sql.lastIndexOf("clients = ?, ") + "clients = ?, ".length());
+            sql.replace(sql.lastIndexOf("room"), sql.lastIndexOf("room") + "room".length(), "room_id");
+        }
+
+        if (essence.getClass().equals(ProvidedService.class)) {
+            sql.replace(sql.lastIndexOf("beneficiaries"),
+                    sql.lastIndexOf("beneficiaries") + "beneficiaries".length(), "client_id");
+            sql.replace(sql.indexOf(" service"), sql.indexOf(" service") + " service".length(), " service_id");
+        }
 
         return sql.toString();
     }
