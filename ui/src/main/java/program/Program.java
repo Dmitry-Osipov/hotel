@@ -15,7 +15,7 @@ public class Program {
         ApplicationContext context = null;
         try {
             context = new ApplicationContext(List.of("ui", "ui.actions.room", "ui.actions.client", "ui.actions.service",
-                    "repository", "service"));
+                    "repository", "service", "dao"));
             context.run(new PropertyFileConfigurator());
         } catch (IOException | InstantiationException | URISyntaxException | ClassNotFoundException |
                  InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
