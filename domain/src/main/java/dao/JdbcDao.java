@@ -51,14 +51,15 @@ public class JdbcDao implements IDao {
      */
     @Override
     public <T extends Identifiable> void save(T essence) throws SQLException, IllegalAccessException {
-        Field[] fields = essence.getClass().getDeclaredFields();
+        Class<?> clazz = essence.getClass();
+        Field[] fields = clazz.getDeclaredFields();
         String sql = sqlInsertIntoBuild(essence);
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             for (int i = 0; i < fields.length; i++) {
-                if (essence.getClass().equals(RoomReservation.class) && fields[i].getName().equals("room")) {
+                if (fields[i].getName().equals("clients") && clazz.equals(RoomReservation.class)) {
                     continue;
                 }
 
@@ -73,7 +74,7 @@ public class JdbcDao implements IDao {
                     value = parseValueFromApplication(essence, fields[i]);
                 }
 
-                if (i > 2 && essence.getClass().equals(RoomReservation.class)) {
+                if ((i > 2 && clazz.equals(RoomReservation.class)) || (fields[i].getName().equals("room"))) {
                     statement.setObject(i, value);
                 } else {
                     statement.setObject(i + 1, value);
@@ -82,6 +83,10 @@ public class JdbcDao implements IDao {
 
             if (statement.executeUpdate() == 0) {
                 throw new TechnicalException("Не удалось вставить данные в БД");
+            }
+        } finally {
+            if (clazz.equals(RoomReservation.class)) {
+                insertReservationClients(essence);
             }
         }
     }
@@ -133,6 +138,7 @@ public class JdbcDao implements IDao {
         }
     }
 
+    // TODO: обновить документацию
     /**
      * Возвращает один объект из базы данных по его идентификатору.
      * @param id идентификатор объекта.

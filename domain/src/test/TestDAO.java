@@ -17,29 +17,26 @@ import java.util.List;
 public class TestDAO {
     @SneakyThrows
     public static void main(String[] args) {
-        try {
-            testGetOneRoom();
-            testGetOneService();
-            testGetOneClient();
-            testGetOneRoomReservation();
-            testGetOneProvidedService();
-            testGetAllRooms();
-            testGetAllServices();
-            testGetAllClients();
-            testGetAllRoomReservations();
-            testGetAllProvidedServices();
-            testSaveRoom();
-            testSaveService();
-            testSaveClient();
-            testSaveRoomReservation();
-            testUpdateRoom();
-            testUpdateService();
-            testUpdateClient();
-        } finally {
-            testDeleteRoom();
-            testDeleteService();
-            testDeleteClient();
-        }
+//        testGetOneRoom();
+//        testGetOneService();
+//        testGetOneClient();
+//        testGetOneRoomReservation();
+//        testGetOneProvidedService();
+//        testGetAllRooms();
+//        testGetAllServices();
+//        testGetAllClients();
+//        testGetAllRoomReservations();
+//        testGetAllProvidedServices();
+//        testSaveRoom();
+//        testSaveService();
+//        testSaveClient();
+//        testSaveRoomReservation();
+//        testUpdateRoom();
+//        testUpdateService();
+//        testUpdateClient();
+//        testDeleteRoom();
+//        testDeleteService();
+//        testDeleteClient();
     }
 
     public static void testGetOneRoom() throws SQLException, NoSuchFieldException, InvocationTargetException,
@@ -200,14 +197,15 @@ public class TestDAO {
         System.out.println("--------------------------------------");
     }
 
-    public static void testSaveRoomReservation() throws SQLException, IllegalAccessException {
+    public static void testSaveRoomReservation() throws SQLException, IllegalAccessException, NoSuchFieldException,
+            ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         JdbcDao jdbcDao = new JdbcDao();
         jdbcDao.setDbUrl("jdbc:mysql://localhost:3306/hotel");
         jdbcDao.setDbUser("hotel_user");
         jdbcDao.setDbPassword("R7hB2fK9sL6e");
-        RoomReservation reservation = new RoomReservation(3, new Room(16, 7, 3, 5000),
+        RoomReservation reservation = new RoomReservation(3, jdbcDao.getOne(16, Room.class),
                 LocalDateTime.now(), LocalDateTime.now(),
-                List.of(new Client(6, "Antadze U. M.", "+7(953)170-82-19")));
+                List.of(jdbcDao.getOne(6, Client.class)));
         jdbcDao.save(reservation);
         System.out.println("Сохранить сущность " + reservation + " удалось");
         System.out.println("--------------------------------------");
