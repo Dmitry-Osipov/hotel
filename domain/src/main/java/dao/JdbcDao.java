@@ -11,7 +11,6 @@ import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.exceptions.TechnicalException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -37,7 +36,7 @@ public class JdbcDao implements IDao {
     private EntityMapper mapper;
 
     @Override
-    public <T extends Identifiable> void save(T essence) throws SQLException, IllegalAccessException {
+    public <T extends Identifiable> void save(T essence) throws SQLException {
         String sql = SqlBuilder.sqlInsertIntoBuild(essence);
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -55,7 +54,7 @@ public class JdbcDao implements IDao {
     }
 
     @Override
-    public <T extends Identifiable> void update(T essence) throws SQLException, IllegalAccessException {
+    public <T extends Identifiable> void update(T essence) throws SQLException {
         String sql = SqlBuilder.sqlUpdateBuild(essence);
         try (
                 Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -93,9 +92,7 @@ public class JdbcDao implements IDao {
     }
 
     @Override
-    public <T extends Identifiable> T getOne(int id, Class<T> clazz) throws SQLException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException,
-            ClassNotFoundException {
+    public <T extends Identifiable> T getOne(int id, Class<T> clazz) throws SQLException {
         String sql = String.format("SELECT * FROM hotel.%s WHERE id = %d",
                 SqlBuilder.parseStringFromCamelCaseToSnakeCase(clazz.getSimpleName()), id);
         try (
@@ -112,9 +109,7 @@ public class JdbcDao implements IDao {
     }
 
     @Override
-    public <T extends Identifiable> List<T> getAll(Class<T> clazz) throws SQLException, NoSuchFieldException,
-            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-            ClassNotFoundException {
+    public <T extends Identifiable> List<T> getAll(Class<T> clazz) throws SQLException {
         String sql = String.format("SELECT * FROM hotel.%s",
                 SqlBuilder.parseStringFromCamelCaseToSnakeCase(clazz.getSimpleName()));
         try (
