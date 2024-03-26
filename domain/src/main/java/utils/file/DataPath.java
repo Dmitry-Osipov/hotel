@@ -1,7 +1,6 @@
 package utils.file;
 
 import lombok.Getter;
-import utils.PropertyFileReader;
 
 /**
  * Перечисление DataPath представляет собой константы директорий и файлов.

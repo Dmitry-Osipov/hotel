@@ -7,9 +7,9 @@ import essence.room.AbstractRoom;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
-import utils.PropertyFileReader;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
+import utils.file.PropertyFileReader;
 
 import java.util.List;
 

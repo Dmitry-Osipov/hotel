@@ -1,8 +1,7 @@
-package utils;
+package utils.file;
 
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
-import utils.file.DataPath;
 
 import java.io.FileInputStream;
 import java.io.IOException;
