@@ -10,9 +10,11 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.ListToArrayConverter;
 import utils.exceptions.AccessDeniedException;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -40,6 +42,8 @@ public class CheckInAction implements IAction {
             System.out.println("\nЗаселение прошло успешно");
         } catch (NoEntityException | InvalidDataException | AccessDeniedException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

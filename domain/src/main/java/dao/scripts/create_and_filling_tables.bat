@@ -1,9 +1,9 @@
-@echo off
+#!/bin/bash
 
-set MYSQL_PATH="/usr/local/mysql/bin/mysql"
+PGSQL_PATH="/usr/local/bin/psql"
 
-%MYSQL_PATH%\mysql -u root -p hotel < create_tables_ddl.sql
+$PGSQL_PATH -U postgres -d hotel -f create_tables_ddl.sql
 
-%MYSQL_PATH%\mysql -u root -p hotel < filling_tables_dml.sql
+$PGSQL_PATH -U postgres -d hotel -f filling_tables_dml.sql
 
-pause
+read -p "Press Enter to exit"

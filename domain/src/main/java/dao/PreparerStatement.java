@@ -48,14 +48,13 @@ public final class PreparerStatement {
      * @throws SQLException если произошла ошибка при установке параметров в {@link PreparedStatement}.
      */
     private static void prepareRoom(Room room, PreparedStatement statement) throws SQLException {
-        statement.setInt(1, room.getId());
-        statement.setInt(2, room.getPrice());
-        statement.setInt(3, room.getNumber());
-        statement.setInt(4, room.getCapacity());
-        statement.setString(5, String.valueOf(room.getStatus()));
-        statement.setInt(6, room.getStars());
-        statement.setTimestamp(7, parseFromLocalDateTime(room.getCheckInTime()));
-        statement.setTimestamp(8, parseFromLocalDateTime(room.getCheckOutTime()));
+        statement.setInt(1, room.getPrice());
+        statement.setInt(2, room.getNumber());
+        statement.setInt(3, room.getCapacity());
+        statement.setString(4, String.valueOf(room.getStatus()));
+        statement.setInt(5, room.getStars());
+        statement.setTimestamp(6, parseFromLocalDateTime(room.getCheckInTime()));
+        statement.setTimestamp(7, parseFromLocalDateTime(room.getCheckOutTime()));
     }
 
     /**
@@ -65,11 +64,10 @@ public final class PreparerStatement {
      * @throws SQLException если произошла ошибка при установке параметров в {@link PreparedStatement}.
      */
     private static void prepareService(Service service, PreparedStatement statement) throws SQLException {
-        statement.setInt(1, service.getId());
-        statement.setInt(2, service.getPrice());
-        statement.setString(3, String.valueOf(service.getName()));
-        statement.setString(4, String.valueOf(service.getStatus()));
-        statement.setTimestamp(5, parseFromLocalDateTime(service.getServiceTime()));
+        statement.setInt(1, service.getPrice());
+        statement.setString(2, String.valueOf(service.getName()));
+        statement.setString(3, String.valueOf(service.getStatus()));
+        statement.setTimestamp(4, parseFromLocalDateTime(service.getServiceTime()));
     }
 
     /**
@@ -79,11 +77,10 @@ public final class PreparerStatement {
      * @throws SQLException если произошла ошибка при установке параметров в {@link PreparedStatement}.
      */
     private static void prepareClient(Client client, PreparedStatement statement) throws SQLException {
-        statement.setInt(1, client.getId());
-        statement.setString(2, client.getFio());
-        statement.setString(3, client.getPhoneNumber());
-        statement.setTimestamp(4, parseFromLocalDateTime(client.getCheckInTime()));
-        statement.setTimestamp(5, parseFromLocalDateTime(client.getCheckOutTime()));
+        statement.setString(1, client.getFio());
+        statement.setString(2, client.getPhoneNumber());
+        statement.setTimestamp(3, parseFromLocalDateTime(client.getCheckInTime()));
+        statement.setTimestamp(4, parseFromLocalDateTime(client.getCheckOutTime()));
     }
 
     /**
@@ -95,10 +92,9 @@ public final class PreparerStatement {
      */
     private static void prepareRoomReservation(RoomReservation roomReservation, PreparedStatement statement) throws
             SQLException {
-        statement.setInt(1, roomReservation.getId());
-        statement.setInt(2, roomReservation.getRoom().getId());
-        statement.setTimestamp(3, parseFromLocalDateTime(roomReservation.getCheckInTime()));
-        statement.setTimestamp(4, parseFromLocalDateTime(roomReservation.getCheckOutTime()));
+        statement.setInt(1, roomReservation.getRoom().getId());
+        statement.setTimestamp(2, parseFromLocalDateTime(roomReservation.getCheckInTime()));
+        statement.setTimestamp(3, parseFromLocalDateTime(roomReservation.getCheckOutTime()));
     }
 
     /**
@@ -110,10 +106,9 @@ public final class PreparerStatement {
      */
     private static void prepareProvidedService(ProvidedService providedService, PreparedStatement statement) throws
             SQLException {
-        statement.setInt(1, providedService.getId());
-        statement.setInt(2, providedService.getBeneficiaries().getFirst().getId());
-        statement.setInt(3, providedService.getService().getId());
-        statement.setTimestamp(4, parseFromLocalDateTime(providedService.getServiceTime()));
+        statement.setInt(1, providedService.getBeneficiaries().getFirst().getId());
+        statement.setInt(2, providedService.getService().getId());
+        statement.setTimestamp(3, parseFromLocalDateTime(providedService.getServiceTime()));
     }
 
     /**

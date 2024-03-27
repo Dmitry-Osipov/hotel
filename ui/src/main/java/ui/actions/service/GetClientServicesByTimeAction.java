@@ -7,8 +7,11 @@ import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.printers.ServicesPrinter;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по получению списка услуг, оказанных клиенту, по убыванию времени
@@ -35,6 +38,8 @@ public class GetClientServicesByTimeAction implements IAction {
             ServicesPrinter.printServices(serviceService.getClientServicesByTime(client));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

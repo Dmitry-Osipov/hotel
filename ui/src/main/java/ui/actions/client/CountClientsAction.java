@@ -4,6 +4,9 @@ import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import service.ClientService;
 import ui.actions.IAction;
+import utils.exceptions.ErrorMessages;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по подсчёту количества клиентов.
@@ -18,6 +21,10 @@ public class CountClientsAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nКоличество клиентов - " + clientService.countClients());
+        try {
+            System.out.println("\nКоличество клиентов - " + clientService.countClients());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
+        }
     }
 }

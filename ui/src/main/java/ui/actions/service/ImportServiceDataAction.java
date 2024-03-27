@@ -13,6 +13,7 @@ import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -50,6 +51,8 @@ public class ImportServiceDataAction implements IAction {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
         } catch (EntityContainedException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

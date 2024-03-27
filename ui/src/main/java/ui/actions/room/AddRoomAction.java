@@ -16,6 +16,7 @@ import utils.validators.ArrayDigitsValidator;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по добавлению новой комнаты.
@@ -32,30 +33,30 @@ public class AddRoomAction implements IAction {
      */
     @Override
     public void execute() {
-        String path = DataPath.ID_DIRECTORY.getPath() + "room_id.txt";
-        int id = IdFileManager.readMaxId(path);
-        if (!UniqueIdValidator.validateUniqueId(roomService.roomsByStars(), id)) {
-            id = roomService.roomsByStars().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
-        }
         try {
+            String path = DataPath.ID_DIRECTORY.getPath() + "room_id.txt";
+            int id = IdFileManager.readMaxId(path);
+            if (!UniqueIdValidator.validateUniqueId(roomService.roomsByStars(), id)) {
+                id = roomService.roomsByStars().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
+            }
             IdFileManager.writeMaxId(path, id + 1);
-        } catch (IOException e) {
-            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
-        }
 
-        System.out.println("\nВведите номер, вместимость и цену комнаты через пробел: ");
-        String[] userInput = InputHandler.getUserInput().split(" ");
-        while (userInput.length != 3 || !ArrayDigitsValidator.isArrayOfDigits(userInput)) {
-            System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
-            userInput = InputHandler.getUserInput().split(" ");
-        }
+            System.out.println("\nВведите номер, вместимость и цену комнаты через пробел: ");
+            String[] userInput = InputHandler.getUserInput().split(" ");
+            while (userInput.length != 3 || !ArrayDigitsValidator.isArrayOfDigits(userInput)) {
+                System.out.println("\n" + ErrorMessages.INCORRECT_INPUT.getMessage());
+                userInput = InputHandler.getUserInput().split(" ");
+            }
 
-        try {
             roomService.addRoom(new Room(id, Integer.parseInt(userInput[0]), Integer.parseInt(userInput[1]),
                     Integer.parseInt(userInput[2])));
             System.out.println("\nУдалось добавить комнату");
         } catch (EntityContainedException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
+        } catch (IOException e) {
+            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
         }
     }
 }

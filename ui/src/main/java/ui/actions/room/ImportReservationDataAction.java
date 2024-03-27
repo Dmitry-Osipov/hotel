@@ -13,6 +13,7 @@ import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -49,6 +50,8 @@ public class ImportReservationDataAction implements IAction {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
         } catch (AccessDeniedException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

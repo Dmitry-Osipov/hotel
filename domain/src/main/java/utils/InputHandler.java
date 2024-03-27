@@ -13,6 +13,7 @@ import utils.printers.ServicesPrinter;
 import utils.validators.FileValidator;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -51,8 +52,9 @@ public final class InputHandler {
      * какой-либо из номеров.
      * @return Номер.
      * @throws NoEntityException Ошибка связана с отсутствием комнат.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public static AbstractRoom getRoomByInput(RoomService roomService) throws NoEntityException {
+    public static AbstractRoom getRoomByInput(RoomService roomService) throws NoEntityException, SQLException {
         List<AbstractRoom> rooms = roomService.roomsByStars();
         if (rooms.isEmpty()) {
             throw new NoEntityException(ErrorMessages.NO_ROOMS.getMessage());
@@ -72,7 +74,7 @@ public final class InputHandler {
      * @return Список клиентов.
      * @throws NoEntityException Ошибка связана с отсутствием клиентов.
      */
-    private static List<AbstractClient> getClients(ClientService clientService) throws NoEntityException {
+    private static List<AbstractClient> getClients(ClientService clientService) throws NoEntityException, SQLException {
         List<AbstractClient> clients = clientService.getClients();
         if (clients.isEmpty()) {
             throw new NoEntityException(ErrorMessages.NO_CLIENTS.getMessage());
@@ -89,8 +91,9 @@ public final class InputHandler {
      * Пользователю требуется выбрать какого-либо клиента.
      * @return Клиент.
      * @throws NoEntityException Ошибка связана с отсутствием клиентов.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public static AbstractClient getClientByInput(ClientService clientService) {
+    public static AbstractClient getClientByInput(ClientService clientService) throws SQLException {
         System.out.println("\nВыберите клиента: ");
         List<AbstractClient> clients = getClients(clientService);
         int choice = getEntityByInput(clients, false);
@@ -101,8 +104,9 @@ public final class InputHandler {
      * Пользователю требуется выбрать одного или нескольких клиентов.
      * @return Список клиентов.
      * @throws NoEntityException Ошибка связана с отсутствием клиентов.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public static List<AbstractClient> getManyClientsByInput(ClientService clientService) {
+    public static List<AbstractClient> getManyClientsByInput(ClientService clientService) throws SQLException {
         System.out.println("\nСписок всех клиентов: ");
         List<AbstractClient> clients = getClients(clientService);
 
@@ -123,8 +127,10 @@ public final class InputHandler {
      * Пользователю требуется выбрать услугу.
      * @return Услуга.
      * @throws NoEntityException Ошибка связана с отсутствием услуг.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public static AbstractService getServiceByInput(ServiceService serviceService) throws NoEntityException {
+    public static AbstractService getServiceByInput(ServiceService serviceService) throws NoEntityException,
+            SQLException {
         List<AbstractService> services = serviceService.getServices();
 
         if (services.isEmpty()) {

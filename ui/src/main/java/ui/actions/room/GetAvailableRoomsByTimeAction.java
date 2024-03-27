@@ -10,6 +10,7 @@ import utils.exceptions.NoEntityException;
 import utils.printers.RoomsPrinter;
 import utils.validators.ArrayDigitsValidator;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -46,6 +47,8 @@ public class GetAvailableRoomsByTimeAction implements IAction {
             )));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

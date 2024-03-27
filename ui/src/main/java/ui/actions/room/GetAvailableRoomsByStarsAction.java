@@ -4,8 +4,11 @@ import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import service.RoomService;
 import ui.actions.IAction;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.printers.RoomsPrinter;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по выводу списка свободных комнат в порядке убывания звёзд.
@@ -27,6 +30,8 @@ public class GetAvailableRoomsByStarsAction implements IAction {
             RoomsPrinter.printRooms(roomService.availableRoomsByStars());
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

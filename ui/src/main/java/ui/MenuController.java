@@ -70,9 +70,6 @@ public class MenuController {
     private void exit() {
         logger.info("Вызван метод выхода из приложения");
         System.out.println("\nВыход из программы...");
-        clientService.saveToDb();
-        roomService.saveToDb();
-        serviceService.saveToDb();
         logger.info("Выход из приложения");
     }
 }

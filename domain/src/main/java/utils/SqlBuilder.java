@@ -93,16 +93,16 @@ public final class SqlBuilder {
         StringBuilder sql =
                 new StringBuilder("INSERT INTO " + "hotel." +
                         parseStringFromCamelCaseToSnakeCase(clazz.getSimpleName()) + " (");
-        for (int i = 0; i < fields.length; i++) {
-            if (i > 0) {
+        for (int i = 1; i < fields.length; i++) {
+            if (i > 1) {
                 sql.append(", ");
             }
             sql.append(parseStringFromCamelCaseToSnakeCase(fields[i].getName()));
         }
 
         sql.append(") VALUES (");
-        for (int i = 0; i < fields.length; i++) {
-            if (i > 0) {
+        for (int i = 1; i < fields.length; i++) {
+            if (i > 1) {
                 sql.append(", ");
             }
             sql.append("?");
@@ -123,8 +123,8 @@ public final class SqlBuilder {
                 new StringBuilder("UPDATE " + "hotel." +
                         parseStringFromCamelCaseToSnakeCase(clazz.getSimpleName()) + " SET ");
         Field[] fields = clazz.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            if (i > 0) {
+        for (int i = 1; i < fields.length; i++) {
+            if (i > 1) {
                 sql.append(", ");
             }
             sql.append(parseStringFromCamelCaseToSnakeCase(fields[i].getName())).append(" = ?");

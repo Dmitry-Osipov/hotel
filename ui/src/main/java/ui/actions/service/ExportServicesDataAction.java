@@ -11,6 +11,7 @@ import utils.file.FileAdditionResult;
 import utils.file.csv.ExportCSV;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Класс представляет собой действие по экспорту данных об услугах.
@@ -39,6 +40,8 @@ public class ExportServicesDataAction implements IAction {
             }
         } catch (IOException e) {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

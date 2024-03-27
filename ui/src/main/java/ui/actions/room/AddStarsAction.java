@@ -6,8 +6,11 @@ import essence.room.AbstractRoom;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по добавлению звёзд комнате.
@@ -32,6 +35,8 @@ public class AddStarsAction implements IAction {
             System.out.println("\nДобавление звёзд прошло успешно");
         } catch (NoEntityException | InvalidDataException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

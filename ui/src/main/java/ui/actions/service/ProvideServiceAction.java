@@ -8,7 +8,11 @@ import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
+import utils.exceptions.ErrorMessages;
+import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по предоставлению услуги клиенту.
@@ -33,6 +37,10 @@ public class ProvideServiceAction implements IAction {
             System.out.println("\nУдалось провести услугу");
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
+        } catch (InvalidDataException e) {
+            System.out.println("\nНевозможно провести уже проведённую услугу");
         }
     }
 }

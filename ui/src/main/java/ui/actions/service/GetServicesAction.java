@@ -4,8 +4,11 @@ import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import service.ServiceService;
 import ui.actions.IAction;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.printers.ServicesPrinter;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по получению списка всех услуг.
@@ -26,6 +29,8 @@ public class GetServicesAction implements IAction {
             ServicesPrinter.printServices(serviceService.getServices());
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

@@ -33,7 +33,8 @@ public enum ErrorMessages {
     DB_UPDATE_EXCEPTION("Не удалось обновить данные в БД"),
     DB_NO_SELECT_EXCEPTION("В БД не содержится такой сущности"),
     DB_NO_INSERT_EXCEPTION("Не удалось добавить данные в БД"),
-    NO_HANDLER("Для данного класса нет специального обработчика");
+    NO_HANDLER("Для данного класса нет специального обработчика"),
+    FATAL_ERROR("Непредвиденная ошибка");
 
     private final String message;
 

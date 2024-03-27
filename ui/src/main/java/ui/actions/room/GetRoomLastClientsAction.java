@@ -11,6 +11,7 @@ import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.file.PropertyFileReader;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -40,6 +41,8 @@ public class GetRoomLastClientsAction implements IAction {
             System.out.println("\n" + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

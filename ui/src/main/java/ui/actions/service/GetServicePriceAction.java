@@ -6,7 +6,10 @@ import essence.service.Service;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику получения стоимости услуги.
@@ -28,6 +31,8 @@ public class GetServicePriceAction implements IAction {
             System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

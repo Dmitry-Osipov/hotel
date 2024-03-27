@@ -7,6 +7,7 @@ import service.ClientService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -23,14 +24,18 @@ public class GetClientsAction implements IAction {
      */
     @Override
     public void execute() {
-        List<AbstractClient> clients = clientService.getClients();
-        if (clients.isEmpty()) {
-            System.out.println("\n" + ErrorMessages.NO_CLIENTS.getMessage());
-        } else {
-            System.out.println("\nСписок всех клиентов: ");
-            for (int i = 0; i < clients.size(); i++) {
-                System.out.println(i+1 + ". " + clients.get(i));
+        try {
+            List<AbstractClient> clients = clientService.getClients();
+            if (clients.isEmpty()) {
+                System.out.println("\n" + ErrorMessages.NO_CLIENTS.getMessage());
+            } else {
+                System.out.println("\nСписок всех клиентов: ");
+                for (int i = 0; i < clients.size(); i++) {
+                    System.out.println(i + 1 + ". " + clients.get(i));
+                }
             }
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

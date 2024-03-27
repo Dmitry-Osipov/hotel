@@ -9,12 +9,14 @@ import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.EntityContainedException;
+import utils.exceptions.ErrorMessages;
 import utils.file.DataPath;
 import utils.file.FileAdditionResult;
 import utils.file.id.IdFileManager;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по добавлению новой услуги в отель.
@@ -55,6 +57,8 @@ public class AddServiceAction implements IAction {
             System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
         } catch (EntityContainedException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }
