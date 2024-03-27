@@ -21,11 +21,20 @@ public class ServiceRepository {
     @InjectByInterface(clazz = JdbcDao.class)
     private IDao dao;
 
-    // TODO: дока
+    /**
+     * Возвращает список всех услуг отеля.
+     * @return список услуг отеля.
+     * @throws SQLException если произошла ошибка при получении данных из базы данных.
+     */
     public <T extends AbstractService> List<T> getServices() throws SQLException {
         return (List<T>) dao.getAll(Service.class);
     }
 
+    /**
+     * Сохраняет или обновляет информацию об услуге в репозитории.
+     * @param service объект услуги, который нужно сохранить или обновить.
+     * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
+     */
     public void saveOrUpdate(AbstractService service) throws SQLException {
         try {
             dao.update(service);
