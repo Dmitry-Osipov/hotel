@@ -2,19 +2,16 @@ package ui.actions.room;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
+import utils.exceptions.ErrorMessages;
+
+import java.sql.SQLException;
 
 /**
  * Класс представляет логику выполнения действия подсчёта количества свободных комнат.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class CountAvailableRoomsAction implements IAction {
     @Autowired
     private RoomService roomService;
@@ -25,6 +22,10 @@ public class CountAvailableRoomsAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nКоличество свободных комнат - " + roomService.countAvailableRooms());
+        try {
+            System.out.println("\nКоличество свободных комнат - " + roomService.countAvailableRooms());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
+        }
     }
 }

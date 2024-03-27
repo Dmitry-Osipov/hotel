@@ -7,9 +7,6 @@ import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +15,16 @@ import repository.ServiceRepository;
 import utils.comparators.ServiceTimeComparator;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
+import utils.exceptions.TechnicalException;
 import utils.file.DataPath;
 import utils.file.FileAdditionResult;
 import utils.file.id.IdFileManager;
-import utils.file.serialize.SerializationUtils;
 import utils.validators.UniqueIdValidator;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
@@ -34,9 +33,6 @@ import java.util.stream.Stream;
  * Класс отвечает за обработку данных по услугам.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 @ToString
 public class ServiceService extends AbstractFavorService {
     private static final Logger serviceLogger = LoggerFactory.getLogger(ServiceService.class);
@@ -51,17 +47,12 @@ public class ServiceService extends AbstractFavorService {
      * @param service Новая услуга.
      * @throws EntityContainedException Ошибка вылетает, когда услуга уже содержится в отеле (невозможно повторно
      * добавить).
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public void addService(AbstractService service) throws EntityContainedException {
+    public void addService(AbstractService service) throws EntityContainedException, SQLException {
         int serviceId = service.getId();
         serviceLogger.info("Вызван метод добавления услуги с ID {}", serviceId);
-        boolean added = serviceRepository.getServices().add(service);
-
-        if (!added) {
-            serviceLogger.error("Не удалось добавить услугу с ID {}", serviceId);
-            throw new EntityContainedException(ErrorMessages.SERVICE_CONTAINED.getMessage());
-        }
-
+        serviceRepository.saveOrUpdate(service);
         serviceLogger.info("Добавлена новая услуга с ID {}", serviceId);
     }
 
@@ -69,34 +60,31 @@ public class ServiceService extends AbstractFavorService {
      * Метод обновления данных услуги. Валидация услуги происходит по её ID.
      * @param service Новые данные услуги, собранные в классе услуги.
      * @return {@code true}, если удалось обновить данные, иначе {@code false}.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public boolean updateService(AbstractService service) {
+    public boolean updateService(AbstractService service) throws SQLException {
         int serviceId = service.getId();
         serviceLogger.info("Вызван метод обновления услуги с ID {}", serviceId);
-        for (AbstractService currentService : serviceRepository.getServices()) {
-            if (currentService.getId() == serviceId) {
-                currentService.setName(service.getName());
-                currentService.setPrice(service.getPrice());
-                currentService.setStatus(service.getStatus());
-                currentService.setServiceTime(service.getServiceTime());
-                serviceLogger.info("Обновлена услуга с ID {}", serviceId);
 
-                return true;
-            }
+        try {
+            serviceRepository.saveOrUpdate(service);
+            serviceLogger.info("Обновлена услуга с ID {}", serviceId);
+            return true;
+        } catch (TechnicalException e) {
+            serviceLogger.error("Не удалось обновить услугу с ID {}", serviceId);
+            return false;
         }
-
-        serviceLogger.error("Не удалось обновить услугу с ID {}", serviceId);
-        return false;
     }
 
     /**
      * Метод addProvidedService добавляет оказанную услугу в репозиторий оказанных услуг.
      * @param providedService Оказанная услуга для добавления.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public void addProvidedService(ProvidedService providedService) {
+    public void addProvidedService(ProvidedService providedService) throws SQLException {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод добавления новой оказанной услуги с ID {}", providedServiceId);
-        providedServicesRepository.getProvidedServices().add(providedService);
+        providedServicesRepository.saveOrUpdate(providedService);
         providedServiceLogger.info("Добавлена новая оказанная услуга с ID {}", providedServiceId);
     }
 
@@ -104,23 +92,20 @@ public class ServiceService extends AbstractFavorService {
      * Метод updateProvidedService обновляет информацию об оказанной услуге в репозитории оказанных услуг.
      * @param providedService Обновленная информация об оказанной услуге.
      * @return {@code true}, если информация успешно добавлена, иначе {@code false}.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public boolean updateProvidedService(ProvidedService providedService) {
+    public boolean updateProvidedService(ProvidedService providedService) throws SQLException {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод обновления оказанной услуги с ID {}", providedServiceId);
-        for (ProvidedService currentProvidedService : providedServicesRepository.getProvidedServices()) {
-            if (currentProvidedService.getId() == providedServiceId) {
-                currentProvidedService.setService(providedService.getService());
-                currentProvidedService.setServiceTime(providedService.getServiceTime());
-                currentProvidedService.setBeneficiaries(providedService.getBeneficiaries());
-                providedServiceLogger.info("Удалось обновить оказанную услугу с ID {}", providedServiceId);
 
-                return true;
-            }
+        try {
+            providedServicesRepository.saveOrUpdate(providedService);
+            providedServiceLogger.info("Обновилась проведённая услуга с ID {}", providedServiceId);
+            return true;
+        } catch (TechnicalException e) {
+            providedServiceLogger.error("Не удалось обновить оказанную услугу с ID {}", providedServiceId);
+            return false;
         }
-
-        providedServiceLogger.error("Не удалось обновить оказанную услугу с ID {}", providedServiceId);
-        return false;
     }
 
     /**
@@ -128,8 +113,10 @@ public class ServiceService extends AbstractFavorService {
      * @param client Клиент.
      * @param service Услуга.
      * @throws NoEntityException Ошибка вылетает, если услуги нет в отеле.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws InvalidDataException если услуга была проведена ранее.
      */
-    public void provideService(AbstractClient client, AbstractService service) throws NoEntityException {
+    public void provideService(AbstractClient client, AbstractService service) throws NoEntityException, SQLException {
         String startMessage = "Вызван метод оказания услуги с ID {} для клиента с ID {}";
         int serviceId = service.getId();
         int clientId = client.getId();
@@ -140,6 +127,10 @@ public class ServiceService extends AbstractFavorService {
             serviceLogger.error(message, serviceId, clientId);
             providedServiceLogger.error(message, serviceId, clientId);
             throw new NoEntityException(ErrorMessages.NO_SERVICE.getMessage());
+        }
+
+        if (service.getStatus().equals(ServiceStatusTypes.RENDERED)) {
+            throw new InvalidDataException(ErrorMessages.SERVICE_PROVIDED_ADDITION_FAILURE.getMessage());
         }
 
         String path = DataPath.ID_DIRECTORY.getPath() + "provided_service_id.txt";
@@ -157,6 +148,7 @@ public class ServiceService extends AbstractFavorService {
         addProvidedService(new ProvidedService(id, service, now, client));
         service.setServiceTime(now);
         service.setStatus(ServiceStatusTypes.RENDERED);
+        serviceRepository.saveOrUpdate(service);
         serviceLogger.info("Услуга с ID {} была оказана клиенту с ID {}", serviceId, clientId);
     }
 
@@ -164,8 +156,9 @@ public class ServiceService extends AbstractFavorService {
      * Метод формирует список услуг, оказанных конкретному клиенту, с сортировкой по увеличению цены.
      * @param client Клиент.
      * @return Список услуг.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public List<AbstractService> getClientServicesByPrice(AbstractClient client) {
+    public List<AbstractService> getClientServicesByPrice(AbstractClient client) throws SQLException {
         int clientId = client.getId();
         providedServiceLogger.info("Вызван метод получения списка оказанных услуг, отсортированных по возрастанию " +
                 "цены, для клиента с ID {}", clientId);
@@ -179,8 +172,9 @@ public class ServiceService extends AbstractFavorService {
      * Метод формирует список услуг, оказанных конкретному клиенту, с сортировкой по убыванию времени оказания услуги.
      * @param client Клиент.
      * @return Список услуг.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public List<AbstractService> getClientServicesByTime(AbstractClient client) {
+    public List<AbstractService> getClientServicesByTime(AbstractClient client) throws SQLException {
         int clientId = client.getId();
         providedServiceLogger.info("Вызван метод получения списка оказанных услуг, отсортированных по убыванию " +
                 "времени оказания услуги, для клиента с ID {}", clientId);
@@ -194,101 +188,21 @@ public class ServiceService extends AbstractFavorService {
     /**
      * Метод возвращает список всех услуг.
      * @return Список всех услуг.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public List<AbstractService> getServices() {
+    public List<AbstractService> getServices() throws SQLException {
         serviceLogger.info("Вызван метод получения списка всех услуг");
-        return serviceRepository.getServices().stream().toList();
+        return serviceRepository.getServices();
     }
 
     /**
      * Метод возвращает список оказанных услуг.
      * @return Список оказанных услуг.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    public List<ProvidedService> getProvidedServices() {
+    public List<ProvidedService> getProvidedServices() throws SQLException {
         providedServiceLogger.info("Вызван метод получения списка оказанных услуг");
         return providedServicesRepository.getProvidedServices();
-    }
-
-    /**
-     * Метод производит сериализацию данных по услугам и проведённым услугам.
-     */
-    public void serializeServicesData() {
-        serializeServiceRepo();
-        serializeProvidedServiceRepo();
-    }
-
-    /**
-     * Метод производит десериализацию данных по услугам и проведённым услугам.
-     */
-    public void deserializeServicesData() {
-        deserializeServiceRepo();
-        deserializeProvidedServiceRepo();
-    }
-
-    /**
-     * Служебный метод производит десериализацию данных по услугам.
-     */
-    private void deserializeServiceRepo() {
-        serviceLogger.info("Происходит десериализация данных по услугам");
-        try {
-            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "services";
-            ServiceRepository repo = SerializationUtils.deserialize(ServiceRepository.class, path);
-            for (AbstractService service : repo.getServices()) {
-                if (!updateService(service)) {
-                    addService(service);
-                }
-            }
-        } catch (IOException e) {
-            serviceLogger.error("Десериализация данных по услугам не произошла");
-        }
-        serviceLogger.info("Десериализация данных по услугам завершена");
-    }
-
-    /**
-     * Служебный метод производит десериализацию данных по проведённым услугам.
-     */
-    private void deserializeProvidedServiceRepo() {
-        providedServiceLogger.info("Происходит десериализация данных по проведённым услугам");
-        try {
-            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "provided_services";
-            ProvidedServicesRepository repo = SerializationUtils.deserialize(ProvidedServicesRepository.class, path);
-            for (ProvidedService providedService : repo.getProvidedServices()) {
-                if (!updateProvidedService(providedService)) {
-                    addProvidedService(providedService);
-                }
-            }
-        } catch (IOException e) {
-            providedServiceLogger.error("Десериализация данных по проведённым услугам не произошла");
-        }
-        providedServiceLogger.info("Десериализация данных по проведённым услугам завершена");
-    }
-
-    /**
-     * Служебный метод производит сериализацию данных по услугам.
-     */
-    private void serializeServiceRepo() {
-        serviceLogger.info("Происходит сериализация данных по услугам");
-        try {
-            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "services";
-            SerializationUtils.serialize(serviceRepository, path);
-        } catch (IOException e) {
-            serviceLogger.error("Сериализация данных по услугам не произошла");
-        }
-        serviceLogger.info("Сериализация данных по услугам завершена");
-    }
-
-    /**
-     * Служебный метод производит сериализацию данных по проведённым услугам.
-     */
-    private void serializeProvidedServiceRepo() {
-        providedServiceLogger.info("Происходит сериализация данных по проведённым услугам");
-        try {
-            String path = DataPath.SERIALIZE_DIRECTORY.getPath() + "provided_services";
-            SerializationUtils.serialize(providedServicesRepository, path);
-        } catch (IOException e) {
-            providedServiceLogger.error("Сериализация данных по проведённым услугам не произошла");
-        }
-        providedServiceLogger.info("Сериализация данных по проведённым услугам завершена");
     }
 
     /**
@@ -296,8 +210,9 @@ public class ServiceService extends AbstractFavorService {
      * содержанию конкретного клиента в списке.
      * @param client Клиент.
      * @return Отфильтрованный стрим.
+     * @throws SQLException если произошла ошибка SQL.
      */
-    private Stream<AbstractService> streamClientServices(AbstractClient client) {
+    private Stream<AbstractService> streamClientServices(AbstractClient client) throws SQLException {
         return providedServicesRepository.getProvidedServices()
                 .stream()
                 .filter(service -> service.getBeneficiaries().contains(client)

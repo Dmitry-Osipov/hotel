@@ -2,9 +2,6 @@ package ui;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +16,7 @@ import java.util.Scanner;
  * Класс отвечает за работу UI.
  */
 @Component
-@Getter
-@Setter
 @ToString
-@NoArgsConstructor
 public class MenuController {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     @Autowired
@@ -41,9 +35,6 @@ public class MenuController {
      */
     public void run() {
         logger.info("Запуск приложения");
-        roomService.deserializeRoomsData();
-        serviceService.deserializeServicesData();
-        clientService.deserializeClientsData();
         while (true) {
             navigator.printMenu();
             int choice = getUserInput() - 1;
@@ -77,10 +68,8 @@ public class MenuController {
      * Служебный метод производит user-friendly выход из программы.
      */
     private void exit() {
-        logger.info("Выход из приложения");
+        logger.info("Вызван метод выхода из приложения");
         System.out.println("\nВыход из программы...");
-        roomService.serializeRoomsData();
-        serviceService.serializeServicesData();
-        clientService.serializeClientsData();
+        logger.info("Выход из приложения");
     }
 }

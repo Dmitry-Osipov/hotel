@@ -2,19 +2,16 @@ package ui.actions.client;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ClientService;
 import ui.actions.IAction;
+import utils.exceptions.ErrorMessages;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по подсчёту количества клиентов.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class CountClientsAction implements IAction {
     @Autowired
     private ClientService clientService;
@@ -24,6 +21,10 @@ public class CountClientsAction implements IAction {
      */
     @Override
     public void execute() {
-        System.out.println("\nКоличество клиентов - " + clientService.countClients());
+        try {
+            System.out.println("\nКоличество клиентов - " + clientService.countClients());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
+        }
     }
 }

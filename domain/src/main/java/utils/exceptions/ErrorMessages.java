@@ -28,7 +28,13 @@ public enum ErrorMessages {
     NO_PROVIDED_SERVICE("Такой проведённой услуги нет в отеле"),
     INVALID_DATA("Поступили некорректные данные"),
     NOT_ALLOWED_CHANGE_ROOM_STATUS("Запрещено изменение статуса комнаты"),
-    PROGRAM_START_ERROR("Невозможно запустить программу");
+    PROGRAM_START_ERROR("Невозможно запустить программу"),
+    DB_DELETE_EXCEPTION("Не удалось удалить данные из БД"),
+    DB_UPDATE_EXCEPTION("Не удалось обновить данные в БД"),
+    DB_NO_SELECT_EXCEPTION("В БД не содержится такой сущности"),
+    DB_NO_INSERT_EXCEPTION("Не удалось добавить данные в БД"),
+    NO_HANDLER("Для данного класса нет специального обработчика"),
+    FATAL_ERROR("Непредвиденная ошибка");
 
     private final String message;
 

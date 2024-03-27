@@ -3,9 +3,6 @@ package ui;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import annotations.factory.InitializeComponent;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +12,7 @@ import utils.exceptions.ErrorMessages;
  * Класс отвечает за навигацию по меню.
  */
 @Component
-@Getter
-@Setter
 @ToString
-@NoArgsConstructor
 public class Navigator implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     private Menu currentMenu;

@@ -2,9 +2,6 @@ package ui.actions.service;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -14,14 +11,12 @@ import utils.file.FileAdditionResult;
 import utils.file.csv.ExportCSV;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Класс представляет собой действие по экспорту данных об услугах.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class ExportServicesDataAction implements IAction {
     @Autowired
     private ServiceService serviceService;
@@ -45,6 +40,8 @@ public class ExportServicesDataAction implements IAction {
             }
         } catch (IOException e) {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

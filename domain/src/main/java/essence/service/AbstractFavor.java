@@ -19,11 +19,6 @@ public abstract class AbstractFavor {
     protected AbstractFavor() {
     }
 
-    protected AbstractFavor(int id, int price) {
-        this.id = id;
-        setPrice(price);
-    }
-
     /**
      * Метод устанавливает новую цену на услугу.
      * @param price Новая цена.

@@ -2,21 +2,18 @@ package ui.actions.room;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
 import utils.printers.RoomsPrinter;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику выполнения действия по выводу списка свободных комнат в порядке возрастания вместимости.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetAvailableRoomsByCapacityAction implements IAction {
     @Autowired
     private RoomService roomService;
@@ -33,6 +30,8 @@ public class GetAvailableRoomsByCapacityAction implements IAction {
             RoomsPrinter.printRooms(roomService.availableRoomsByCapacity());
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

@@ -4,9 +4,6 @@ import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.service.AbstractService;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -16,15 +13,13 @@ import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
  * Класс представляет собой действие по импорту данных по услугам.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class ImportServiceDataAction implements IAction {
     @Autowired
     private ServiceService serviceService;
@@ -56,6 +51,8 @@ public class ImportServiceDataAction implements IAction {
             System.out.println("\n" + ErrorMessages.FILE_ERROR.getMessage());
         } catch (EntityContainedException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

@@ -15,6 +15,8 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 public class Room extends AbstractFavor implements AbstractRoom, Comparable<AbstractRoom> {
+    private int id;
+    private int price;
     private int number;
     private int capacity;
     private RoomStatusTypes status = RoomStatusTypes.AVAILABLE;
@@ -23,7 +25,8 @@ public class Room extends AbstractFavor implements AbstractRoom, Comparable<Abst
     private LocalDateTime checkOutTime;
 
     public Room(int id, int number, int capacity, int price) {
-        super(id, price);
+        this.id = id;
+        this.price = price;
         this.number = number;
         this.capacity = capacity;
     }

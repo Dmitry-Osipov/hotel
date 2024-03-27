@@ -2,9 +2,6 @@ package ui.actions.room;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -13,6 +10,7 @@ import utils.exceptions.NoEntityException;
 import utils.printers.RoomsPrinter;
 import utils.validators.ArrayDigitsValidator;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -20,9 +18,6 @@ import java.util.Arrays;
  * Класс предоставляет логику выполнения действия по выводу списка свободных комнат с конкретного времени.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetAvailableRoomsByTimeAction implements IAction {
     @Autowired
     private RoomService roomService;
@@ -52,6 +47,8 @@ public class GetAvailableRoomsByTimeAction implements IAction {
             )));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }

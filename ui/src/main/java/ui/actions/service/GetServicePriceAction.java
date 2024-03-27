@@ -3,21 +3,18 @@ package ui.actions.service;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import essence.service.Service;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
+import utils.exceptions.ErrorMessages;
 import utils.exceptions.NoEntityException;
+
+import java.sql.SQLException;
 
 /**
  * Класс предоставляет логику получения стоимости услуги.
  */
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class GetServicePriceAction implements IAction {
     @Autowired
     private ServiceService serviceService;
@@ -34,6 +31,8 @@ public class GetServicePriceAction implements IAction {
             System.out.println("\nСтоимость услуги - " + serviceService.getFavorPrice(service));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
         }
     }
 }
