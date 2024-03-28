@@ -1,5 +1,11 @@
 package essence.person;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,11 +19,23 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(schema = "hotel", name = "client")
 public class Client implements AbstractClient, Comparable<AbstractClient> {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "fio")
     private String fio;
+
+    @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "check_in_time")
     private LocalDateTime checkInTime;
+
+    @Column(name = "check_out_time")
     private LocalDateTime checkOutTime;
 
     public Client(int id, String fio, String phoneNumber) {

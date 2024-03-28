@@ -236,7 +236,7 @@ public final class ImportCSV {
 
                 ProvidedService providedService = new ProvidedService(id, service, serviceTime, clients.getFirst());
                 for (int i = 1; i < clients.size(); i++) {
-                    providedService.getBeneficiaries().add(clients.get(i));
+                    providedService.setClient(clients.get(i));
                 }
 
                 providedServices.add(providedService);

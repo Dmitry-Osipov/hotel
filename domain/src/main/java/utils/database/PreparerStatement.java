@@ -1,4 +1,4 @@
-package dao;
+package utils.database;
 
 import essence.Identifiable;
 import essence.person.Client;
@@ -106,7 +106,7 @@ public final class PreparerStatement {
      */
     private static void prepareProvidedService(ProvidedService providedService, PreparedStatement statement) throws
             SQLException {
-        statement.setInt(1, providedService.getBeneficiaries().getFirst().getId());
+        statement.setInt(1, providedService.getClient().getId());
         statement.setInt(2, providedService.getService().getId());
         statement.setTimestamp(3, parseFromLocalDateTime(providedService.getServiceTime()));
     }

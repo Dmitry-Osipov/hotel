@@ -215,7 +215,7 @@ public class ServiceService extends AbstractFavorService {
     private Stream<AbstractService> streamClientServices(AbstractClient client) throws SQLException {
         return providedServicesRepository.getProvidedServices()
                 .stream()
-                .filter(service -> service.getBeneficiaries().contains(client)
+                .filter(service -> List.of(service.getClient()).contains(client)
                         && service.getService().getStatus() == ServiceStatusTypes.RENDERED)
                 .map(ProvidedService::getService);
     }

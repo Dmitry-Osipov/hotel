@@ -153,7 +153,7 @@ public final class ExportCSV {
             for (ProvidedService providedService : providedServices) {
                 String[] data = {
                         String.valueOf(providedService.getId()),
-                        providedService.getBeneficiaries().toString(),
+                        List.of(providedService.getClient()).toString(),
                         providedService.getService().toString(),
                         String.valueOf(providedService.getServiceTime())
                 };
