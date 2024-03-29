@@ -8,6 +8,7 @@ import essence.room.Room;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,7 +40,7 @@ public class RoomReservation implements Identifiable {
     private int id;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH},
-            targetEntity = Client.class)
+            targetEntity = Client.class, fetch = FetchType.EAGER)
     @JoinTable(schema = "hotel", name = "reservation_client", joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "client_id"))
     private List<AbstractClient> clients;

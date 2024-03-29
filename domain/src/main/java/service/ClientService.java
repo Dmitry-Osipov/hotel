@@ -30,10 +30,9 @@ public class ClientService {
      * @throws SQLException если произошла ошибка SQL.
      */
     public void addClient(AbstractClient client) throws EntityContainedException, SQLException {
-        int clientId = client.getId();
-        logger.info("Вызван метод добавления нового клиента с ID {}", clientId);
+        logger.info("Вызван метод добавления нового клиента");
         clientRepository.saveOrUpdate(client);
-        logger.info("Удалось добавить нового клиента с ID {}", clientId);
+        logger.info("Удалось добавить нового клиента");
     }
 
     /**

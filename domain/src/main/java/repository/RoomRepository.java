@@ -2,8 +2,8 @@ package repository;
 
 import annotations.annotation.Component;
 import annotations.annotation.InjectByInterface;
+import dao.HiberDao;
 import dao.IDao;
-import dao.JdbcDao;
 import essence.room.AbstractRoom;
 import essence.room.Room;
 import lombok.ToString;
@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 @ToString
 public class RoomRepository {
-    @InjectByInterface(clazz = JdbcDao.class)
+    @InjectByInterface(clazz = HiberDao.class)
     private IDao dao;
 
     /**
