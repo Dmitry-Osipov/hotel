@@ -30,15 +30,21 @@ public class ProvidedServicesRepository {
     }
 
     /**
-     * Сохраняет или обновляет информацию об оказанной услуге в репозитории.
+     * Сохраняет информацию об оказанной услуге в репозитории.
      * @param providedService объект оказанной услуги, который нужно сохранить или обновить.
      * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
      */
-    public void saveOrUpdate(ProvidedService providedService) throws SQLException {
-        try {
-            dao.update(providedService);
-        } catch (TechnicalException e) {
-            dao.save(providedService);
-        }
+    public void save(ProvidedService providedService) throws SQLException {
+        dao.save(providedService);
+    }
+
+    /**
+     * Обновляет информацию об оказанной услуге в репозитории.
+     * @param providedService объект оказанной услуги, который нужно сохранить или обновить.
+     * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
+     * @throws TechnicalException если произошла ошибка обновления проведённой услуги.
+     */
+    public void update(ProvidedService providedService) throws SQLException {
+        dao.update(providedService);
     }
 }

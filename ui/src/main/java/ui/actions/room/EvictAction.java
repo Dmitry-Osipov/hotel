@@ -13,6 +13,7 @@ import utils.exceptions.AccessDeniedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
+import utils.exceptions.TechnicalException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -40,7 +41,7 @@ public class EvictAction implements IAction {
             AbstractClient[] clients = ListToArrayConverter.convertListToArray(guests, AbstractClient.class);
             roomService.evict(room, clients);
             System.out.println("\nВыселение прошло успешно");
-        } catch (NoEntityException | InvalidDataException | AccessDeniedException e) {
+        } catch (NoEntityException | InvalidDataException | AccessDeniedException | TechnicalException e) {
             System.out.println("\n" + e.getMessage());
         } catch (SQLException e) {
             System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());

@@ -57,7 +57,7 @@ public class RoomService extends AbstractFavorService {
      */
     public void addRoom(AbstractRoom room) throws EntityContainedException, SQLException {
         roomLogger.info("Вызван метод добавления комнаты");
-        roomRepository.saveOrUpdate(room);
+        roomRepository.save(room);
         roomLogger.info("Добавлена новая комната");
     }
 
@@ -78,7 +78,7 @@ public class RoomService extends AbstractFavorService {
         }
 
         try {
-            roomRepository.saveOrUpdate(room);
+            roomRepository.update(room);
             roomLogger.info("Обновлена комната с ID {}", roomId);
             return true;
         } catch (TechnicalException e) {
@@ -94,7 +94,7 @@ public class RoomService extends AbstractFavorService {
      */
     public void addReservation(RoomReservation reservation) throws SQLException {
         reservationLogger.info("Вызван метод добавления новой резервации");
-        reservationRepository.saveOrUpdate(reservation);
+        reservationRepository.save(reservation);
         reservationLogger.info("Добавлена новая резервация");
     }
 
@@ -109,12 +109,12 @@ public class RoomService extends AbstractFavorService {
         reservationLogger.info("Вызван метод обновления резервации с ID {}", reservationId);
 
         try {
-            reservationRepository.saveOrUpdate(reservation);
+            reservationRepository.update(reservation);
             reservationLogger.info("Обновлена резервация с ID {}", reservationId);
             return true;
         } catch (TechnicalException e) {
-        reservationLogger.error("Не удалось обновить резервацию с ID {}", reservationId);
-        return false;
+            reservationLogger.error("Не удалось обновить резервацию с ID {}", reservationId);
+            return false;
         }
     }
 
@@ -126,6 +126,7 @@ public class RoomService extends AbstractFavorService {
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "свободен").
      * @throws AccessDeniedException Ошибка запрета изменения статуса комнаты.
      * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если невозможно обновить клиента или комнату.
      */
     public void checkIn(AbstractRoom room, AbstractClient...clients) throws InvalidDataException, SQLException {
         String startMessage = "Вызван метод заселения в комнату с ID {} следующих клиентов: {}";
@@ -165,7 +166,7 @@ public class RoomService extends AbstractFavorService {
         for (AbstractClient client : guests) {
             client.setCheckInTime(now);
             client.setCheckOutTime(checkOutPlan);
-            clientRepository.saveOrUpdate(client);
+            clientRepository.update(client);
         }
         roomLogger.info("В комнату с ID {} заселены следующие клиенты: {}", roomId, clientsString);
     }
@@ -198,6 +199,7 @@ public class RoomService extends AbstractFavorService {
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "занят").
      * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если невозможно обновить клиента или комнату.
      */
     public void evict(AbstractRoom room, AbstractClient ...clients) throws InvalidDataException, SQLException {
         String startMessage = "Вызван метод выселения из комнаты с ID {} следующих клиентов: {}";
@@ -222,7 +224,7 @@ public class RoomService extends AbstractFavorService {
         LocalDateTime now = LocalDateTime.now();
         for (AbstractClient client : clients) {
             client.setCheckOutTime(now);
-            clientRepository.saveOrUpdate(client);
+            clientRepository.update(client);
         }
 
         room.setStatus(RoomStatusTypes.AVAILABLE);

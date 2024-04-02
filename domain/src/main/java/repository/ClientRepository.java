@@ -31,15 +31,21 @@ public class ClientRepository {
     }
 
     /**
-     * Сохраняет или обновляет информацию о клиенте в репозитории.
+     * Сохраняет информацию о клиенте в репозитории.
      * @param client объект клиента, который нужно сохранить или обновить.
      * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
      */
-    public void saveOrUpdate(AbstractClient client) throws SQLException {
-        try {
-            dao.update(client);
-        } catch (TechnicalException e) {
-            dao.save(client);
-        }
+    public void save(AbstractClient client) throws SQLException {
+        dao.save(client);
+    }
+
+    /**
+     * Обновляет информацию о клиенте в репозитории.
+     * @param client объект клиента, который нужно сохранить или обновить.
+     * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
+     * @throws TechnicalException если невозможно обновить клиента.
+     */
+    public void update(AbstractClient client) throws SQLException {
+        dao.update(client);
     }
 }

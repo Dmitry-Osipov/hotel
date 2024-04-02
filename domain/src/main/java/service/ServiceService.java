@@ -45,7 +45,7 @@ public class ServiceService extends AbstractFavorService {
      */
     public void addService(AbstractService service) throws EntityContainedException, SQLException {
         serviceLogger.info("Вызван метод добавления услуги");
-        serviceRepository.saveOrUpdate(service);
+        serviceRepository.save(service);
         serviceLogger.info("Добавлена новая услуга");
     }
 
@@ -60,7 +60,7 @@ public class ServiceService extends AbstractFavorService {
         serviceLogger.info("Вызван метод обновления услуги с ID {}", serviceId);
 
         try {
-            serviceRepository.saveOrUpdate(service);
+            serviceRepository.update(service);
             serviceLogger.info("Обновлена услуга с ID {}", serviceId);
             return true;
         } catch (TechnicalException e) {
@@ -76,7 +76,7 @@ public class ServiceService extends AbstractFavorService {
      */
     public void addProvidedService(ProvidedService providedService) throws SQLException {
         providedServiceLogger.info("Вызван метод добавления новой оказанной услуги");
-        providedServicesRepository.saveOrUpdate(providedService);
+        providedServicesRepository.save(providedService);
         providedServiceLogger.info("Добавлена новая оказанная услуга");
     }
 
@@ -91,7 +91,7 @@ public class ServiceService extends AbstractFavorService {
         providedServiceLogger.info("Вызван метод обновления оказанной услуги с ID {}", providedServiceId);
 
         try {
-            providedServicesRepository.saveOrUpdate(providedService);
+            providedServicesRepository.update(providedService);
             providedServiceLogger.info("Обновилась проведённая услуга с ID {}", providedServiceId);
             return true;
         } catch (TechnicalException e) {
@@ -107,6 +107,7 @@ public class ServiceService extends AbstractFavorService {
      * @throws NoEntityException Ошибка вылетает, если услуги нет в отеле.
      * @throws SQLException если произошла ошибка SQL.
      * @throws InvalidDataException если услуга была проведена ранее.
+     * @throws TechnicalException если не удалось обновить услугу.
      */
     public void provideService(AbstractClient client, AbstractService service) throws NoEntityException, SQLException {
         String startMessage = "Вызван метод оказания услуги с ID {} для клиента с ID {}";
@@ -134,7 +135,7 @@ public class ServiceService extends AbstractFavorService {
         addProvidedService(providedService);
         service.setServiceTime(now);
         service.setStatus(ServiceStatusTypes.RENDERED);
-        serviceRepository.saveOrUpdate(service);
+        serviceRepository.update(service);
         serviceLogger.info("Услуга с ID {} была оказана клиенту с ID {}", serviceId, clientId);
     }
 

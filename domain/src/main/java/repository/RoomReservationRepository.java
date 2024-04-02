@@ -30,15 +30,21 @@ public class RoomReservationRepository {
     }
 
     /**
-     * Сохраняет или обновляет информацию о бронировании в репозитории.
+     * Сохраняет информацию о бронировании в репозитории.
      * @param reservation объект бронирования, который нужно сохранить или обновить.
      * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
      */
-    public void saveOrUpdate(RoomReservation reservation) throws SQLException {
-        try {
-            dao.update(reservation);
-        } catch (TechnicalException e) {
-            dao.save(reservation);
-        }
+    public void save(RoomReservation reservation) throws SQLException {
+        dao.save(reservation);
+    }
+
+    /**
+     * Обновляет информацию о бронировании в репозитории.
+     * @param reservation объект бронирования, который нужно сохранить или обновить.
+     * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
+     * @throws TechnicalException если не удалось обновить резервацию.
+     */
+    public void update(RoomReservation reservation) throws SQLException {
+        dao.update(reservation);
     }
 }
