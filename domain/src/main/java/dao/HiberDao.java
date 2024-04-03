@@ -1,12 +1,13 @@
 package dao;
 
-import annotations.annotation.Component;
 import essence.Identifiable;
 import jakarta.persistence.OptimisticLockException;
+import lombok.NoArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import utils.database.SessionFactoryCreator;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.TechnicalException;
@@ -18,7 +19,8 @@ import java.util.Objects;
  * Класс HiberDao представляет собой реализацию интерфейса {@link IDao} для работы с объектами базы данных
  * с использованием Hibernate.
  */
-@Component
+@Repository
+@NoArgsConstructor
 public class HiberDao implements IDao {
     private static final Logger logger = LoggerFactory.getLogger(HiberDao.class);
 

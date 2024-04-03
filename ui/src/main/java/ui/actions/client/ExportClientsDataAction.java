@@ -1,7 +1,7 @@
 package ui.actions.client;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -18,8 +18,12 @@ import java.sql.SQLException;
  */
 @Component
 public class ExportClientsDataAction implements IAction {
+    private final ClientService clientService;
+
     @Autowired
-    private ClientService clientService;
+    public ExportClientsDataAction(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     /**
      * Метод execute выполняет действие по экспорту данных о клиентах. Пользователю предлагается ввести название файла

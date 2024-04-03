@@ -1,7 +1,7 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
@@ -15,8 +15,12 @@ import java.sql.SQLException;
  */
 @Component
 public class GetRoomsByCapacityAction implements IAction {
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public GetRoomsByCapacityAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     /**
      * Метод выполняет действие по выводу списка всех комнат по возрастанию вместимости. При выполнении действия

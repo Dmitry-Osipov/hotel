@@ -1,12 +1,14 @@
 package ui;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import annotations.factory.InitializeComponent;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import utils.exceptions.ErrorMessages;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Класс отвечает за навигацию по меню.
@@ -17,12 +19,17 @@ public class Navigator implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     private Menu currentMenu;
     private Menu rootMenu;
+    private final Builder builder;
+
     @Autowired
-    private Builder builder;
+    public Navigator(Builder builder) {
+        this.builder = builder;
+    }
 
     /**
      * Метод проводит инициализацию главного и текущего меню.
      */
+    @PostConstruct
     @Override
     public void init() {
         currentMenu = builder.getRootMenu();

@@ -1,7 +1,7 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
@@ -13,8 +13,12 @@ import java.sql.SQLException;
  */
 @Component
 public class CountAvailableRoomsAction implements IAction {
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public CountAvailableRoomsAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     /**
      * Метод выполняет действие по подсчёту количества свободных комнат.

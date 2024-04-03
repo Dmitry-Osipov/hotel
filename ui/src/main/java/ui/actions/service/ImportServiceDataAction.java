@@ -1,9 +1,9 @@
 package ui.actions.service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.service.AbstractService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -21,8 +21,12 @@ import java.util.List;
  */
 @Component
 public class ImportServiceDataAction implements IAction {
+    private final ServiceService serviceService;
+
     @Autowired
-    private ServiceService serviceService;
+    public ImportServiceDataAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
 
     /**
      * Метод execute выполняет действие по импорту данных по услугам.

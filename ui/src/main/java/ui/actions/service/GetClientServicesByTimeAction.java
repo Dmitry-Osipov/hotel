@@ -1,8 +1,8 @@
 package ui.actions.service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
@@ -19,10 +19,14 @@ import java.sql.SQLException;
  */
 @Component
 public class GetClientServicesByTimeAction implements IAction {
+    private final ServiceService serviceService;
+    private final ClientService clientService;
+
     @Autowired
-    private ServiceService serviceService;
-    @Autowired
-    private ClientService clientService;
+    public GetClientServicesByTimeAction(ServiceService serviceService, ClientService clientService) {
+        this.serviceService = serviceService;
+        this.clientService = clientService;
+    }
 
     /**
      * Метод выполняет действие по получению списка услуг, оказанных клиенту, по убыванию времени оказания. При

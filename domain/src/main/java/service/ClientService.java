@@ -1,11 +1,11 @@
 package service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import repository.ClientRepository;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.TechnicalException;
@@ -16,12 +16,16 @@ import java.util.List;
 /**
  * Класс отвечает за обработку данных по клиентам.
  */
-@Component
+@Service
 @ToString
 public class ClientService {
     private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
+    private final ClientRepository clientRepository;
+
     @Autowired
-    private ClientRepository clientRepository;
+    public ClientService(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
 
     /**
      * Метод добавляет нового клиента в список всех клиентов отеля.

@@ -1,12 +1,12 @@
 package repository;
 
-import annotations.annotation.Component;
-import annotations.annotation.InjectByInterface;
-import dao.HiberDao;
 import dao.IDao;
 import essence.person.AbstractClient;
 import essence.person.Client;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 import utils.exceptions.TechnicalException;
 
 import java.sql.SQLException;
@@ -15,11 +15,15 @@ import java.util.List;
 /**
  * Класс отвечает за хранение клиентов отеля.
  */
-@Component
+@Repository
 @ToString
 public class ClientRepository {
-    @InjectByInterface(clazz = HiberDao.class)
-    private IDao dao;
+    private final IDao dao;
+
+    @Autowired
+    public ClientRepository(@Qualifier("hiberDao") IDao dao) {
+        this.dao = dao;
+    }
 
     /**
      * Возвращает список всех клиентов отеля.

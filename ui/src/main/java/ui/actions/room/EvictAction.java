@@ -1,9 +1,9 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import service.RoomService;
 import ui.actions.IAction;
@@ -23,10 +23,14 @@ import java.util.List;
  */
 @Component
 public class EvictAction implements IAction {
+    private final RoomService roomService;
+    private final ClientService clientService;
+
     @Autowired
-    private RoomService roomService;
-    @Autowired
-    private ClientService clientService;
+    public EvictAction(RoomService roomService, ClientService clientService) {
+        this.roomService = roomService;
+        this.clientService = clientService;
+    }
 
     /**
      * Метод выполняет действие по выселению клиентов из комнаты. При выполнении действия пользователю предлагается

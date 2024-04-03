@@ -1,7 +1,7 @@
 package ui.actions.client;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
@@ -13,8 +13,12 @@ import java.sql.SQLException;
  */
 @Component
 public class CountClientsAction implements IAction {
+    private final ClientService clientService;
+
     @Autowired
-    private ClientService clientService;
+    public CountClientsAction(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     /**
      * Метод выполняет действие по подсчёту количества клиентов. Пользователю выводится соответствующее сообщение.

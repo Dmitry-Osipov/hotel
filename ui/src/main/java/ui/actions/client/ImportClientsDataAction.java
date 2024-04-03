@@ -1,9 +1,9 @@
 package ui.actions.client;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.person.AbstractClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -21,8 +21,12 @@ import java.util.List;
  */
 @Component
 public class ImportClientsDataAction implements IAction {
+    private final ClientService clientService;
+
     @Autowired
-    private ClientService clientService;
+    public ImportClientsDataAction(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     /**
      * Метод execute выполняет действие по импорту данных о клиентах. Пользователю предлагается ввести название файла

@@ -1,8 +1,8 @@
 package ui.actions.service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.service.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -16,8 +16,12 @@ import java.sql.SQLException;
  */
 @Component
 public class GetServicePriceAction implements IAction {
+    private final ServiceService serviceService;
+
     @Autowired
-    private ServiceService serviceService;
+    public GetServicePriceAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
 
     /**
      * Метод выполняет действие по получению стоимости конкретной услуги. При выполнении действия пользователю

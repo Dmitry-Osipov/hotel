@@ -1,10 +1,10 @@
 package ui;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -15,20 +15,25 @@ import java.util.Scanner;
 /**
  * Класс отвечает за работу UI.
  */
-@Component
+@Controller
 @ToString
 public class MenuController {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
+    private final Builder builder;
+    private final Navigator navigator;
+    private final RoomService roomService;
+    private final ServiceService serviceService;
+    private final ClientService clientService;
+
     @Autowired
-    private Builder builder;
-    @Autowired
-    private Navigator navigator;
-    @Autowired
-    private RoomService roomService;
-    @Autowired
-    private ServiceService serviceService;
-    @Autowired
-    private ClientService clientService;
+    public MenuController(Builder builder, Navigator navigator, RoomService roomService, ServiceService serviceService,
+                          ClientService clientService) {
+        this.builder = builder;
+        this.navigator = navigator;
+        this.roomService = roomService;
+        this.serviceService = serviceService;
+        this.clientService = clientService;
+    }
 
     /**
      * Метод запускает приложение отеля.

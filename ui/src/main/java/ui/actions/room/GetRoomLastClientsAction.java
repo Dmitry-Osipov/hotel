@@ -1,9 +1,9 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import essence.room.AbstractRoom;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -20,8 +20,12 @@ import java.util.List;
  */
 @Component
 public class GetRoomLastClientsAction implements IAction {
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public GetRoomLastClientsAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     /**
      * Метод выполняет действие по выводу последних клиентов комнаты. При выполнении действия выводится указанное

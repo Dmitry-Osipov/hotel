@@ -1,7 +1,7 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -18,8 +18,12 @@ import java.sql.SQLException;
  */
 @Component
 public class ExportRoomsDataAction implements IAction {
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public ExportRoomsDataAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     /**
      * Метод execute выполняет действие по экспорту данных о комнатах. Пользователю предлагается ввести название файла
