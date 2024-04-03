@@ -11,6 +11,7 @@
 
 
     <modules>
+        <module>web-app</module>
         <module>domain</module>
         <module>ui</module>
         <module>annotations</module>
