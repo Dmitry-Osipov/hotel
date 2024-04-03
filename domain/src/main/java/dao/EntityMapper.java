@@ -139,7 +139,7 @@ public class EntityMapper {
     private ProvidedService mapProvidedService(ResultSet resultSet) throws SQLException {
         ProvidedService providedService = new ProvidedService();
         providedService.setId(resultSet.getInt("id"));
-        providedService.setBeneficiaries(List.of(getClientById(resultSet.getInt("client_id"))));
+        providedService.setClient(getClientById(resultSet.getInt("client_id")));
         providedService.setService(getServiceById(resultSet.getInt("service_id")));
         providedService.setServiceTime(parseFromTimestamp(resultSet.getTimestamp("service_time")));
 

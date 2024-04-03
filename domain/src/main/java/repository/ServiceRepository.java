@@ -2,8 +2,8 @@ package repository;
 
 import annotations.annotation.Component;
 import annotations.annotation.InjectByInterface;
+import dao.HiberDao;
 import dao.IDao;
-import dao.JdbcDao;
 import essence.service.AbstractService;
 import essence.service.Service;
 import lombok.ToString;
@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 @ToString
 public class ServiceRepository {
-    @InjectByInterface(clazz = JdbcDao.class)
+    @InjectByInterface(clazz = HiberDao.class)
     private IDao dao;
 
     /**
@@ -31,15 +31,21 @@ public class ServiceRepository {
     }
 
     /**
-     * Сохраняет или обновляет информацию об услуге в репозитории.
+     * Сохраняет информацию об услуге в репозитории.
      * @param service объект услуги, который нужно сохранить или обновить.
      * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
      */
-    public void saveOrUpdate(AbstractService service) throws SQLException {
-        try {
-            dao.update(service);
-        } catch (TechnicalException e) {
-            dao.save(service);
-        }
+    public void save(AbstractService service) throws SQLException {
+        dao.save(service);
+    }
+
+    /**
+     * Обновляет информацию об услуге в репозитории.
+     * @param service объект услуги, который нужно сохранить или обновить.
+     * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
+     * @throws TechnicalException если произошла ошибка обновления услуги.
+     */
+    public void update(AbstractService service) throws SQLException {
+        dao.update(service);
     }
 }

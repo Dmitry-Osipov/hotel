@@ -3,7 +3,6 @@ package service;
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
 import annotations.annotation.ConfigProperty;
-import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
@@ -24,12 +23,7 @@ import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.TechnicalException;
-import utils.file.DataPath;
-import utils.file.FileAdditionResult;
-import utils.file.id.IdFileManager;
-import utils.validators.UniqueIdValidator;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -62,10 +56,9 @@ public class RoomService extends AbstractFavorService {
      * @throws SQLException если произошла ошибка SQL.
      */
     public void addRoom(AbstractRoom room) throws EntityContainedException, SQLException {
-        int roomId = room.getId();
-        roomLogger.info("Вызван метод добавления комнаты с ID {}", roomId);
-        roomRepository.saveOrUpdate(room);
-        roomLogger.info("Добавлена новая комната с ID {}", roomId);
+        roomLogger.info("Вызван метод добавления комнаты");
+        roomRepository.save(room);
+        roomLogger.info("Добавлена новая комната");
     }
 
     /**
@@ -85,7 +78,7 @@ public class RoomService extends AbstractFavorService {
         }
 
         try {
-            roomRepository.saveOrUpdate(room);
+            roomRepository.update(room);
             roomLogger.info("Обновлена комната с ID {}", roomId);
             return true;
         } catch (TechnicalException e) {
@@ -100,10 +93,9 @@ public class RoomService extends AbstractFavorService {
      * @throws SQLException если произошла ошибка SQL.
      */
     public void addReservation(RoomReservation reservation) throws SQLException {
-        int reservationId = reservation.getId();
-        reservationLogger.info("Вызван метод добавления новой резервации с ID {}", reservationId);
-        reservationRepository.saveOrUpdate(reservation);
-        reservationLogger.info("Добавлена новая резервация с ID {}", reservationId);
+        reservationLogger.info("Вызван метод добавления новой резервации");
+        reservationRepository.save(reservation);
+        reservationLogger.info("Добавлена новая резервация");
     }
 
     /**
@@ -117,12 +109,12 @@ public class RoomService extends AbstractFavorService {
         reservationLogger.info("Вызван метод обновления резервации с ID {}", reservationId);
 
         try {
-            reservationRepository.saveOrUpdate(reservation);
+            reservationRepository.update(reservation);
             reservationLogger.info("Обновлена резервация с ID {}", reservationId);
             return true;
         } catch (TechnicalException e) {
-        reservationLogger.error("Не удалось обновить резервацию с ID {}", reservationId);
-        return false;
+            reservationLogger.error("Не удалось обновить резервацию с ID {}", reservationId);
+            return false;
         }
     }
 
@@ -134,6 +126,7 @@ public class RoomService extends AbstractFavorService {
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "свободен").
      * @throws AccessDeniedException Ошибка запрета изменения статуса комнаты.
      * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если невозможно обновить клиента или комнату.
      */
     public void checkIn(AbstractRoom room, AbstractClient...clients) throws InvalidDataException, SQLException {
         String startMessage = "Вызван метод заселения в комнату с ID {} следующих клиентов: {}";
@@ -159,18 +152,13 @@ public class RoomService extends AbstractFavorService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime checkOutPlan = now.plusHours(22);
 
-        String path = DataPath.ID_DIRECTORY.getPath() + "reservation_id.text";
-        int id = IdFileManager.readMaxId(path);
-        if (!UniqueIdValidator.validateUniqueId(getReservations(), id)) {
-            id = getReservations().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
-        }
-        try {
-            IdFileManager.writeMaxId(path, id + 1);
-        } catch (IOException e) {
-            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
-        }
+        RoomReservation reservation = new RoomReservation();
+        reservation.setRoom(room);
+        reservation.setCheckInTime(now);
+        reservation.setCheckOutTime(checkOutPlan);
+        reservation.setClients(guests);
+        addReservation(reservation);
 
-        addReservation(new RoomReservation(id, room, now, checkOutPlan, guests));
         room.setStatus(RoomStatusTypes.OCCUPIED);
         room.setCheckInTime(now);
         room.setCheckOutTime(checkOutPlan);
@@ -178,7 +166,7 @@ public class RoomService extends AbstractFavorService {
         for (AbstractClient client : guests) {
             client.setCheckInTime(now);
             client.setCheckOutTime(checkOutPlan);
-            clientRepository.saveOrUpdate(client);
+            clientRepository.update(client);
         }
         roomLogger.info("В комнату с ID {} заселены следующие клиенты: {}", roomId, clientsString);
     }
@@ -211,6 +199,7 @@ public class RoomService extends AbstractFavorService {
      * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "занят").
      * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
      * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если невозможно обновить клиента или комнату.
      */
     public void evict(AbstractRoom room, AbstractClient ...clients) throws InvalidDataException, SQLException {
         String startMessage = "Вызван метод выселения из комнаты с ID {} следующих клиентов: {}";
@@ -235,7 +224,7 @@ public class RoomService extends AbstractFavorService {
         LocalDateTime now = LocalDateTime.now();
         for (AbstractClient client : clients) {
             client.setCheckOutTime(now);
-            clientRepository.saveOrUpdate(client);
+            clientRepository.update(client);
         }
 
         room.setStatus(RoomStatusTypes.AVAILABLE);

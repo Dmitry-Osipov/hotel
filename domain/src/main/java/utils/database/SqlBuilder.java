@@ -1,4 +1,4 @@
-package utils;
+package utils.database;
 
 import essence.Identifiable;
 import essence.person.Client;
@@ -153,8 +153,8 @@ public final class SqlBuilder {
             int questionIndex = sql.lastIndexOf("?, ");
             sql.delete(questionIndex, questionIndex + "?, ".length());
         } else if (clazz.equals(ProvidedService.class)) {
-            int beneficiariesIndex = sql.lastIndexOf("beneficiaries");
-            sql.replace(beneficiariesIndex, beneficiariesIndex + "beneficiaries".length(), "client_id");
+            int clientIndex = sql.lastIndexOf("client");
+            sql.replace(clientIndex, clientIndex + "client".length(), "client_id");
 
             int serviceIndex = sql.indexOf(" service");
             sql.replace(serviceIndex, serviceIndex + " service".length(), " service_id");
@@ -180,8 +180,8 @@ public final class SqlBuilder {
             int roomIndex = sql.lastIndexOf("room");
             sql.replace(roomIndex, roomIndex + "room".length(), "room_id");
         } else if (clazz.equals(ProvidedService.class)) {
-            int beneficiariesIndex = sql.lastIndexOf("beneficiaries");
-            sql.replace(beneficiariesIndex, beneficiariesIndex + "beneficiaries".length(), "client_id");
+            int clientIndex = sql.lastIndexOf("client");
+            sql.replace(clientIndex, clientIndex + "client".length(), "client_id");
 
             int serviceIndex = sql.indexOf(" service");
             sql.replace(serviceIndex, serviceIndex + " service".length(), " service_id");

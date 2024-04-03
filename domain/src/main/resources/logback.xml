@@ -4,6 +4,7 @@
     <property name="WORK_LOG" value="${HOME_LOG}/work" />
     <property name="FILE_LOG" value="${HOME_LOG}/file" />
     <property name="APP_LOG" value="${HOME_LOG}/app" />
+    <property name="DB_LOG" value="${HOME_LOG}/database" />
     <property name="DEFAULT_PATTERN" value="%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level  %logger{36} -" />
 
 
@@ -124,6 +125,19 @@
         </encoder>
     </appender>
 
+    <appender name="DB_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${DB_LOG}/db.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${DB_LOG}/db.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_PATTERN} %msg%n</pattern>
+        </encoder>
+    </appender>
+
 
     <logger name="service.RoomService" level="debug" additivity="false">
         <appender-ref ref="ROOM_FILE" />
@@ -159,5 +173,9 @@
 
     <logger name="AppProcess" level="debug" additivity="false">
         <appender-ref ref="APP_FILE" />
+    </logger>
+
+    <logger name="dao.HiberDao" level="debug" additivity="false">
+        <appender-ref ref="DB_FILE" />
     </logger>
 </configuration>

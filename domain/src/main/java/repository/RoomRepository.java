@@ -2,8 +2,8 @@ package repository;
 
 import annotations.annotation.Component;
 import annotations.annotation.InjectByInterface;
+import dao.HiberDao;
 import dao.IDao;
-import dao.JdbcDao;
 import essence.room.AbstractRoom;
 import essence.room.Room;
 import lombok.ToString;
@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 @ToString
 public class RoomRepository {
-    @InjectByInterface(clazz = JdbcDao.class)
+    @InjectByInterface(clazz = HiberDao.class)
     private IDao dao;
 
     /**
@@ -31,15 +31,21 @@ public class RoomRepository {
     }
 
     /**
-     * Сохраняет или обновляет информацию о номере в репозитории.
+     * Сохраняет информацию о номере в репозитории.
      * @param room объект номера, который нужно сохранить или обновить.
      * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
      */
-    public void saveOrUpdate(AbstractRoom room) throws SQLException {
-        try {
-            dao.update(room);
-        } catch (TechnicalException e) {
-            dao.save(room);
-        }
+    public void save(AbstractRoom room) throws SQLException {
+        dao.save(room);
+    }
+
+    /**
+     * Обновляет информацию о номере в репозитории.
+     * @param room объект номера, который нужно сохранить или обновить.
+     * @throws SQLException если произошла ошибка при выполнении SQL-запроса.
+     * @throws TechnicalException если произошла ошибка обновления комнаты.
+     */
+    public void update(AbstractRoom room) throws SQLException {
+        dao.update(room);
     }
 }

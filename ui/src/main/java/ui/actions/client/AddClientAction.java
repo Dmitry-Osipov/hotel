@@ -2,20 +2,14 @@ package ui.actions.client;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import essence.Identifiable;
 import essence.person.Client;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
-import utils.file.DataPath;
-import utils.file.FileAdditionResult;
-import utils.file.id.IdFileManager;
 import utils.validators.PhoneNumberValidator;
-import utils.validators.UniqueIdValidator;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -34,13 +28,6 @@ public class AddClientAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = DataPath.ID_DIRECTORY.getPath() + "client_id.txt";
-            int id = IdFileManager.readMaxId(path);
-            if (!UniqueIdValidator.validateUniqueId(clientService.getClients(), id)) {
-                id = clientService.getClients().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
-            }
-            IdFileManager.writeMaxId(path, id + 1);
-
             System.out.println("\nВведите ФИО клиента: ");
             String name = InputHandler.getUserInput();
 
@@ -51,14 +38,15 @@ public class AddClientAction implements IAction {
                 phone = InputHandler.getUserInput();
             }
 
-            clientService.addClient(new Client(id, name, phone));
+            Client client = new Client();
+            client.setFio(name);
+            client.setPhoneNumber(phone);
+            clientService.addClient(client);
             System.out.println("\nУдалось добавить клиента");
         } catch (EntityContainedException e) {
             System.out.println("\n" + e.getMessage());
         } catch (SQLException e) {
             System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
-        } catch (IOException e) {
-            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
         }
     }
 }

@@ -11,6 +11,7 @@ import utils.InputHandler;
 import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
+import utils.exceptions.TechnicalException;
 
 import java.sql.SQLException;
 
@@ -35,7 +36,7 @@ public class ProvideServiceAction implements IAction {
             AbstractService service = InputHandler.getServiceByInput(serviceService);
             serviceService.provideService(client, service);
             System.out.println("\nУдалось провести услугу");
-        } catch (NoEntityException e) {
+        } catch (NoEntityException | TechnicalException e) {
             System.out.println("\n" + e.getMessage());
         } catch (SQLException e) {
             System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.ClientRepository;
 import utils.exceptions.EntityContainedException;
+import utils.exceptions.TechnicalException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -30,10 +31,9 @@ public class ClientService {
      * @throws SQLException если произошла ошибка SQL.
      */
     public void addClient(AbstractClient client) throws EntityContainedException, SQLException {
-        int clientId = client.getId();
-        logger.info("Вызван метод добавления нового клиента с ID {}", clientId);
-        clientRepository.saveOrUpdate(client);
-        logger.info("Удалось добавить нового клиента с ID {}", clientId);
+        logger.info("Вызван метод добавления нового клиента");
+        clientRepository.save(client);
+        logger.info("Удалось добавить нового клиента");
     }
 
     /**
@@ -67,8 +67,13 @@ public class ClientService {
     public boolean updateClient(AbstractClient client) throws SQLException {
         int clientId = client.getId();
         logger.info("Вызван метод обновления клиента с ID {}", clientId);
-        clientRepository.saveOrUpdate(client);
-        logger.error("Не удалось обновить клиента с ID {}", clientId);
-        return false;
+        try {
+            clientRepository.update(client);
+            logger.info("Удалось обновить клиента с ID {}", clientId);
+            return true;
+        } catch (TechnicalException e) {
+            logger.error("Не удалось обновить клиента с ID {}", clientId);
+            return false;
+        }
     }
 }

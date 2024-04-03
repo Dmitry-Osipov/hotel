@@ -2,7 +2,6 @@ package service;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import essence.Identifiable;
 import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
@@ -18,12 +17,7 @@ import utils.exceptions.ErrorMessages;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 import utils.exceptions.TechnicalException;
-import utils.file.DataPath;
-import utils.file.FileAdditionResult;
-import utils.file.id.IdFileManager;
-import utils.validators.UniqueIdValidator;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,10 +44,9 @@ public class ServiceService extends AbstractFavorService {
      * @throws SQLException если произошла ошибка SQL.
      */
     public void addService(AbstractService service) throws EntityContainedException, SQLException {
-        int serviceId = service.getId();
-        serviceLogger.info("Вызван метод добавления услуги с ID {}", serviceId);
-        serviceRepository.saveOrUpdate(service);
-        serviceLogger.info("Добавлена новая услуга с ID {}", serviceId);
+        serviceLogger.info("Вызван метод добавления услуги");
+        serviceRepository.save(service);
+        serviceLogger.info("Добавлена новая услуга");
     }
 
     /**
@@ -67,7 +60,7 @@ public class ServiceService extends AbstractFavorService {
         serviceLogger.info("Вызван метод обновления услуги с ID {}", serviceId);
 
         try {
-            serviceRepository.saveOrUpdate(service);
+            serviceRepository.update(service);
             serviceLogger.info("Обновлена услуга с ID {}", serviceId);
             return true;
         } catch (TechnicalException e) {
@@ -82,10 +75,9 @@ public class ServiceService extends AbstractFavorService {
      * @throws SQLException если произошла ошибка SQL.
      */
     public void addProvidedService(ProvidedService providedService) throws SQLException {
-        int providedServiceId = providedService.getId();
-        providedServiceLogger.info("Вызван метод добавления новой оказанной услуги с ID {}", providedServiceId);
-        providedServicesRepository.saveOrUpdate(providedService);
-        providedServiceLogger.info("Добавлена новая оказанная услуга с ID {}", providedServiceId);
+        providedServiceLogger.info("Вызван метод добавления новой оказанной услуги");
+        providedServicesRepository.save(providedService);
+        providedServiceLogger.info("Добавлена новая оказанная услуга");
     }
 
     /**
@@ -99,7 +91,7 @@ public class ServiceService extends AbstractFavorService {
         providedServiceLogger.info("Вызван метод обновления оказанной услуги с ID {}", providedServiceId);
 
         try {
-            providedServicesRepository.saveOrUpdate(providedService);
+            providedServicesRepository.update(providedService);
             providedServiceLogger.info("Обновилась проведённая услуга с ID {}", providedServiceId);
             return true;
         } catch (TechnicalException e) {
@@ -115,6 +107,7 @@ public class ServiceService extends AbstractFavorService {
      * @throws NoEntityException Ошибка вылетает, если услуги нет в отеле.
      * @throws SQLException если произошла ошибка SQL.
      * @throws InvalidDataException если услуга была проведена ранее.
+     * @throws TechnicalException если не удалось обновить услугу.
      */
     public void provideService(AbstractClient client, AbstractService service) throws NoEntityException, SQLException {
         String startMessage = "Вызван метод оказания услуги с ID {} для клиента с ID {}";
@@ -122,6 +115,7 @@ public class ServiceService extends AbstractFavorService {
         int clientId = client.getId();
         serviceLogger.info(startMessage, serviceId, clientId);
         providedServiceLogger.info(startMessage, serviceId, clientId);
+
         if (!serviceRepository.getServices().contains(service)) {
             String message = "Провалена попытка оказания услуги с ID {} для клиента с ID {}";
             serviceLogger.error(message, serviceId, clientId);
@@ -133,22 +127,15 @@ public class ServiceService extends AbstractFavorService {
             throw new InvalidDataException(ErrorMessages.SERVICE_PROVIDED_ADDITION_FAILURE.getMessage());
         }
 
-        String path = DataPath.ID_DIRECTORY.getPath() + "provided_service_id.txt";
-        int id = IdFileManager.readMaxId(path);
-        if (!UniqueIdValidator.validateUniqueId(getProvidedServices(), id)) {
-            id = getProvidedServices().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
-        }
-        try {
-            IdFileManager.writeMaxId(path, id + 1);
-        } catch (IOException e) {
-            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
-        }
-
         LocalDateTime now = LocalDateTime.now();
-        addProvidedService(new ProvidedService(id, service, now, client));
+        ProvidedService providedService = new ProvidedService();
+        providedService.setService(service);
+        providedService.setServiceTime(now);
+        providedService.setClient(client);
+        addProvidedService(providedService);
         service.setServiceTime(now);
         service.setStatus(ServiceStatusTypes.RENDERED);
-        serviceRepository.saveOrUpdate(service);
+        serviceRepository.update(service);
         serviceLogger.info("Услуга с ID {} была оказана клиенту с ID {}", serviceId, clientId);
     }
 
@@ -215,7 +202,7 @@ public class ServiceService extends AbstractFavorService {
     private Stream<AbstractService> streamClientServices(AbstractClient client) throws SQLException {
         return providedServicesRepository.getProvidedServices()
                 .stream()
-                .filter(service -> service.getBeneficiaries().contains(client)
+                .filter(service -> List.of(service.getClient()).contains(client)
                         && service.getService().getStatus() == ServiceStatusTypes.RENDERED)
                 .map(ProvidedService::getService);
     }

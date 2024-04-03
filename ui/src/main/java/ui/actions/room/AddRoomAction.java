@@ -2,20 +2,14 @@ package ui.actions.room;
 
 import annotations.annotation.Autowired;
 import annotations.annotation.Component;
-import essence.Identifiable;
 import essence.room.Room;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
-import utils.file.DataPath;
-import utils.file.FileAdditionResult;
-import utils.file.id.IdFileManager;
 import utils.validators.ArrayDigitsValidator;
-import utils.validators.UniqueIdValidator;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -34,13 +28,6 @@ public class AddRoomAction implements IAction {
     @Override
     public void execute() {
         try {
-            String path = DataPath.ID_DIRECTORY.getPath() + "room_id.txt";
-            int id = IdFileManager.readMaxId(path);
-            if (!UniqueIdValidator.validateUniqueId(roomService.roomsByStars(), id)) {
-                id = roomService.roomsByStars().stream().mapToInt(Identifiable::getId).max().orElse(0) + 1;
-            }
-            IdFileManager.writeMaxId(path, id + 1);
-
             System.out.println("\nВведите номер, вместимость и цену комнаты через пробел: ");
             String[] userInput = InputHandler.getUserInput().split(" ");
             while (userInput.length != 3 || !ArrayDigitsValidator.isArrayOfDigits(userInput)) {
@@ -48,15 +35,16 @@ public class AddRoomAction implements IAction {
                 userInput = InputHandler.getUserInput().split(" ");
             }
 
-            roomService.addRoom(new Room(id, Integer.parseInt(userInput[0]), Integer.parseInt(userInput[1]),
-                    Integer.parseInt(userInput[2])));
+            Room room = new Room();
+            room.setNumber(Integer.parseInt(userInput[0]));
+            room.setCapacity(Integer.parseInt(userInput[1]));
+            room.setPrice(Integer.parseInt(userInput[2]));
+            roomService.addRoom(room);
             System.out.println("\nУдалось добавить комнату");
         } catch (EntityContainedException e) {
             System.out.println("\n" + e.getMessage());
         } catch (SQLException e) {
             System.out.println("\n" + ErrorMessages.FATAL_ERROR.getMessage());
-        } catch (IOException e) {
-            System.out.println("\n" + FileAdditionResult.FAILURE.getMessage());
         }
     }
 }
