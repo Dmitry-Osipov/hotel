@@ -1,7 +1,7 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
@@ -15,8 +15,12 @@ import java.sql.SQLException;
  */
 @Component
 public class GetAvailableRoomsByPriceAction implements IAction {
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public GetAvailableRoomsByPriceAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     /**
      * Метод выполняет действие по выводу списка свободных комнат в порядке возрастания цены. При выполнении

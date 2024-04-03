@@ -1,7 +1,5 @@
 package service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
 import essence.service.AbstractService;
@@ -9,6 +7,8 @@ import essence.service.ServiceStatusTypes;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import repository.ProvidedServicesRepository;
 import repository.ServiceRepository;
 import utils.comparators.ServiceTimeComparator;
@@ -26,15 +26,19 @@ import java.util.stream.Stream;
 /**
  * Класс отвечает за обработку данных по услугам.
  */
-@Component
+@Service
 @ToString
 public class ServiceService extends AbstractFavorService {
     private static final Logger serviceLogger = LoggerFactory.getLogger(ServiceService.class);
     private static final Logger providedServiceLogger = LoggerFactory.getLogger("service.ProvidedServiceService");
+    private final ServiceRepository serviceRepository;
+    private final ProvidedServicesRepository providedServicesRepository;
+
     @Autowired
-    private ServiceRepository serviceRepository;
-    @Autowired
-    private ProvidedServicesRepository providedServicesRepository;
+    public ServiceService(ServiceRepository serviceRepository, ProvidedServicesRepository providedServicesRepository) {
+        this.serviceRepository = serviceRepository;
+        this.providedServicesRepository = providedServicesRepository;
+    }
 
     /**
      * Метод добавляет новую услугу в список всех услуг отеля.

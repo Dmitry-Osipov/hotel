@@ -1,8 +1,5 @@
 package service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
-import annotations.annotation.ConfigProperty;
 import essence.person.AbstractClient;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
@@ -11,6 +8,9 @@ import essence.room.RoomStatusTypes;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import repository.ClientRepository;
 import repository.RoomRepository;
 import repository.RoomReservationRepository;
@@ -34,19 +34,24 @@ import java.util.stream.Stream;
 /**
  * Класс отвечает за обработку данных по комнатам.
  */
-@Component
+@Service
 @ToString
 public class RoomService extends AbstractFavorService {
     private static final Logger roomLogger = LoggerFactory.getLogger(RoomService.class);
     private static final Logger reservationLogger = LoggerFactory.getLogger("service.ReservationService");
-    @Autowired
-    private RoomRepository roomRepository;
-    @Autowired
-    private RoomReservationRepository reservationRepository;
-    @Autowired
-    private ClientRepository clientRepository;
-    @ConfigProperty(propertyName = "enable_room_status_change", type = Boolean.class)
+    private final RoomRepository roomRepository;
+    private final RoomReservationRepository reservationRepository;
+    private final ClientRepository clientRepository;
+    @Value("${enable_room_status_change}")
     private boolean allowSetStatusRoom;
+
+    @Autowired
+    public RoomService(RoomRepository roomRepository, RoomReservationRepository reservationRepository,
+                       ClientRepository clientRepository) {
+        this.roomRepository = roomRepository;
+        this.reservationRepository = reservationRepository;
+        this.clientRepository = clientRepository;
+    }
 
     /**
      * Метод добавляет новую комнату в список всех комнат отеля.

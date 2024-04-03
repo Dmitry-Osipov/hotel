@@ -1,7 +1,7 @@
 package ui.actions.service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -18,8 +18,12 @@ import java.sql.SQLException;
  */
 @Component
 public class ExportServicesDataAction implements IAction {
+    private final ServiceService serviceService;
+
     @Autowired
-    private ServiceService serviceService;
+    public ExportServicesDataAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
 
     /**
      * Метод execute выполняет действие по экспорту данных об услугах. Пользователю предлагается ввести название файла

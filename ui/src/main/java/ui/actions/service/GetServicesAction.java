@@ -1,7 +1,7 @@
 package ui.actions.service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
@@ -15,8 +15,12 @@ import java.sql.SQLException;
  */
 @Component
 public class GetServicesAction implements IAction {
+    private final ServiceService serviceService;
+
     @Autowired
-    private ServiceService serviceService;
+    public GetServicesAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
 
     /**
      * Метод выполняет действие по получению списка всех услуг. При выполнении действия выводится список всех доступных

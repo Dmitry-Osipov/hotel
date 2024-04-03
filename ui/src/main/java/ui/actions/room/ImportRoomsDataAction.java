@@ -1,9 +1,9 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import com.opencsv.exceptions.CsvValidationException;
 import essence.room.AbstractRoom;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -22,8 +22,12 @@ import java.util.List;
  */
 @Component
 public class ImportRoomsDataAction implements IAction {
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public ImportRoomsDataAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     /**
      * Метод execute выполняет действие по импорту данных о комнатах. Пользователю предлагается ввести название файла

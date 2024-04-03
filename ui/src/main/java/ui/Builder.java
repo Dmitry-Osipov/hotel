@@ -1,49 +1,15 @@
 package ui;
 
-import annotations.annotation.Component;
-import annotations.annotation.InjectByInterface;
 import annotations.factory.InitializeComponent;
 import lombok.Getter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ui.actions.IAction;
-import ui.actions.client.AddClientAction;
-import ui.actions.client.CountClientsAction;
-import ui.actions.client.ExportClientsDataAction;
-import ui.actions.client.GetClientsAction;
-import ui.actions.client.ImportClientsDataAction;
-import ui.actions.room.AddRoomAction;
-import ui.actions.room.AddStarsAction;
-import ui.actions.room.CheckInAction;
-import ui.actions.room.CountAvailableRoomsAction;
-import ui.actions.room.EvictAction;
-import ui.actions.room.ExportReservationsDataAction;
-import ui.actions.room.ExportRoomsDataAction;
-import ui.actions.room.GetAvailableRoomsByCapacityAction;
-import ui.actions.room.GetAvailableRoomsByPriceAction;
-import ui.actions.room.GetAvailableRoomsByStarsAction;
-import ui.actions.room.GetAvailableRoomsByTimeAction;
-import ui.actions.room.GetClientRoomsByCheckOutTimeAction;
-import ui.actions.room.GetClientRoomsByNumbersAction;
-import ui.actions.room.GetRoomInfoAction;
-import ui.actions.room.GetRoomLastClientsAction;
-import ui.actions.room.GetRoomPriceAction;
-import ui.actions.room.GetRoomsByCapacityAction;
-import ui.actions.room.GetRoomsByPriceAction;
-import ui.actions.room.GetRoomsByStarsAction;
-import ui.actions.room.ImportReservationDataAction;
-import ui.actions.room.ImportRoomsDataAction;
-import ui.actions.service.AddServiceAction;
-import ui.actions.service.ExportProvidedServicesDataAction;
-import ui.actions.service.ExportServicesDataAction;
-import ui.actions.service.GetClientServicesByPriceAction;
-import ui.actions.service.GetClientServicesByTimeAction;
-import ui.actions.service.GetServicePriceAction;
-import ui.actions.service.GetServicesAction;
-import ui.actions.service.ImportProvidedServicesDataAction;
-import ui.actions.service.ImportServiceDataAction;
-import ui.actions.service.ProvideServiceAction;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Класс отвечает за формирование меню.
@@ -54,82 +20,121 @@ public class Builder implements InitializeComponent {
     private static final Logger logger = LoggerFactory.getLogger("AppProcess");
     @Getter
     private Menu rootMenu;
-    @InjectByInterface(clazz = AddRoomAction.class)
-    private IAction addRoomAction;
-    @InjectByInterface(clazz = AddStarsAction.class)
-    private IAction addStarsAction;
-    @InjectByInterface(clazz = CheckInAction.class)
-    private IAction checkInAction;
-    @InjectByInterface(clazz = CountAvailableRoomsAction.class)
-    private IAction countAvailableRoomsAction;
-    @InjectByInterface(clazz = EvictAction.class)
-    private IAction evictAction;
-    @InjectByInterface(clazz = ExportReservationsDataAction.class)
-    private IAction exportReservationsDataAction;
-    @InjectByInterface(clazz = ExportRoomsDataAction.class)
-    private IAction exportRoomsDataAction;
-    @InjectByInterface(clazz = GetAvailableRoomsByCapacityAction.class)
-    private IAction getAvailableRoomsByCapacityAction;
-    @InjectByInterface(clazz = GetAvailableRoomsByPriceAction.class)
-    private IAction getAvailableRoomsByPriceAction;
-    @InjectByInterface(clazz = GetAvailableRoomsByStarsAction.class)
-    private IAction getAvailableRoomsByStarsAction;
-    @InjectByInterface(clazz = GetAvailableRoomsByTimeAction.class)
-    private IAction getAvailableRoomsByTimeAction;
-    @InjectByInterface(clazz = GetClientRoomsByCheckOutTimeAction.class)
-    private IAction getClientRoomsByCheckOutTimeAction;
-    @InjectByInterface(clazz = GetClientRoomsByNumbersAction.class)
-    private IAction getClientRoomsByNumbersAction;
-    @InjectByInterface(clazz = GetRoomInfoAction.class)
-    private IAction getRoomInfoAction;
-    @InjectByInterface(clazz = GetRoomLastClientsAction.class)
-    private IAction getRoomLastClientsAction;
-    @InjectByInterface(clazz = GetRoomPriceAction.class)
-    private IAction getRoomPriceAction;
-    @InjectByInterface(clazz = GetRoomsByCapacityAction.class)
-    private IAction getRoomsByCapacityAction;
-    @InjectByInterface(clazz = GetRoomsByPriceAction.class)
-    private IAction getRoomsByPriceAction;
-    @InjectByInterface(clazz = GetRoomsByStarsAction.class)
-    private IAction getRoomsByStarsAction;
-    @InjectByInterface(clazz = ImportReservationDataAction.class)
-    private IAction importReservationDataAction;
-    @InjectByInterface(clazz = ImportRoomsDataAction.class)
-    private IAction importRoomsDataAction;
-    @InjectByInterface(clazz = AddServiceAction.class)
-    private IAction addServiceAction;
-    @InjectByInterface(clazz = ExportProvidedServicesDataAction.class)
-    private IAction exportProvidedServicesDataAction;
-    @InjectByInterface(clazz = ExportServicesDataAction.class)
-    private IAction exportServicesDataAction;
-    @InjectByInterface(clazz = GetClientServicesByPriceAction.class)
-    private IAction getClientServicesByPriceAction;
-    @InjectByInterface(clazz = GetClientServicesByTimeAction.class)
-    private IAction getClientServicesByTimeAction;
-    @InjectByInterface(clazz = GetServicePriceAction.class)
-    private IAction getServicePriceAction;
-    @InjectByInterface(clazz = GetServicesAction.class)
-    private IAction getServicesAction;
-    @InjectByInterface(clazz = ImportProvidedServicesDataAction.class)
-    private IAction importProvidedServicesDataAction;
-    @InjectByInterface(clazz = ImportServiceDataAction.class)
-    private IAction importServiceDataAction;
-    @InjectByInterface(clazz = ProvideServiceAction.class)
-    private IAction provideServiceAction;
-    @InjectByInterface(clazz = AddClientAction.class)
-    private IAction addClientAction;
-    @InjectByInterface(clazz = CountClientsAction.class)
-    private IAction countClientsAction;
-    @InjectByInterface(clazz = ExportClientsDataAction.class)
-    private IAction exportClientsDataAction;
-    @InjectByInterface(clazz = GetClientsAction.class)
-    private IAction getClientsAction;
-    @InjectByInterface(clazz = ImportClientsDataAction.class)
-    private IAction importClientsDataAction;
+    private final IAction addRoomAction;
+    private final IAction addStarsAction;
+    private final IAction checkInAction;
+    private final IAction countAvailableRoomsAction;
+    private final IAction evictAction;
+    private final IAction exportReservationsDataAction;
+    private final IAction exportRoomsDataAction;
+    private final IAction getAvailableRoomsByCapacityAction;
+    private final IAction getAvailableRoomsByPriceAction;
+    private final IAction getAvailableRoomsByStarsAction;
+    private final IAction getAvailableRoomsByTimeAction;
+    private final IAction getClientRoomsByCheckOutTimeAction;
+    private final IAction getClientRoomsByNumbersAction;
+    private final IAction getRoomInfoAction;
+    private final IAction getRoomLastClientsAction;
+    private final IAction getRoomPriceAction;
+    private final IAction getRoomsByCapacityAction;
+    private final IAction getRoomsByPriceAction;
+    private final IAction getRoomsByStarsAction;
+    private final IAction importReservationDataAction;
+    private final IAction importRoomsDataAction;
+    private final IAction addServiceAction;
+    private final IAction exportProvidedServicesDataAction;
+    private final IAction exportServicesDataAction;
+    private final IAction getClientServicesByPriceAction;
+    private final IAction getClientServicesByTimeAction;
+    private final IAction getServicePriceAction;
+    private final IAction getServicesAction;
+    private final IAction importProvidedServicesDataAction;
+    private final IAction importServiceDataAction;
+    private final IAction provideServiceAction;
+    private final IAction addClientAction;
+    private final IAction countClientsAction;
+    private final IAction exportClientsDataAction;
+    private final IAction getClientsAction;
+    private final IAction importClientsDataAction;
+
+    public Builder(@Qualifier("getAvailableRoomsByPriceAction") IAction getAvailableRoomsByPriceAction,
+                   @Qualifier("addRoomAction") IAction addRoomAction,
+                   @Qualifier("addStarsAction") IAction addStarsAction,
+                   @Qualifier("checkInAction") IAction checkInAction,
+                   @Qualifier("countAvailableRoomsAction") IAction countAvailableRoomsAction,
+                   @Qualifier("importReservationDataAction") IAction importReservationDataAction,
+                   @Qualifier("getClientServicesByTimeAction") IAction getClientServicesByTimeAction,
+                   @Qualifier("getRoomsByCapacityAction") IAction getRoomsByCapacityAction,
+                   @Qualifier("evictAction") IAction evictAction,
+                   @Qualifier("exportReservationsDataAction") IAction exportReservationsDataAction,
+                   @Qualifier("exportServicesDataAction") IAction exportServicesDataAction,
+                   @Qualifier("getClientServicesByPriceAction") IAction getClientServicesByPriceAction,
+                   @Qualifier("getClientsAction") IAction getClientsAction,
+                   @Qualifier("getRoomsByPriceAction") IAction getRoomsByPriceAction,
+                   @Qualifier("importProvidedServicesDataAction") IAction importProvidedServicesDataAction,
+                   @Qualifier("exportRoomsDataAction") IAction exportRoomsDataAction,
+                   @Qualifier("getAvailableRoomsByCapacityAction") IAction getAvailableRoomsByCapacityAction,
+                   @Qualifier("getServicePriceAction") IAction getServicePriceAction,
+                   @Qualifier("countClientsAction") IAction countClientsAction,
+                   @Qualifier("getClientRoomsByCheckOutTimeAction") IAction getClientRoomsByCheckOutTimeAction,
+                   @Qualifier("getRoomLastClientsAction") IAction getRoomLastClientsAction,
+                   @Qualifier("importRoomsDataAction") IAction importRoomsDataAction,
+                   @Qualifier("getAvailableRoomsByStarsAction") IAction getAvailableRoomsByStarsAction,
+                   @Qualifier("getRoomInfoAction") IAction getRoomInfoAction,
+                   @Qualifier("getRoomsByStarsAction") IAction getRoomsByStarsAction,
+                   @Qualifier("getServicesAction") IAction getServicesAction,
+                   @Qualifier("getRoomPriceAction") IAction getRoomPriceAction,
+                   @Qualifier("importClientsDataAction") IAction importClientsDataAction,
+                   @Qualifier("provideServiceAction") IAction provideServiceAction,
+                   @Qualifier("addServiceAction") IAction addServiceAction,
+                   @Qualifier("exportProvidedServicesDataAction") IAction exportProvidedServicesDataAction,
+                   @Qualifier("getAvailableRoomsByTimeAction") IAction getAvailableRoomsByTimeAction,
+                   @Qualifier("addClientAction") IAction addClientAction,
+                   @Qualifier("importServiceDataAction") IAction importServiceDataAction,
+                   @Qualifier("exportClientsDataAction") IAction exportClientsDataAction,
+                   @Qualifier("getClientRoomsByNumbersAction") IAction getClientRoomsByNumbersAction) {
+        this.getAvailableRoomsByPriceAction = getAvailableRoomsByPriceAction;
+        this.addRoomAction = addRoomAction;
+        this.addStarsAction = addStarsAction;
+        this.checkInAction = checkInAction;
+        this.countAvailableRoomsAction = countAvailableRoomsAction;
+        this.importReservationDataAction = importReservationDataAction;
+        this.getClientServicesByTimeAction = getClientServicesByTimeAction;
+        this.getRoomsByCapacityAction = getRoomsByCapacityAction;
+        this.evictAction = evictAction;
+        this.exportReservationsDataAction = exportReservationsDataAction;
+        this.exportServicesDataAction = exportServicesDataAction;
+        this.getClientServicesByPriceAction = getClientServicesByPriceAction;
+        this.getClientsAction = getClientsAction;
+        this.getRoomsByPriceAction = getRoomsByPriceAction;
+        this.importProvidedServicesDataAction = importProvidedServicesDataAction;
+        this.exportRoomsDataAction = exportRoomsDataAction;
+        this.getAvailableRoomsByCapacityAction = getAvailableRoomsByCapacityAction;
+        this.getServicePriceAction = getServicePriceAction;
+        this.countClientsAction = countClientsAction;
+        this.getClientRoomsByCheckOutTimeAction = getClientRoomsByCheckOutTimeAction;
+        this.getRoomLastClientsAction = getRoomLastClientsAction;
+        this.importRoomsDataAction = importRoomsDataAction;
+        this.getAvailableRoomsByStarsAction = getAvailableRoomsByStarsAction;
+        this.getRoomInfoAction = getRoomInfoAction;
+        this.getRoomsByStarsAction = getRoomsByStarsAction;
+        this.getServicesAction = getServicesAction;
+        this.getRoomPriceAction = getRoomPriceAction;
+        this.importClientsDataAction = importClientsDataAction;
+        this.provideServiceAction = provideServiceAction;
+        this.addServiceAction = addServiceAction;
+        this.exportProvidedServicesDataAction = exportProvidedServicesDataAction;
+        this.getAvailableRoomsByTimeAction = getAvailableRoomsByTimeAction;
+        this.addClientAction = addClientAction;
+        this.importServiceDataAction = importServiceDataAction;
+        this.exportClientsDataAction = exportClientsDataAction;
+        this.getClientRoomsByNumbersAction = getClientRoomsByNumbersAction;
+    }
 
     /**
      * Метод проводит настройку главного меню.
      */
+    @PostConstruct
     @Override
     public void init() {
         rootMenu = buildMainMenu();

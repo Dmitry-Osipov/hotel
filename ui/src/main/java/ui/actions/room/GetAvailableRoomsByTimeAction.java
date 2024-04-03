@@ -1,7 +1,7 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.RoomService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -19,8 +19,12 @@ import java.util.Arrays;
  */
 @Component
 public class GetAvailableRoomsByTimeAction implements IAction {
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public GetAvailableRoomsByTimeAction(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     /**
      * Метод выполняет действие по выводу списка свободных комнат с конкретного времени. При выполнении

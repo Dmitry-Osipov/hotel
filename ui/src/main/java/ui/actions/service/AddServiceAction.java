@@ -1,9 +1,9 @@
 package ui.actions.service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.service.Service;
 import essence.service.ServiceNames;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
@@ -17,8 +17,12 @@ import java.sql.SQLException;
  */
 @Component
 public class AddServiceAction implements IAction {
+    private final ServiceService serviceService;
+
     @Autowired
-    private ServiceService serviceService;
+    public AddServiceAction(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
 
     /**
      * Метод выполняет действие по добавлению новой услуги в отель. При выполнении действия пользователю предлагается

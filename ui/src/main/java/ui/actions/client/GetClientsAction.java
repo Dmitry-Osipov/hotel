@@ -1,8 +1,8 @@
 package ui.actions.client;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import ui.actions.IAction;
 import utils.exceptions.ErrorMessages;
@@ -15,8 +15,12 @@ import java.util.List;
  */
 @Component
 public class GetClientsAction implements IAction {
+    private final ClientService clientService;
+
     @Autowired
-    private ClientService clientService;
+    public GetClientsAction(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     /**
      * Метод выполняет действие по получению списка всех клиентов. При выполнении действия выводится список всех

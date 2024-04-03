@@ -1,9 +1,9 @@
 package ui.actions.service;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
 import essence.service.AbstractService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import service.ServiceService;
 import ui.actions.IAction;
@@ -20,10 +20,14 @@ import java.sql.SQLException;
  */
 @Component
 public class ProvideServiceAction implements IAction {
+    private final ServiceService serviceService;
+    private final ClientService clientService;
+
     @Autowired
-    private ServiceService serviceService;
-    @Autowired
-    private ClientService clientService;
+    public ProvideServiceAction(ServiceService serviceService, ClientService clientService) {
+        this.serviceService = serviceService;
+        this.clientService = clientService;
+    }
 
     /**
      * Метод выполняет действие по предоставлению услуги клиенту. При выполнении действия проверяется наличие клиента и

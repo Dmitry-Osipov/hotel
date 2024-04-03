@@ -1,8 +1,8 @@
 package ui.actions.room;
 
-import annotations.annotation.Autowired;
-import annotations.annotation.Component;
 import essence.person.AbstractClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import service.RoomService;
 import ui.actions.IAction;
@@ -18,10 +18,14 @@ import java.sql.SQLException;
  */
 @Component
 public class GetClientRoomsByCheckOutTimeAction implements IAction {
+    private final RoomService roomService;
+    private final ClientService clientService;
+
     @Autowired
-    private RoomService roomService;
-    @Autowired
-    private ClientService clientService;
+    public GetClientRoomsByCheckOutTimeAction(RoomService roomService, ClientService clientService) {
+        this.roomService = roomService;
+        this.clientService = clientService;
+    }
 
     /**
      * Метод выполняет действие по выводу списка комнат клиента по убыванию времени выезда. При выполнении действия
