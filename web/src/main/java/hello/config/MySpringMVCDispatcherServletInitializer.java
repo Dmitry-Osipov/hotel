@@ -1,4 +1,4 @@
-package ru.osipov.hello.config;
+package hello.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
