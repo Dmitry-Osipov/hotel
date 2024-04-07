@@ -234,7 +234,7 @@ public final class ImportCSV {
                 AbstractService service = parseService(nextLine[2]);
                 LocalDateTime serviceTime = parseDateTime(nextLine[3]);
 
-                ProvidedService providedService = new ProvidedService(id, service, serviceTime, clients.getFirst());
+                ProvidedService providedService = new ProvidedService(id, service, serviceTime, clients.get(0));
                 for (int i = 1; i < clients.size(); i++) {
                     providedService.setClient(clients.get(i));
                 }

@@ -52,4 +52,12 @@ public class ServiceRepository {
     public void update(AbstractService service) throws SQLException {
         dao.update(service);
     }
+
+    public AbstractService getServiceById(int id) throws SQLException {
+        return dao.getOne(id, AbstractService.class);
+    }
+
+    public void deleteService(AbstractService service) throws SQLException {
+        dao.delete(service);
+    }
 }

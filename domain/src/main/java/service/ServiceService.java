@@ -196,6 +196,30 @@ public class ServiceService extends AbstractFavorService {
         return providedServicesRepository.getProvidedServices();
     }
 
+    public AbstractService getServiceById(int serviceId) throws SQLException {
+        serviceLogger.info("Вызван метод получения клиента по ID {}", serviceId);
+        try {
+            AbstractService service = serviceRepository.getServiceById(serviceId);
+            serviceLogger.info("Удалось получить клиента по ID {}", serviceId);
+            return service;
+        } catch (TechnicalException e) {
+            serviceLogger.error("Не удалось получить клиента по ID {}", serviceId);
+            throw e;
+        }
+    }
+
+    public void deleteClient(AbstractService service) throws SQLException {
+        int serviceId = service.getId();
+        serviceLogger.info("Вызван метод удаления клиента с ID {}", serviceId);
+        try {
+            serviceRepository.deleteService(service);
+            serviceLogger.info("Удалось удалить клиента с ID {}", serviceId);
+        } catch (TechnicalException e) {
+            serviceLogger.error("Не удалось удалить клиента с ID {}", serviceId);
+            throw e;
+        }
+    }
+
     /**
      * Служебный метод предназначен для устранения дублирования кода. Метод фильтрует стрим от списка услуг по
      * содержанию конкретного клиента в списке.

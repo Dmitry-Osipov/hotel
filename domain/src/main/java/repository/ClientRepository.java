@@ -52,4 +52,12 @@ public class ClientRepository {
     public void update(AbstractClient client) throws SQLException {
         dao.update(client);
     }
+
+    public AbstractClient getClientById(int id) throws SQLException {
+        return dao.getOne(id, Client.class);
+    }
+
+    public void deleteClient(AbstractClient client) throws SQLException {
+        dao.delete(client);
+    }
 }

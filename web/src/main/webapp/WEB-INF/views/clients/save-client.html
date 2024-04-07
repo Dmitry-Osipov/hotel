@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+    <form action="/clients/saveClient" method="post" th:object="${client}">
+        <div>
+            <label for="fio">FIO:</label>
+            <input type="text" id="fio" name="fio" th:field="*{fio}">
+            <span th:if="${#fields.hasErrors('fio')}" th:errors="*{fio}"></span>
+        </div>
+        <div>
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}">
+            <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+        </div>
+        <div>
+            <label for="checkInTime">Check In Time:</label>
+            <input type="datetime-local" id="checkInTime" name="checkInTime" th:field="*{checkInTime}">
+            <span th:if="${#fields.hasErrors('checkInTime')}" th:errors="*{checkInTime}"></span>
+        </div>
+        <div>
+            <label for="checkOutTime">Check Out Time:</label>
+            <input type="datetime-local" id="checkOutTime" name="checkOutTime" th:field="*{checkOutTime}">
+            <span th:if="${#fields.hasErrors('checkOutTime')}" th:errors="*{checkOutTime}"></span>
+        </div>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

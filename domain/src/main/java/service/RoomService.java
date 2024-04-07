@@ -43,7 +43,7 @@ public class RoomService extends AbstractFavorService {
     private final RoomReservationRepository reservationRepository;
     private final ClientRepository clientRepository;
     @Value("${enable_room_status_change}")
-    private boolean allowSetStatusRoom;
+    private String allowSetStatusRoom;
 
     @Autowired
     public RoomService(RoomRepository roomRepository, RoomReservationRepository reservationRepository,
@@ -76,7 +76,7 @@ public class RoomService extends AbstractFavorService {
         int roomId = room.getId();
         roomLogger.info("Вызван метод обновления комнаты с ID {}", roomId);
 
-        if (!allowSetStatusRoom) {
+        if (!Boolean.parseBoolean(allowSetStatusRoom)) {
             roomLogger.error("Не удалось обновить комнату с ID {} из-за невозможности изменения статуса комнаты",
                     roomId);
             throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
@@ -147,7 +147,7 @@ public class RoomService extends AbstractFavorService {
             throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
         }
 
-        if (!allowSetStatusRoom) {
+        if (!Boolean.parseBoolean(allowSetStatusRoom)) {
             roomLogger.error(failureMessage, roomId, clientsString);
             reservationLogger.error(failureMessage, roomId, clientsString);
             throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
@@ -220,7 +220,7 @@ public class RoomService extends AbstractFavorService {
             throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
         }
 
-        if (!allowSetStatusRoom) {
+        if (!Boolean.parseBoolean(allowSetStatusRoom)) {
             roomLogger.error(failureMessage, roomId, clientsString);
             reservationLogger.error(failureMessage, roomId, clientsString);
             throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());

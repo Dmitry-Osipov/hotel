@@ -80,4 +80,29 @@ public class ClientService {
             return false;
         }
     }
+
+    public AbstractClient getClientById(int clientId) throws SQLException {
+        logger.info("Вызван метод получения клиента по ID {}", clientId);
+        try {
+            AbstractClient client = clientRepository.getClientById(clientId);
+            logger.info("Удалось получить клиента по ID {}", clientId);
+            return client;
+        } catch (TechnicalException e) {
+            logger.error("Не удалось получить клиента по ID {}", clientId);
+            throw e;
+        }
+    }
+
+    public void deleteClient(AbstractClient client) throws SQLException {
+        int clientId = client.getId();
+        logger.info("Вызван метод удаления клиента с ID {}", clientId);
+        try {
+
+            clientRepository.deleteClient(client);
+            logger.info("Удалось удалить клиента с ID {}", clientId);
+        } catch (TechnicalException e) {
+            logger.error("Не удалось удалить клиента с ID {}", clientId);
+            throw e;
+        }
+    }
 }
