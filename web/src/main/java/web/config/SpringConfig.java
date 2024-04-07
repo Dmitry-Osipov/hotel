@@ -12,6 +12,9 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
+/**
+ * Конфигурационный класс для Spring MVC.
+ */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"repository", "service", "dao", "web"})
@@ -23,6 +26,10 @@ public class SpringConfig implements WebMvcConfigurer {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Создает и настраивает ресолвер шаблонов Thymeleaf.
+     * @return Ресолвер шаблонов
+     */
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -32,6 +39,10 @@ public class SpringConfig implements WebMvcConfigurer {
         return templateResolver;
     }
 
+    /**
+     * Создает и настраивает движок шаблонов Thymeleaf.
+     * @return Движок шаблонов
+     */
     @Bean
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
@@ -40,22 +51,14 @@ public class SpringConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
+    /**
+     * Конфигурирует резольвер представлений для использования Thymeleaf.
+     * @param registry объект для регистрации резольвера представлений
+     */
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setTemplateEngine(templateEngine());
         registry.viewResolver(resolver);
     }
-
-    // TODO: мб убрать
-//    @Override
-//    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-//        configurer.enable();
-//    }
-//
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler("/resources/**")
-//                .addResourceLocations("/resources/");
-//    }
 }

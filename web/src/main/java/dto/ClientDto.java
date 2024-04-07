@@ -8,6 +8,10 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+/**
+ * Класс, представляющий сущность клиента с информацией о клиенте.
+ * Используется для передачи данных о клиенте между слоями приложения.
+ */
 @Getter
 @Setter
 @ToString

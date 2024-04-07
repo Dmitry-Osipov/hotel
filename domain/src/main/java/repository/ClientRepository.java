@@ -53,10 +53,23 @@ public class ClientRepository {
         dao.update(client);
     }
 
+    /**
+     * Получает клиента по его уникальному идентификатору.
+     * @param id Уникальный идентификатор клиента.
+     * @return Клиент с указанным ID.
+     * @throws SQLException Если происходит ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
     public AbstractClient getClientById(int id) throws SQLException {
         return dao.getOne(id, Client.class);
     }
 
+    /**
+     * Удаляет клиента из репозитория.
+     * @param client Клиент, который должен быть удален.
+     * @throws SQLException Если происходит ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
     public void deleteClient(AbstractClient client) throws SQLException {
         dao.delete(client);
     }

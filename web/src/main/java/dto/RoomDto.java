@@ -6,6 +6,10 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+/**
+ * Класс, представляющий информацию о номере гостиницы.
+ * Используется для передачи данных о номере между слоями приложения.
+ */
 @Getter
 @Setter
 @ToString

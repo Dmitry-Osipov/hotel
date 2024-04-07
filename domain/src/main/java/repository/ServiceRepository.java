@@ -53,10 +53,23 @@ public class ServiceRepository {
         dao.update(service);
     }
 
+    /**
+     * Получает услугу по ее уникальному идентификатору.
+     * @param id Уникальный идентификатор услуги.
+     * @return Услуга с указанным ID.
+     * @throws SQLException Если происходит ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
     public AbstractService getServiceById(int id) throws SQLException {
-        return dao.getOne(id, AbstractService.class);
+        return dao.getOne(id, Service.class);
     }
 
+    /**
+     * Удаляет услугу из репозитория.
+     * @param service Услуга, которая должна быть удалена.
+     * @throws SQLException Если происходит ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
     public void deleteService(AbstractService service) throws SQLException {
         dao.delete(service);
     }

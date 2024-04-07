@@ -425,6 +425,43 @@ public class RoomService extends AbstractFavorService {
     }
 
     /**
+     * Получает комнату из репозитория по указанному идентификатору.
+     * @param roomId Уникальный идентификатор комнаты.
+     * @return Комната с указанным идентификатором.
+     * @throws SQLException Если возникает ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
+    public AbstractRoom getRoomById(int roomId) throws SQLException {
+        roomLogger.info("Вызван метод получения комнаты по ID {}", roomId);
+        try {
+            AbstractRoom room = roomRepository.getRoomById(roomId);
+            roomLogger.info("Удалось получить комнату по ID {}", roomId);
+            return room;
+        } catch (TechnicalException e) {
+            roomLogger.error("Не удалось получить комнату по ID {}", roomId);
+            throw e;
+        }
+    }
+
+    /**
+     * Удаляет комнату из базы данных.
+     * @param room Комната, которая должна быть удалена.
+     * @throws SQLException Если возникает ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
+    public void deleteRoom(AbstractRoom room) throws SQLException {
+        int roomId = room.getId();
+        roomLogger.info("Вызван метод удаления комнаты с ID {}", roomId);
+        try {
+            roomRepository.deleteRoom(room);
+            roomLogger.info("Удалось удалить комнату с ID {}", roomId);
+        } catch (TechnicalException e) {
+            roomLogger.error("Не удалось удалить комнату с ID {}", roomId);
+            throw e;
+        }
+    }
+
+    /**
      * Служебный метод предназначен для снижения дублирования кода создания стрима, отфильтрованного по сравнению
      * комнат.
      * @param room Комната.

@@ -81,6 +81,13 @@ public class ClientService {
         }
     }
 
+    /**
+     * Получает клиента из репозитория по указанному идентификатору.
+     * @param clientId Уникальный идентификатор клиента.
+     * @return Клиент с указанным идентификатором.
+     * @throws SQLException Если возникает ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
     public AbstractClient getClientById(int clientId) throws SQLException {
         logger.info("Вызван метод получения клиента по ID {}", clientId);
         try {
@@ -93,11 +100,16 @@ public class ClientService {
         }
     }
 
+    /**
+     * Удаляет клиента из базы данных.
+     * @param client Клиент, который должен быть удален.
+     * @throws SQLException Если возникает ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
     public void deleteClient(AbstractClient client) throws SQLException {
         int clientId = client.getId();
         logger.info("Вызван метод удаления клиента с ID {}", clientId);
         try {
-
             clientRepository.deleteClient(client);
             logger.info("Удалось удалить клиента с ID {}", clientId);
         } catch (TechnicalException e) {

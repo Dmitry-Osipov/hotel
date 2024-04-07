@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+</head>
+<body>
+<h1 th:text="${title}"></h1>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Price</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Service Time</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="service : ${services}" style="text-align: center">
+        <td th:text="${service.id}" style="text-align: center"></td>
+        <td th:text="${service.price}" style="text-align: center"></td>
+        <td th:text="${service.name}" style="text-align: center"></td>
+        <td th:text="${service.status}" style="text-align: center"></td>
+        <td th:text="${service.serviceTime}" style="text-align: center"></td>
+        <td style="text-align: center">
+            <form th:action="@{/services/updateService/{id}(id=${service.id})}" method="get" style="display: inline;">
+                <button type="submit">Update</button>
+            </form>&nbsp;|&nbsp;
+            <form th:action="@{/services/deleteService/{id}(id=${service.id})}" method="post" style="display: inline;">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
