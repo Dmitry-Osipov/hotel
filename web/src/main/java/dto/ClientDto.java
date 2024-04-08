@@ -1,5 +1,6 @@
 package dto;
 
+import essence.Identifiable;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class ClientDto {
+public class ClientDto implements Identifiable {
     private int id;
     @Size(min = 5, message = "FIO must be minimum 5 symbols")
     private String fio;

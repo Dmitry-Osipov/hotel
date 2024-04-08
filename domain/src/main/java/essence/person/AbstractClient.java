@@ -13,6 +13,12 @@ import java.time.LocalDateTime;
 @JsonSubTypes({@JsonSubTypes.Type(value = Client.class, name = "Client")})
 public interface AbstractClient extends Identifiable {
     /**
+     * Метод установки нового ID.
+     * @param id ID
+     */
+    void setId(int id);
+
+    /**
      * Метод получения номера телефона.
      * @return Номер телефона.
      */

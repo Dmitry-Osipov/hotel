@@ -27,6 +27,9 @@
             </form>&nbsp;|&nbsp;
             <form th:action="@{/services/deleteService/{id}(id=${service.id})}" method="post" style="display: inline;">
                 <input type="submit" value="Delete">
+            </form>&nbsp;|&nbsp;
+            <form th:action="@{/services/countPriceService/{id}(id=${service.id})}" method="get" style="display: inline">
+                <input type="submit" value="Count Price">
             </form>
         </td>
     </tr>

@@ -1,5 +1,6 @@
 package dto;
 
+import essence.Identifiable;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class ServiceDto {
+public class ServiceDto implements Identifiable {
     private int id;
     @Min(value = 1500, message = "Must be greater than 1499")
     private int price;

@@ -1,5 +1,6 @@
 package dto;
 
+import essence.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class RoomReservationDto {
+public class RoomReservationDto implements Identifiable {
     private int id;
     private List<Integer> clientIds;
     private int roomId;

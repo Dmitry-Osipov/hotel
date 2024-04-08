@@ -22,9 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Класс импорта данных из CSV файла.
@@ -59,8 +57,8 @@ public final class ImportCSV {
                 int price = Integer.parseInt(nextLine[3]);
                 RoomStatusTypes status = RoomStatusTypes.valueOf(nextLine[4]);
                 int stars = Integer.parseInt(nextLine[5]);
-                LocalDateTime checkInTime = parseDateTime(nextLine[6]);
-                LocalDateTime checkOutTime = parseDateTime(nextLine[7]);
+                LocalDateTime checkInTime = EntityFromStringParser.parseDateTime(nextLine[6]);
+                LocalDateTime checkOutTime = EntityFromStringParser.parseDateTime(nextLine[7]);
 
                 AbstractRoom room = new Room(id, number, capacity, price);
                 room.setStatus(status);
@@ -72,10 +70,10 @@ public final class ImportCSV {
             }
         } catch (IOException e) {
             logger.error("Не удалось импортировать данные по комнатам из CSV файла {}. Ошибка IO", fileName);
-            throw new IOException(e.getMessage());
+            throw e;
         } catch (CsvValidationException e) {
             logger.error("Не удалось импортировать данные по комнатам из CSV файла {}. Ошибка валидации", fileName);
-            throw new CsvValidationException(e.getMessage());
+            throw e;
         }
 
         logger.info("Удалось импортировать данные по комнатам из CSV файла {}. Полученный список: {}", fileName, rooms);
@@ -104,7 +102,7 @@ public final class ImportCSV {
                 ServiceNames name = ServiceNames.valueOf(nextLine[1]);
                 int price = Integer.parseInt(nextLine[2]);
                 ServiceStatusTypes status = ServiceStatusTypes.valueOf(nextLine[3]);
-                LocalDateTime serviceTime = parseDateTime(nextLine[4]);
+                LocalDateTime serviceTime = EntityFromStringParser.parseDateTime(nextLine[4]);
 
                 AbstractService service = new Service(id, name, price);
                 service.setStatus(status);
@@ -114,10 +112,10 @@ public final class ImportCSV {
             }
         } catch (IOException e) {
             logger.error("Не удалось импортировать данные по услугам из CSV файла {}. Ошибка IO", fileName);
-            throw new IOException(e.getMessage());
+            throw e;
         } catch (CsvValidationException e) {
             logger.error("Не удалось импортировать данные по услугам из CSV файла {}. Ошибка валидации", fileName);
-            throw new CsvValidationException(e.getMessage());
+            throw e;
         }
 
         logger.info("Удалось импортировать данные по услугам из CSV файла {}. Полученный список: {}",
@@ -146,8 +144,8 @@ public final class ImportCSV {
                 int id = Integer.parseInt(nextLine[0]);
                 String fio = nextLine[1];
                 String phoneNumber = nextLine[2];
-                LocalDateTime checkInTime = parseDateTime(nextLine[3]);
-                LocalDateTime checkOutTime = parseDateTime(nextLine[4]);
+                LocalDateTime checkInTime = EntityFromStringParser.parseDateTime(nextLine[3]);
+                LocalDateTime checkOutTime = EntityFromStringParser.parseDateTime(nextLine[4]);
 
                 AbstractClient client = new Client(id, fio, phoneNumber);
                 client.setCheckInTime(checkInTime);
@@ -157,10 +155,10 @@ public final class ImportCSV {
             }
         } catch (IOException e) {
             logger.error("Не удалось импортировать данные по клиентам из CSV файла {}. Ошибка IO", fileName);
-            throw new IOException(e.getMessage());
+            throw e;
         } catch (CsvValidationException e) {
             logger.error("Не удалось импортировать данные по клиентам из CSV файла {}. Ошибка валидации", fileName);
-            throw new CsvValidationException(e.getMessage());
+            throw e;
         }
 
         logger.info("Удалось импортировать данные по клиентам из CSV файла {}. Полученный список: {}",
@@ -189,19 +187,19 @@ public final class ImportCSV {
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 int id = Integer.parseInt(nextLine[0]);
-                AbstractRoom room = parseRoom(nextLine[1]);
-                LocalDateTime checkInTime = parseDateTime(nextLine[2]);
-                LocalDateTime checkOutTime = parseDateTime(nextLine[3]);
-                List<AbstractClient> clients = parseClients(nextLine[4]);
+                AbstractRoom room = EntityFromStringParser.parseRoom(nextLine[1]);
+                LocalDateTime checkInTime = EntityFromStringParser.parseDateTime(nextLine[2]);
+                LocalDateTime checkOutTime = EntityFromStringParser.parseDateTime(nextLine[3]);
+                List<AbstractClient> clients = EntityFromStringParser.parseClients(nextLine[4]);
 
                 reservations.add(new RoomReservation(id, room, checkInTime, checkOutTime, clients));
             }
         } catch (IOException e) {
             logger.error("Не удалось импортировать данные по резервациям из CSV файла {}. Ошибка IO", fileName);
-            throw new IOException(e.getMessage());
+            throw e;
         } catch (CsvValidationException e) {
             logger.error("Не удалось импортировать данные по резервация из CSV файла {}. Ошибка валидации", fileName);
-            throw new CsvValidationException(e.getMessage());
+            throw e;
         }
 
         logger.info("Удалось импортировать данные по резервациям из CSV файла {}. Полученный список: {}",
@@ -230,9 +228,9 @@ public final class ImportCSV {
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 int id = Integer.parseInt(nextLine[0]);
-                List<AbstractClient> clients = parseClients(nextLine[1]);
-                AbstractService service = parseService(nextLine[2]);
-                LocalDateTime serviceTime = parseDateTime(nextLine[3]);
+                List<AbstractClient> clients = EntityFromStringParser.parseClients(nextLine[1]);
+                AbstractService service = EntityFromStringParser.parseService(nextLine[2]);
+                LocalDateTime serviceTime = EntityFromStringParser.parseDateTime(nextLine[3]);
 
                 ProvidedService providedService = new ProvidedService(id, service, serviceTime, clients.get(0));
                 for (int i = 1; i < clients.size(); i++) {
@@ -243,119 +241,15 @@ public final class ImportCSV {
             }
         } catch (IOException e) {
             logger.error("Не удалось импортировать данные по оказанным услугам из CSV файла {}. Ошибка IO", fileName);
-            throw new IOException(e.getMessage());
+            throw e;
         } catch (CsvValidationException e) {
             logger.error("Не удалось импортировать данные по оказанным услугам из CSV файла {}. Ошибка валидации",
                     fileName);
-            throw new CsvValidationException(e.getMessage());
+            throw e;
         }
 
         logger.info("Удалось импортировать данные по оказанным услугам из CSV файла {}. Полученный список: {}",
                 fileName, providedServices);
         return providedServices;
-    }
-
-    /**
-     * Служебный метод парсит строковое время и дату в экземпляр класса LocalDateTime.
-     * @param dateTime Строка времени и даты.
-     * @return Время, если строка или значение строки не равно null, иначе возвращается null.
-     */
-    private static LocalDateTime parseDateTime(String dateTime) {
-        return dateTime != null && !dateTime.equals("null") ? LocalDateTime.parse(dateTime) : null;
-    }
-
-    /**
-     * Служебный метод парсит строковое представление комнаты в объект комнаты.
-     * @param room Строка комнаты.
-     * @return Комната.
-     */
-    private static AbstractRoom parseRoom(String room) {
-        room = room.substring(5, room.length() - 1);
-        Map<String, String> roomMap = new HashMap<>();
-        updateMapByArray(roomMap, room.split("; "));
-
-        int id = Integer.parseInt(roomMap.get("id"));
-        int number = Integer.parseInt(roomMap.get("number"));
-        int capacity = Integer.parseInt(roomMap.get("capacity"));
-        int price = Integer.parseInt(roomMap.get("price"));
-        RoomStatusTypes status = RoomStatusTypes.valueOf(roomMap.get("status"));
-        int stars = Integer.parseInt(roomMap.get("stars"));
-        LocalDateTime checkInTime = parseDateTime(roomMap.get("check-in time"));
-        LocalDateTime checkOutTime = parseDateTime(roomMap.get("check-out time"));
-
-        AbstractRoom newRoom = new Room(id, number, capacity, price);
-        newRoom.setStatus(status);
-        newRoom.setStars(stars);
-        newRoom.setCheckInTime(checkInTime);
-        newRoom.setCheckOutTime(checkOutTime);
-
-        return newRoom;
-    }
-
-    /**
-     * Служебный метод парсит строковый список клиентов в обычный список клиентов.
-     * @param client Список клиентов в виде строки.
-     * @return Список клиентов.
-     */
-    private static List<AbstractClient> parseClients(String client) {
-        List<AbstractClient> guests = new ArrayList<>();
-        client = client.substring(1, client.length()-1);
-        Map<String, String> clientMap = new HashMap<>();
-
-        for (String clientString : client.split(", ")) {
-            updateMapByArray(clientMap, clientString.substring(7, clientString.length() - 1).split("; "));
-
-            int id = Integer.parseInt(clientMap.get("id"));
-            String fio = clientMap.get("fio");
-            String phoneNumber = clientMap.get("phoneNumber");
-            LocalDateTime checkInTime = parseDateTime(clientMap.get("checkInTime"));
-            LocalDateTime checkOutTime = parseDateTime(clientMap.get("checkOutTime"));
-
-            AbstractClient guest = new Client(id, fio, phoneNumber);
-            guest.setCheckInTime(checkInTime);
-            guest.setCheckOutTime(checkOutTime);
-
-            guests.add(guest);
-        }
-
-        return guests;
-    }
-
-    /**
-     * Служебный метод обновляет переданную мапу ключом и значением переданного массива. Ключ - первый элемент массива,
-     * значение - второй элемент массива.
-     * @param map Мапа, которую необходимо обновить.
-     * @param array Массив, откуда будут браться данные для обновления.
-     */
-    private static void updateMapByArray(Map<String, String> map, String[] array) {
-        for (String data : array) {
-            String[] keyValue = data.split("=");
-            String key = keyValue[0].trim();
-            String value = keyValue[1].trim();
-            map.put(key, value);
-        }
-    }
-
-    /**
-     * Служебный метод парсит строковое представление услуги в экземпляр класса услуги.
-     * @param service Строка услуги.
-     * @return Услуга.
-     */
-    private static AbstractService parseService(String service) {
-        service = service.substring(8, service.length() - 1);
-        Map<String, String> serviceMap = new HashMap<>();
-        updateMapByArray(serviceMap, service.split("; "));
-
-        int id = Integer.parseInt(serviceMap.get("id"));
-        ServiceNames name = ServiceNames.valueOf(serviceMap.get("name"));
-        int price = Integer.parseInt(serviceMap.get("price"));
-        ServiceStatusTypes status = ServiceStatusTypes.valueOf(serviceMap.get("status"));
-        LocalDateTime serviceTime = parseDateTime(serviceMap.get("service time"));
-
-        AbstractService newService = new Service(id, name, price);
-        newService.setStatus(status);
-        newService.setServiceTime(serviceTime);
-
-        return newService;
     }
 }

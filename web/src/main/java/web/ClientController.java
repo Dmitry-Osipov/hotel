@@ -4,6 +4,11 @@ import dto.ClientDto;
 import essence.person.AbstractClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,12 +17,21 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import service.ClientService;
+import service.RoomService;
+import service.ServiceService;
 import utils.DtoConverter;
+import utils.RedirectBasePages;
+import utils.file.ExportCSV;
+import utils.file.ImportCSV;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Контроллер для обработки запросов, связанных с клиентами.
@@ -26,10 +40,14 @@ import java.util.List;
 @RequestMapping("/clients")
 public class ClientController {
     private final ClientService clientService;
+    private final RoomService roomService;
+    private final ServiceService serviceService;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, RoomService roomService, ServiceService serviceService) {
         this.clientService = clientService;
+        this.roomService = roomService;
+        this.serviceService = serviceService;
     }
 
     /**
@@ -100,7 +118,7 @@ public class ClientController {
 
         AbstractClient client = DtoConverter.convertDtoToClient(dto);
         clientService.addClient(client);
-        return "redirect:/clients/allClients";
+        return RedirectBasePages.CLIENT.getUrl();
     }
 
     /**
@@ -145,7 +163,7 @@ public class ClientController {
 
         AbstractClient client = DtoConverter.convertDtoToClient(dto);
         clientService.updateClient(client);
-        return "redirect:/clients/allClients";
+        return RedirectBasePages.CLIENT.getUrl();
     }
 
     /**
@@ -160,6 +178,70 @@ public class ClientController {
     @PostMapping("/deleteClient/{id}")
     public String deleteClient(@PathVariable("id") int id) throws SQLException {
         clientService.deleteClient(clientService.getClientById(id));
-        return "redirect:/clients/allClients";
+        return RedirectBasePages.CLIENT.getUrl();
+    }
+
+    /**
+     * Обрабатывает запрос для экспорта клиентов в формат CSV.
+     * @param model объект модели
+     * @return имя представления для экспорта клиентов
+     */
+    @GetMapping("/exportCsvClients")
+    public String exportCsvClients(Model model) {
+        model.addAttribute("title", "Export Clients");
+        return "clients/export-clients";
+    }
+
+    /**
+     * Экспортирует клиентов в формате CSV для пользователя.
+     * @return ответ с ресурсом для скачивания CSV файла
+     * @throws SQLException в случае возникновения ошибки при работе с базой данных
+     * @throws IOException в случае возникновения ошибки ввода-вывода
+     */
+    @GetMapping("/exportClients")
+    public ResponseEntity<Resource> exportClientsToCsv() throws SQLException, IOException {
+        List<ClientDto> clients = clientService.getClients().stream()
+                .map(DtoConverter::convertClientToDto)
+                .collect(Collectors.toList());
+        ByteArrayResource resource = new ByteArrayResource(
+                ExportCSV.exportEntitiesDtoDataToBytes(clients, roomService, clientService, serviceService));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=client.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(resource);
+    }
+
+    /**
+     * Обрабатывает запрос для импорта клиентов из файла CSV.
+     * @param model объект модели
+     * @return имя представления для импорта клиентов
+     */
+    @GetMapping("/importCsvClients")
+    public String importCsvClients(Model model) {
+        model.addAttribute("title", "Import Clients");
+        return "clients/import-clients";
+    }
+
+    /**
+     * Обрабатывает запрос для импорта клиентов из файла CSV от пользователя.
+     * @param file загружаемый файл CSV с данными клиентов
+     * @return перенаправление на страницу со списком всех клиентов
+     * @throws IOException в случае возникновения ошибки ввода-вывода
+     * @throws SQLException в случае возникновения ошибки при работе с базой данных
+     */
+    @PostMapping(value = "/importClients", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String importClientsFromCsv(@RequestParam("file") MultipartFile file) throws IOException, SQLException {
+        for (ClientDto dto : ImportCSV.parseEntityDtoFromCsv(file, ClientDto.class)) {
+            AbstractClient client = DtoConverter.convertDtoToClient(dto);
+            boolean updated = clientService.updateClient(client);
+            if (!updated) {
+                clientService.addClient(client);
+            }
+        }
+
+        return RedirectBasePages.CLIENT.getUrl();
     }
 }

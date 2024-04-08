@@ -1,5 +1,6 @@
 package dto;
 
+import essence.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class ProvidedServiceDto {
+public class ProvidedServiceDto implements Identifiable {
     private int id;
     private int clientId;
     private int serviceId;

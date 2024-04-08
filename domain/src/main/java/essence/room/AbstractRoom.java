@@ -13,6 +13,12 @@ import java.time.LocalDateTime;
 @JsonSubTypes({@JsonSubTypes.Type(value = Room.class, name = "Room")})
 public interface AbstractRoom extends Identifiable {
     /**
+     * Метод установки нового ID.
+     * @param id ID
+     */
+    void setId(int id);
+
+    /**
      * Метод установки нового статуса комнаты.
      * @param status Новый статус.
      */
