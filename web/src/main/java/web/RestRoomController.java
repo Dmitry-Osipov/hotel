@@ -82,10 +82,9 @@ public class RestRoomController {
         return ResponseEntity.ok().body(DtoConverter.convertRoomToDto(rooms.get(rooms.size() - 1)));
     }
 
-    // TODO: убрать ID во всех контроллерах + убрать второй вызов сущности из БД
-    @PutMapping("/updateRoom/{id}")
-    public ResponseEntity<RoomDto> updateRoom(@PathVariable("id") int id, @Valid @RequestBody RoomDto dto,
-                                                    BindingResult bindingResult) throws SQLException {
+    @PutMapping("/updateRoom")
+    public ResponseEntity<RoomDto> updateRoom(@Valid @RequestBody RoomDto dto, BindingResult bindingResult)
+            throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
@@ -95,7 +94,7 @@ public class RestRoomController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok().body(DtoConverter.convertRoomToDto(roomService.getRoomById(id)));
+        return ResponseEntity.ok().body(dto);
     }
 
     @DeleteMapping("/deleteRoom/{id}")

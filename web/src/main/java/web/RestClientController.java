@@ -70,9 +70,9 @@ public class RestClientController {
         return ResponseEntity.ok().body(DtoConverter.convertClientToDto(clients.get(clients.size() - 1)));
     }
 
-    @PutMapping("/updateClient/{id}")
-    public ResponseEntity<ClientDto> updateClient(@PathVariable("id") int id, @Valid @RequestBody ClientDto dto,
-                                                  BindingResult bindingResult) throws SQLException {
+    @PutMapping("/updateClient")
+    public ResponseEntity<ClientDto> updateClient(@Valid @RequestBody ClientDto dto, BindingResult bindingResult)
+            throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
@@ -82,14 +82,14 @@ public class RestClientController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok().body(DtoConverter.convertClientToDto(clientService.getClientById(id)));
+        return ResponseEntity.ok().body(dto);
     }
 
     @DeleteMapping("/deleteClient/{id}")
-    public ResponseEntity<ClientDto> deleteClient(@PathVariable("id") int id) throws SQLException {
+    public ResponseEntity<String> deleteClient(@PathVariable("id") int id) throws SQLException {
         AbstractClient client = clientService.getClientById(id);
         clientService.deleteClient(client);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("Deleted client with ID = " + id);
     }
 
     @GetMapping("/countClients")

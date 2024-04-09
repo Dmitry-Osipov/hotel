@@ -75,9 +75,9 @@ public class RestServiceController {
         return ResponseEntity.ok().body(DtoConverter.convertServiceToDto(services.get(services.size() - 1)));
     }
 
-    @PutMapping("/updateService/{id}")
-    public ResponseEntity<ServiceDto> updateService(@PathVariable("id") int id, @Valid @RequestBody ServiceDto dto,
-                                                    BindingResult bindingResult) throws SQLException {
+    @PutMapping("/updateService")
+    public ResponseEntity<ServiceDto> updateService(@Valid @RequestBody ServiceDto dto, BindingResult bindingResult)
+            throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
@@ -87,7 +87,7 @@ public class RestServiceController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok().body(DtoConverter.convertServiceToDto(serviceService.getServiceById(id)));
+        return ResponseEntity.ok().body(dto);
     }
 
     @DeleteMapping("/deleteService/{id}")
