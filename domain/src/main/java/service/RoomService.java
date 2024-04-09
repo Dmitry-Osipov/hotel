@@ -3,7 +3,6 @@ package service;
 import essence.person.AbstractClient;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
-import essence.room.Room;
 import essence.room.RoomStatusTypes;
 import lombok.ToString;
 import org.slf4j.Logger;
@@ -51,6 +50,16 @@ public class RoomService extends AbstractFavorService {
         this.roomRepository = roomRepository;
         this.reservationRepository = reservationRepository;
         this.clientRepository = clientRepository;
+    }
+
+    /**
+     * Метод возвращает список всех комнат.
+     * @return Список всех комнат.
+     * @throws SQLException если произошла ошибка SQL.
+     */
+    public List<AbstractRoom> getRooms() throws SQLException {
+        roomLogger.info("Вызван метод получения списка всех комнат");
+        return roomRepository.getRooms();
     }
 
     /**
@@ -359,7 +368,7 @@ public class RoomService extends AbstractFavorService {
      * @param room Комната.
      * @return Полная информация про комнату.
      */
-    public String getRoomInfo(Room room) {
+    public String getRoomInfo(AbstractRoom room) {
         roomLogger.info("Вызван метод получения информации по комнате с ID {}", room.getId());
         return room.toString();
     }

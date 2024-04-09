@@ -10,6 +10,7 @@ import essence.person.AbstractClient;
 import essence.person.Client;
 import essence.provided.ProvidedService;
 import essence.reservation.RoomReservation;
+import essence.room.AbstractRoom;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
 import essence.service.AbstractService;
@@ -98,7 +99,7 @@ public final class DtoConverter {
      * @param room Объект комнаты
      * @return DTO комнаты
      */
-    public static RoomDto convertRoomToDto(Room room) {
+    public static RoomDto convertRoomToDto(AbstractRoom room) {
         RoomDto dto = new RoomDto();
         dto.setId(room.getId());
         dto.setNumber(room.getNumber());
@@ -118,7 +119,7 @@ public final class DtoConverter {
      */
     public static Room convertDtoToRoom(RoomDto dto) {
         Room room = new Room();
-        room.setId(room.getId());
+        room.setId(dto.getId());
         room.setNumber(dto.getNumber());
         room.setCapacity(dto.getCapacity());
         room.setStars(dto.getStars());

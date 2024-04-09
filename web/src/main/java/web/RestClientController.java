@@ -4,10 +4,7 @@ import dto.ClientDto;
 import essence.person.AbstractClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,8 +21,8 @@ import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
 import utils.DtoConverter;
-import utils.file.ExportCSV;
 import utils.file.ImportCSV;
+import utils.file.ResponseEntityPreparer;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -69,7 +66,8 @@ public class RestClientController {
 
         AbstractClient client = DtoConverter.convertDtoToClient(dto);
         clientService.addClient(client);
-        return ResponseEntity.ok().body(dto);
+        List<AbstractClient> clients = clientService.getClients();
+        return ResponseEntity.ok().body(DtoConverter.convertClientToDto(clients.get(clients.size() - 1)));
     }
 
     @PutMapping("/updateClient/{id}")
@@ -105,15 +103,8 @@ public class RestClientController {
         List<ClientDto> clients = clientService.getClients().stream()
                 .map(DtoConverter::convertClientToDto)
                 .collect(Collectors.toList());
-        ByteArrayResource resource = new ByteArrayResource(
-                ExportCSV.exportEntitiesDtoDataToBytes(clients, roomService, clientService, serviceService));
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=clients.csv");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType.parseMediaType("text/csv"))
-                .body(resource);
+        return ResponseEntityPreparer.prepareResponseEntity("clients.csv", clients, roomService,
+                serviceService, clientService);
     }
 
     @PostMapping("/importClients")

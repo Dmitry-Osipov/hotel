@@ -204,13 +204,13 @@ public class ServiceService extends AbstractFavorService {
      * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
      */
     public AbstractService getServiceById(int serviceId) throws SQLException {
-        serviceLogger.info("Вызван метод получения клиента по ID {}", serviceId);
+        serviceLogger.info("Вызван метод получения услуги по ID {}", serviceId);
         try {
             AbstractService service = serviceRepository.getServiceById(serviceId);
-            serviceLogger.info("Удалось получить клиента по ID {}", serviceId);
+            serviceLogger.info("Удалось получить услугу по ID {}", serviceId);
             return service;
         } catch (TechnicalException e) {
-            serviceLogger.error("Не удалось получить клиента по ID {}", serviceId);
+            serviceLogger.error("Не удалось получить услугу по ID {}", serviceId);
             throw e;
         }
     }
@@ -221,14 +221,14 @@ public class ServiceService extends AbstractFavorService {
      * @throws SQLException Если возникает ошибка доступа к базе данных.
      * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
      */
-    public void deleteClient(AbstractService service) throws SQLException {
+    public void deleteService(AbstractService service) throws SQLException {
         int serviceId = service.getId();
-        serviceLogger.info("Вызван метод удаления клиента с ID {}", serviceId);
+        serviceLogger.info("Вызван метод удаления услуги с ID {}", serviceId);
         try {
             serviceRepository.deleteService(service);
-            serviceLogger.info("Удалось удалить клиента с ID {}", serviceId);
+            serviceLogger.info("Удалось удалить услугу с ID {}", serviceId);
         } catch (TechnicalException e) {
-            serviceLogger.error("Не удалось удалить клиента с ID {}", serviceId);
+            serviceLogger.error("Не удалось удалить услугу с ID {}", serviceId);
             throw e;
         }
     }
