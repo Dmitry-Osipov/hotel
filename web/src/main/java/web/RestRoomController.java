@@ -37,6 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Контроллер для работы с комнатами через REST API.
+ */
 @RestController
 @RequestMapping("/api/rooms")
 public class RestRoomController {
@@ -51,7 +54,12 @@ public class RestRoomController {
         this.clientService = clientService;
     }
 
-    @GetMapping("/allRooms")
+    /**
+     * Получает список всех номеров.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком всех номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping
     public ResponseEntity<List<RoomDto>> getAllRooms() throws SQLException {
         List<RoomDto> rooms = roomService.getRooms().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -59,7 +67,14 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getRoom/{id}")
+    /**
+     * Получает информацию о номере по его идентификатору.
+     * @param id идентификатор номера.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и найденным номером в теле ответа, если идентификатор больше 0,
+     * или кодом 400 (Bad Request) в случае некорректного идентификатора.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/{id}")
     public ResponseEntity<RoomDto> getRoomById(@PathVariable("id") int id) throws SQLException {
         if (id < 1) {
             return ResponseEntity.badRequest().build();
@@ -69,7 +84,15 @@ public class RestRoomController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @PostMapping("/addRoom")
+    /**
+     * Добавляет новый номер.
+     * @param dto данные нового номера.
+     * @param bindingResult результат валидации данных.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и добавленным номером в теле ответа, если данные корректны,
+     * или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping
     public ResponseEntity<RoomDto> addRoom(@Valid @RequestBody RoomDto dto, BindingResult bindingResult)
             throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -82,7 +105,15 @@ public class RestRoomController {
         return ResponseEntity.ok().body(DtoConverter.convertRoomToDto(rooms.get(rooms.size() - 1)));
     }
 
-    @PutMapping("/updateRoom")
+    /**
+     * Обновляет информацию о номере.
+     * @param dto данные обновляемого номера.
+     * @param bindingResult результат валидации данных.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и обновленным номером в теле ответа, если данные корректны,
+     * или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PutMapping
     public ResponseEntity<RoomDto> updateRoom(@Valid @RequestBody RoomDto dto, BindingResult bindingResult)
             throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -97,14 +128,26 @@ public class RestRoomController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @DeleteMapping("/deleteRoom/{id}")
+    /**
+     * Удаляет номер по его идентификатору.
+     * @param id идентификатор удаляемого номера.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и сообщением об успешном удалении номера в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRoom(@PathVariable("id") int id) throws SQLException {
         AbstractRoom room = roomService.getRoomById(id);
         roomService.deleteRoom(room);
         return ResponseEntity.ok().body("Deleted room with ID = " + id);
     }
 
-    @GetMapping("/exportRooms")
+    /**
+     * Экспортирует данные о номерах в формате CSV.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и файлом CSV в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при экспорте данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/room-file")
     public ResponseEntity<Resource> exportRoomsToCsv() throws IOException, SQLException {
         List<RoomDto> rooms = roomService.getRooms().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -113,7 +156,14 @@ public class RestRoomController {
                 serviceService, clientService);
     }
 
-    @PostMapping("/importRooms")
+    /**
+     * Импортирует данные о номерах из файла CSV.
+     * @param file файл CSV с данными о номерах.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и сообщением об успешном импорте данных в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при чтении файла.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping("/room-file")
     public ResponseEntity<String> importRoomsFromCsv(@RequestParam("file") MultipartFile file)
             throws IOException, SQLException {
         List<AbstractRoom> rooms = ImportCSV.parseEntityDtoFromCsv(file, RoomDto.class).stream()
@@ -129,13 +179,25 @@ public class RestRoomController {
         return ResponseEntity.ok().body("Rooms imported successfully");
     }
 
-    @GetMapping("/countPriceRoom/{id}")
+    /**
+     * Получает стоимость номера.
+     * @param id идентификатор номера.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и стоимостью номера в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/room-price/{id}")
     public ResponseEntity<Integer> countPriceService(@PathVariable("id") int id) throws SQLException {
         int price = roomService.getFavorPrice((AbstractFavor) roomService.getRoomById(id));
         return ResponseEntity.ok().body(price);
     }
 
-    @GetMapping("/exportRoomReservations")
+    /**
+     * Экспортирует данные о бронированиях номеров в формате CSV.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и файлом CSV в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при экспорте данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/reservation-file")
     public ResponseEntity<Resource> exportRoomReservationsToCsv() throws IOException, SQLException {
         List<RoomReservationDto> roomReservations = roomService.getReservations().stream()
                 .map(DtoConverter::convertRoomReservationToDto)
@@ -144,7 +206,14 @@ public class RestRoomController {
                 serviceService, clientService);
     }
 
-    @PostMapping("/importRoomReservations")
+    /**
+     * Импортирует данные о бронированиях номеров из файла CSV.
+     * @param file файл CSV с данными о бронированиях номеров.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и сообщением об успешном импорте данных в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при чтении файла.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping("/reservation-file")
     public ResponseEntity<String> importRoomReservationsFromCsv(@RequestParam("file") MultipartFile file)
             throws IOException, SQLException {
         List<RoomReservationDto> dtos = ImportCSV.parseEntityDtoFromCsv(file, RoomReservationDto.class);
@@ -165,7 +234,15 @@ public class RestRoomController {
         return ResponseEntity.ok().body("Room reservations imported successfully");
     }
 
-    @PostMapping("/addStars")
+    /**
+     * Добавляет звезды к номеру.
+     * @param dto данные номера.
+     * @param bindingResult результат валидации данных.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и обновленным объектом RoomDto в теле ответа, если данные
+     * корректны, или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping("/room-stars")
     public ResponseEntity<RoomDto> addStars(@Valid @RequestBody RoomDto dto, BindingResult bindingResult)
             throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -176,7 +253,15 @@ public class RestRoomController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @PostMapping("/checkIn")
+    /**
+     * Регистрирует заезд клиентов в номер.
+     * @param dto данные бронирования номера.
+     * @param bindingResult результат валидации данных.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и объектом RoomReservationDto в теле ответа, если данные
+     * корректны, или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping("/check-in")
     public ResponseEntity<RoomReservationDto> checkIn(@Valid @RequestBody RoomReservationDto dto,
                                                       BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -192,7 +277,15 @@ public class RestRoomController {
                 .body(DtoConverter.convertRoomReservationToDto(reservations.get(reservations.size() - 1)));
     }
 
-    @PutMapping("/evict")
+    /**
+     * Выселяет клиентов из номера.
+     * @param dto данные бронирования номера.
+     * @param bindingResult результат валидации данных.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и объектом RoomReservationDto в теле ответа, если данные
+     * корректны, или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PutMapping("/eviction")
     public ResponseEntity<RoomReservationDto> evict(@Valid @RequestBody RoomReservationDto dto,
                                                        BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -206,7 +299,12 @@ public class RestRoomController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @GetMapping("/getRoomsByStars")
+    /**
+     * Получает список номеров отсортированных по количеству звезд.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/rooms-by-stars")
     public ResponseEntity<List<RoomDto>> getRoomsByStars() throws SQLException {
         List<RoomDto> rooms = roomService.roomsByStars().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -214,7 +312,12 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getRoomsByPrice")
+    /**
+     * Получает список номеров отсортированных по цене.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/rooms-by-price")
     public ResponseEntity<List<RoomDto>> getRoomsByPrice() throws SQLException {
         List<RoomDto> rooms = roomService.roomsByPrice().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -222,7 +325,12 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getRoomsByCapacity")
+    /**
+     * Получает список номеров отсортированных по вместимости.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/rooms-by-capacity")
     public ResponseEntity<List<RoomDto>> getRoomsByCapacity() throws SQLException {
         List<RoomDto> rooms = roomService.roomsByCapacity().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -230,7 +338,12 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getAvailableRoomsByStars")
+    /**
+     * Получает список доступных номеров отсортированных по количеству звезд.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/available-rooms-by-stars")
     public ResponseEntity<List<RoomDto>> getAvailableRoomsByStars() throws SQLException {
         List<RoomDto> rooms = roomService.availableRoomsByStars().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -238,7 +351,12 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getAvailableRoomsByPrice")
+    /**
+     * Получает список доступных номеров отсортированных по цене.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/available-rooms-by-price")
     public ResponseEntity<List<RoomDto>> getAvailableRoomsByPrice() throws SQLException {
         List<RoomDto> rooms = roomService.availableRoomsByPrice().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -246,7 +364,12 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getAvailableRoomsByCapacity")
+    /**
+     * Получает список доступных номеров отсортированных по вместимости.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/available-rooms-by-capacity")
     public ResponseEntity<List<RoomDto>> getAvailableRoomsByCapacity() throws SQLException {
         List<RoomDto> rooms = roomService.availableRoomsByCapacity().stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -254,17 +377,34 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/countAvailableRooms")
+    /**
+     * Получает количество доступных номеров.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и числом доступных номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/number-available-rooms")
     public ResponseEntity<Integer> countAvailableRooms() throws SQLException {
         return ResponseEntity.ok().body(roomService.countAvailableRooms());
     }
 
-    @GetMapping("/getRoomInfo/{id}")
+    /**
+     * Получает информацию о номере по его идентификатору.
+     * @param id идентификатор номера.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и информацией о номере в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/room-info/{id}")
     public ResponseEntity<String> getRoomInfo(@PathVariable("id") int id) throws SQLException {
         return ResponseEntity.ok().body(roomService.getRoomInfo(roomService.getRoomById(id)));
     }
 
-    @GetMapping("/getClientRoomsByNumbers/{id}")
+    /**
+     * Получает список номеров клиента, отсортированных по номерам.
+     * @param id идентификатор клиента.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров клиента в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/client-rooms-by-numbers/{id}")
     public ResponseEntity<List<RoomDto>> getClientRoomsByNumbers(@PathVariable("id") int id) throws SQLException {
         List<RoomDto> rooms = roomService.getClientRoomsByNumbers(clientService.getClientById(id)).stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -272,7 +412,13 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getClientRoomsByCheckOutTime/{id}")
+    /**
+     * Получает список номеров клиента, отсортированных по времени выезда.
+     * @param id идентификатор клиента.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/client-rooms-by-check-out-time/{id}")
     public ResponseEntity<List<RoomDto>> getClientRoomsByCheckOutTime(@PathVariable("id") int id) throws SQLException {
         List<RoomDto> rooms = roomService.getClientRoomsByCheckOutTime(clientService.getClientById(id)).stream()
                 .map(DtoConverter::convertRoomToDto)
@@ -280,7 +426,13 @@ public class RestRoomController {
         return ResponseEntity.ok().body(rooms);
     }
 
-    @GetMapping("/getAvailableRoomsByTime")
+    /**
+     * Получает список доступных номеров к указанному времени.
+     * @param time время.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком доступных номеров в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/available-rooms-by-time")
     public ResponseEntity<List<RoomDto>> getAvailableRoomsByTime(@RequestParam("time")
                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                      LocalDateTime time) throws SQLException {

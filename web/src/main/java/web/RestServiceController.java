@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Контроллер для работы с услугами через REST API.
+ */
 @RestController
 @RequestMapping("/api/services")
 public class RestServiceController {
@@ -48,7 +51,12 @@ public class RestServiceController {
         this.clientService = clientService;
     }
 
-    @GetMapping("/allServices")
+    /**
+     * Получает список всех услуг.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком всех услуг в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping
     public ResponseEntity<List<ServiceDto>> getAllServices() throws SQLException {
         List<ServiceDto> services = serviceService.getServices().stream()
                 .map(DtoConverter::convertServiceToDto)
@@ -56,13 +64,27 @@ public class RestServiceController {
         return ResponseEntity.ok().body(services);
     }
 
-    @GetMapping("/getService/{id}")
+    /**
+     * Получает информацию об услуге по её идентификатору.
+     * @param id идентификатор услуги.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и найденной услугой в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/{id}")
     public ResponseEntity<ServiceDto> getServiceById(@PathVariable("id") int id) throws SQLException {
         ServiceDto dto = DtoConverter.convertServiceToDto(serviceService.getServiceById(id));
         return ResponseEntity.ok().body(dto);
     }
 
-    @PostMapping("/addService")
+    /**
+     * Добавляет новую услугу.
+     * @param dto данные новой услуги.
+     * @param bindingResult результат валидации данных.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и добавленной услугой в теле ответа, если данные корректны,
+     * или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping
     public ResponseEntity<ServiceDto> addService(@Valid @RequestBody ServiceDto dto, BindingResult bindingResult)
             throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -75,7 +97,15 @@ public class RestServiceController {
         return ResponseEntity.ok().body(DtoConverter.convertServiceToDto(services.get(services.size() - 1)));
     }
 
-    @PutMapping("/updateService")
+    /**
+     * Обновляет информацию об услуге.
+     * @param dto данные обновляемой услуги.
+     * @param bindingResult результат валидации данных.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и обновленной услугой в теле ответа, если данные корректны,
+     * или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PutMapping
     public ResponseEntity<ServiceDto> updateService(@Valid @RequestBody ServiceDto dto, BindingResult bindingResult)
             throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -90,14 +120,26 @@ public class RestServiceController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @DeleteMapping("/deleteService/{id}")
+    /**
+     * Удаляет услугу по её идентификатору.
+     * @param id идентификатор удаляемой услуги.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и сообщением об успешном удалении услуги в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteService(@PathVariable("id") int id) throws SQLException {
         AbstractService service = serviceService.getServiceById(id);
         serviceService.deleteService(service);
         return ResponseEntity.ok().body("Deleted service with ID = " + id);
     }
 
-    @GetMapping("/exportServices")
+    /**
+     * Экспортирует данные об услугах в формате CSV.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и файлом CSV в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при экспорте данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/service-file")
     public ResponseEntity<Resource> exportServicesToCsv() throws IOException, SQLException {
         List<ServiceDto> services = serviceService.getServices().stream()
                 .map(DtoConverter::convertServiceToDto)
@@ -106,7 +148,14 @@ public class RestServiceController {
                 serviceService, clientService);
     }
 
-    @PostMapping("/importServices")
+    /**
+     * Импортирует данные об услугах из файла CSV.
+     * @param file файл CSV с данными об услугах.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и сообщением об успешном импорте данных в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при чтении файла.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping("/service-file")
     public ResponseEntity<String> importServicesFromCsv(@RequestParam("file") MultipartFile file)
             throws IOException, SQLException {
         List<AbstractService> services = ImportCSV.parseEntityDtoFromCsv(file, ServiceDto.class).stream()
@@ -122,13 +171,25 @@ public class RestServiceController {
         return ResponseEntity.ok().body("Services imported successfully");
     }
 
-    @GetMapping("/countPriceService/{id}")
+    /**
+     * Получает стоимость услуги.
+     * @param id идентификатор услуги.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и стоимостью услуги в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/service-price/{id}")
     public ResponseEntity<Integer> countPriceService(@PathVariable("id") int id) throws SQLException {
         int price = serviceService.getFavorPrice((AbstractFavor) serviceService.getServiceById(id));
         return ResponseEntity.ok().body(price);
     }
 
-    @GetMapping("/exportProvidedServices")
+    /**
+     * Экспортирует данные о предоставленных услугах в формате CSV.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и файлом CSV в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при экспорте данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/provided-file")
     public ResponseEntity<Resource> exportProvidedServicesToCsv() throws IOException, SQLException {
         List<ProvidedServiceDto> providedServices = serviceService.getProvidedServices().stream()
                 .map(DtoConverter::convertProvidedServiceToDto)
@@ -137,7 +198,14 @@ public class RestServiceController {
                 serviceService, clientService);
     }
 
-    @PostMapping("/importProvidedServices")
+    /**
+     * Импортирует данные о предоставленных услугах из файла CSV.
+     * @param file файл CSV с данными о предоставленных услугах.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и сообщением об успешном импорте данных в теле ответа.
+     * @throws IOException  если возникает ошибка ввода-вывода при чтении файла.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping("/provided-file")
     public ResponseEntity<String> importProvidedServicesFromCsv(@RequestParam("file") MultipartFile file)
             throws IOException, SQLException {
         List<ProvidedServiceDto> dtos = ImportCSV.parseEntityDtoFromCsv(file, ProvidedServiceDto.class);
@@ -159,7 +227,15 @@ public class RestServiceController {
         return ResponseEntity.ok().body("Provided services imported successfully");
     }
 
-    @PostMapping("/provideService")
+    /**
+     * Предоставляет услугу клиенту.
+     * @param dto данные о предоставляемой услуге.
+     * @param bindingResult результат валидации данных.
+     * @return ResponseEntity с кодом 200 (OK) и предоставленной услугой в теле ответа, если данные корректны,
+     * или кодом 400 (Bad Request) в случае некорректных данных.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @PostMapping("/provided-service")
     public ResponseEntity<ProvidedServiceDto> provideService(@Valid @RequestBody ProvidedServiceDto dto,
                                                              BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
@@ -173,7 +249,13 @@ public class RestServiceController {
                 .body(DtoConverter.convertProvidedServiceToDto(providedServices.get(providedServices.size() - 1)));
     }
 
-    @GetMapping("/getClientServicesByPrice/{id}")
+    /**
+     * Получает список услуг для клиента по их стоимости.
+     * @param id идентификатор клиента.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком услуг для клиента в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/client-services-by-price/{id}")
     public ResponseEntity<List<ServiceDto>> getClientServicesByPrice(@PathVariable("id") int id) throws SQLException {
         if (id < 1) {
             return ResponseEntity.badRequest().build();
@@ -187,7 +269,13 @@ public class RestServiceController {
         return ResponseEntity.ok().body(services);
     }
 
-    @GetMapping("/getClientServicesByTime/{id}")
+    /**
+     * Получает список услуг для клиента по их времени предоставления.
+     * @param id идентификатор клиента.
+     * @return {@link ResponseEntity} с кодом 200 (OK) и списком услуг для клиента в теле ответа.
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
+     */
+    @GetMapping("/client-services-by-time/{id}")
     public ResponseEntity<List<ServiceDto>> getClientServicesByTime(@PathVariable("id") int id) throws SQLException {
         if (id < 1) {
             return ResponseEntity.badRequest().build();

@@ -9,15 +9,31 @@ import org.springframework.http.ResponseEntity;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
+import utils.exceptions.TechnicalException;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Утилитный класс для подготовки объектов {@link ResponseEntity<Resource>} с данными, экспортированными в CSV.
+ */
 public final class ResponseEntityPreparer {
     private ResponseEntityPreparer() {
     }
 
+    /**
+     * Подготавливает объект {@link ResponseEntity<Resource>} для ответа с данными, экспортированными в CSV.
+     * @param fileName Имя файла для вложения.
+     * @param entities Список дто-сущностей для экспорта в CSV.
+     * @param roomService Сервис комнат.
+     * @param serviceService Сервис услуг.
+     * @param clientService Сервис клиентов.
+     * @return Объект {@link ResponseEntity<Resource>}, готовый для отправки в ответ на запрос.
+     * @throws SQLException Если возникает ошибка SQL.
+     * @throws IOException Если возникает ошибка ввода-вывода.
+     * @throws TechnicalException Если нет обработки для класса предоставленных сущностей.
+     */
     public static <T extends Identifiable> ResponseEntity<Resource> prepareResponseEntity(String fileName,
                                                                                           List<T> entities,
                                                                                           RoomService roomService,

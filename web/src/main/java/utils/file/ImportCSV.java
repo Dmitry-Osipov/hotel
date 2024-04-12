@@ -19,10 +19,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Утилитарный класс для импорта данных из CSV-файлов.
+ */
 public final class ImportCSV {
     private ImportCSV() {
     }
 
+    /**
+     * Парсит данные из CSV-файла в список сущностей DTO.
+     * @param file CSV-файл для парсинга.
+     * @param clazz Класс сущности DTO.
+     * @return Список сущностей DTO, полученных из CSV-файла.
+     * @throws IOException Если происходит ошибка ввода-вывода при чтении CSV-файла.
+     * @throws TechnicalException Если нет обработки для класса сущности DTO.
+     */
     public static <T extends Identifiable> List<T> parseEntityDtoFromCsv(MultipartFile file, Class<T> clazz)
             throws IOException {
         try (
@@ -45,6 +56,13 @@ public final class ImportCSV {
         }
     }
 
+    /**
+     * Парсит сущность DTO из строки CSV-записи.
+     * @param csvRecord Строка CSV-записи.
+     * @param clazz Класс сущности DTO.
+     * @return Сущность DTO, созданную на основе CSV-записи.
+     * @throws TechnicalException Если нет обработки для класса сущности DTO.
+     */
     private static <T extends Identifiable> T parseEntityDto(CSVRecord csvRecord, Class<T> clazz) {
         String className = clazz.getSimpleName();
         switch (clazz.getSimpleName()) {
@@ -63,6 +81,11 @@ public final class ImportCSV {
         }
     }
 
+    /**
+     * Парсит данные CSV-записи в объект {@link ClientDto}.
+     * @param csvRecord CSV-запись для парсинга.
+     * @return Объект {@link ClientDto}, созданный на основе CSV-записи.
+     */
     private static ClientDto parseClient(CSVRecord csvRecord) {
         int id = Integer.parseInt(csvRecord.get(0));
         String fio = csvRecord.get(1);
@@ -79,6 +102,11 @@ public final class ImportCSV {
         return client;
     }
 
+    /**
+     * Парсит данные CSV-записи в объект {@link ServiceDto}.
+     * @param csvRecord CSV-запись для парсинга.
+     * @return Объект {@link ServiceDto}, созданный на основе CSV-записи.
+     */
     private static ServiceDto parseService(CSVRecord csvRecord) {
         int id = Integer.parseInt(csvRecord.get(0));
         String name = csvRecord.get(1);
@@ -95,6 +123,11 @@ public final class ImportCSV {
         return service;
     }
 
+    /**
+     * Парсит данные CSV-записи в объект {@link RoomDto}.
+     * @param csvRecord CSV-запись для парсинга.
+     * @return Объект {@link RoomDto}, созданный на основе CSV-записи.
+     */
     private static RoomDto parseRoom(CSVRecord csvRecord) {
         int id = Integer.parseInt(csvRecord.get(0));
         int number = Integer.parseInt(csvRecord.get(1));
@@ -117,6 +150,11 @@ public final class ImportCSV {
         return room;
     }
 
+    /**
+     * Парсит данные CSV-записи в объект {@link RoomReservationDto}.
+     * @param csvRecord CSV-запись для парсинга.
+     * @return Объект {@link RoomReservationDto}, созданный на основе CSV-записи.
+     */
     private static RoomReservationDto parseRoomReservation(CSVRecord csvRecord) {
         int id = Integer.parseInt(csvRecord.get(0));
         int roomId = Integer.parseInt(csvRecord.get(1));
@@ -137,6 +175,11 @@ public final class ImportCSV {
         return reservation;
     }
 
+    /**
+     * Парсит данные CSV-записи в объект {@link ProvidedServiceDto}.
+     * @param csvRecord CSV-запись для парсинга.
+     * @return Объект {@link ProvidedServiceDto}, созданный на основе CSV-записи.
+     */
     private static ProvidedServiceDto parseProvidedService(CSVRecord csvRecord) {
         int id = Integer.parseInt(csvRecord.get(0));
         int clientId = Integer.parseInt(csvRecord.get(1));
