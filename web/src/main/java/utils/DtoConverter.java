@@ -17,6 +17,7 @@ import essence.service.AbstractService;
 import essence.service.Service;
 import essence.service.ServiceNames;
 import essence.service.ServiceStatusTypes;
+import lombok.experimental.UtilityClass;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -29,17 +30,15 @@ import java.util.stream.Collectors;
 /**
  * Утилитарный класс для конвертации объектов между сущностями и их DTO.
  */
+@UtilityClass
 public final class DtoConverter {
-
-    private DtoConverter() {
-    }
 
     /**
      * Конвертирует объект клиента в его DTO.
      * @param client Объект клиента
      * @return DTO клиента
      */
-    public static ClientDto convertClientToDto(AbstractClient client) {
+    public ClientDto convertClientToDto(AbstractClient client) {
         ClientDto dto = new ClientDto();
         dto.setId(client.getId());
         dto.setFio(client.getFio());
@@ -54,7 +53,7 @@ public final class DtoConverter {
      * @param dto DTO клиента
      * @return Объект клиента
      */
-    public static AbstractClient convertDtoToClient(ClientDto dto) {
+    public AbstractClient convertDtoToClient(ClientDto dto) {
         Client client = new Client();
         client.setId(dto.getId());
         client.setFio(dto.getFio());
@@ -69,7 +68,7 @@ public final class DtoConverter {
      * @param service Объект услуги
      * @return DTO услуги
      */
-    public static ServiceDto convertServiceToDto(AbstractService service) {
+    public ServiceDto convertServiceToDto(AbstractService service) {
         ServiceDto dto = new ServiceDto();
         dto.setId(service.getId());
         dto.setName(String.valueOf(service.getName()));
@@ -84,7 +83,7 @@ public final class DtoConverter {
      * @param dto DTO услуги
      * @return Объект услуги
      */
-    public static AbstractService convertDtoToService(ServiceDto dto) {
+    public AbstractService convertDtoToService(ServiceDto dto) {
         Service service = new Service();
         service.setId(dto.getId());
         service.setName(ServiceNames.valueOf(dto.getName()));
@@ -99,7 +98,7 @@ public final class DtoConverter {
      * @param room Объект комнаты
      * @return DTO комнаты
      */
-    public static RoomDto convertRoomToDto(AbstractRoom room) {
+    public RoomDto convertRoomToDto(AbstractRoom room) {
         RoomDto dto = new RoomDto();
         dto.setId(room.getId());
         dto.setNumber(room.getNumber());
@@ -117,7 +116,7 @@ public final class DtoConverter {
      * @param dto DTO комнаты
      * @return Объект комнаты
      */
-    public static Room convertDtoToRoom(RoomDto dto) {
+    public Room convertDtoToRoom(RoomDto dto) {
         Room room = new Room();
         room.setId(dto.getId());
         room.setNumber(dto.getNumber());
@@ -135,7 +134,7 @@ public final class DtoConverter {
      * @param service Объект предоставленной услуги
      * @return DTO предоставленной услуги
      */
-    public static ProvidedServiceDto convertProvidedServiceToDto(ProvidedService service) {
+    public ProvidedServiceDto convertProvidedServiceToDto(ProvidedService service) {
         ProvidedServiceDto dto = new ProvidedServiceDto();
         dto.setId(service.getId());
         dto.setServiceId(service.getService().getId());
@@ -152,8 +151,8 @@ public final class DtoConverter {
      * @return Объект предоставленной услуги
      * @throws SQLException если возникла ошибка при работе с базой данных
      */
-    public static ProvidedService convertDtoToProvidedService(ProvidedServiceDto dto, ServiceService serviceService,
-                                                              ClientService clientService) throws SQLException {
+    public ProvidedService convertDtoToProvidedService(ProvidedServiceDto dto, ServiceService serviceService,
+                                                       ClientService clientService) throws SQLException {
         ProvidedService providedService = new ProvidedService();
         providedService.setId(dto.getId());
         providedService.setService(serviceService.getServiceById(dto.getServiceId()));
@@ -167,7 +166,7 @@ public final class DtoConverter {
      * @param reservation Объект бронирования комнаты
      * @return DTO бронирования комнаты
      */
-    public static RoomReservationDto convertRoomReservationToDto(RoomReservation reservation) {
+    public RoomReservationDto convertRoomReservationToDto(RoomReservation reservation) {
         RoomReservationDto dto = new RoomReservationDto();
         dto.setId(reservation.getId());
         dto.setRoomId(reservation.getRoom().getId());
@@ -185,8 +184,8 @@ public final class DtoConverter {
      * @return Объект бронирования комнаты
      * @throws SQLException если возникла ошибка при работе с базой данных
      */
-    public static RoomReservation convertDtoToRoomReservation(RoomReservationDto dto, RoomService roomService,
-                                                              ClientService clientService) throws SQLException {
+    public RoomReservation convertDtoToRoomReservation(RoomReservationDto dto, RoomService roomService,
+                                                       ClientService clientService) throws SQLException {
         RoomReservation reservation = new RoomReservation();
         reservation.setId(dto.getId());
         reservation.setRoom(roomService.getRoomById(dto.getRoomId()));
@@ -198,5 +197,132 @@ public final class DtoConverter {
         }
         reservation.setClients(clients);
         return reservation;
+    }
+
+    /**
+     * Преобразует список сущностей клиентов в список объектов DTO клиентов.
+     * @param clients список сущностей клиентов.
+     * @return список объектов DTO клиентов.
+     */
+    public List<ClientDto> listClientsToDtos(List<AbstractClient> clients) {
+        return clients.stream()
+                .map(DtoConverter::convertClientToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список объектов DTO клиентов в список сущностей клиентов.
+     * @param dtos список объектов DTO клиентов.
+     * @return список сущностей клиентов.
+     */
+    public List<AbstractClient> listClientsFromDto(List<ClientDto> dtos) {
+        return dtos.stream()
+                .map(DtoConverter::convertDtoToClient)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список сущностей номеров в список объектов DTO номеров.
+     * @param rooms список сущностей номеров.
+     * @return список объектов DTO номеров.
+     */
+    public List<RoomDto> listRoomsToDtos(List<AbstractRoom> rooms) {
+        return rooms.stream()
+                .map(DtoConverter::convertRoomToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список объектов DTO номеров в список сущностей номеров.
+     * @param dtos список объектов DTO номеров.
+     * @return список сущностей номеров.
+     */
+    public List<AbstractRoom> listRoomsFromDtos(List<RoomDto> dtos) {
+        return dtos.stream()
+                .map(DtoConverter::convertDtoToRoom)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список сущностей бронирований номеров в список объектов DTO бронирований номеров.
+     * @param reservations список сущностей бронирований номеров.
+     * @return список объектов DTO бронирований номеров.
+     */
+    public List<RoomReservationDto> listReservationsToDtos(List<RoomReservation> reservations) {
+        return reservations.stream()
+                .map(DtoConverter::convertRoomReservationToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список объектов DTO бронирований номеров в список сущностей бронирований номеров.
+     * @param dtos список объектов DTO бронирований номеров.
+     * @param roomService сервис комнат.
+     * @param clientService сервис клиентов.
+     * @return список сущностей бронирований номеров.
+     * @throws SQLException если возникает ошибка при работе с базой данных.
+     */
+    public List<RoomReservation> listReservationsFromDtos(List<RoomReservationDto> dtos, RoomService roomService,
+                                                          ClientService clientService) throws SQLException {
+        List<RoomReservation> reservations = new ArrayList<>();
+        for (RoomReservationDto dto : dtos) {
+            RoomReservation reservation = DtoConverter.convertDtoToRoomReservation(dto, roomService, clientService);
+            reservations.add(reservation);
+        }
+
+        return reservations;
+    }
+
+    /**
+     * Преобразует список сущностей услуг в список объектов DTO услуг.
+     * @param services список сущностей услуг.
+     * @return список объектов DTO услуг.
+     */
+    public List<ServiceDto> listServicesToDtos(List<AbstractService> services) {
+        return services.stream()
+                .map(DtoConverter::convertServiceToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список объектов DTO услуг в список сущностей услуг.
+     * @param dtos список объектов DTO услуг.
+     * @return список сущностей услуг.
+     */
+    public List<AbstractService> listServicesFromDtos(List<ServiceDto> dtos) {
+        return dtos.stream()
+                .map(DtoConverter::convertDtoToService)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список сущностей предоставленных услуг в список объектов DTO предоставленных услуг.
+     * @param services список сущностей предоставленных услуг.
+     * @return список объектов DTO предоставленных услуг.
+     */
+    public List<ProvidedServiceDto> listProvidedServicesToDtos(List<ProvidedService> services) {
+        return services.stream()
+                .map(DtoConverter::convertProvidedServiceToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует список объектов DTO предоставленных услуг в список сущностей предоставленных услуг.
+     * @param dtos список объектов DTO предоставленных услуг.
+     * @param serviceService сервис услуг.
+     * @param clientService сервис клиентов.
+     * @return список сущностей предоставленных услуг.
+     * @throws SQLException если возникает ошибка при работе с базой данных.
+     */
+    public List<ProvidedService> listProvidedServicesFromDtos(List<ProvidedServiceDto> dtos, ServiceService serviceService,
+                                                              ClientService clientService) throws SQLException {
+        List<ProvidedService> services = new ArrayList<>();
+        for (ProvidedServiceDto dto : dtos) {
+            ProvidedService service = DtoConverter.convertDtoToProvidedService(dto, serviceService,
+                    clientService);
+            services.add(service);
+        }
+
+        return services;
     }
 }

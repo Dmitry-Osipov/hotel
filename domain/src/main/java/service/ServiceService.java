@@ -2,6 +2,7 @@ package service;
 
 import essence.person.AbstractClient;
 import essence.provided.ProvidedService;
+import essence.service.AbstractFavor;
 import essence.service.AbstractService;
 import essence.service.ServiceStatusTypes;
 import lombok.ToString;
@@ -21,6 +22,7 @@ import utils.exceptions.TechnicalException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -56,21 +58,37 @@ public class ServiceService extends AbstractFavorService {
     /**
      * Метод обновления данных услуги. Валидация услуги происходит по её ID.
      * @param service Новые данные услуги, собранные в классе услуги.
-     * @return {@code true}, если удалось обновить данные, иначе {@code false}.
      * @throws SQLException если произошла ошибка SQL.
      */
-    public boolean updateService(AbstractService service) throws SQLException {
+    public void updateService(AbstractService service) throws SQLException {
         int serviceId = service.getId();
         serviceLogger.info("Вызван метод обновления услуги с ID {}", serviceId);
 
         try {
             serviceRepository.update(service);
             serviceLogger.info("Обновлена услуга с ID {}", serviceId);
-            return true;
         } catch (TechnicalException e) {
             serviceLogger.error("Не удалось обновить услугу с ID {}", serviceId);
-            return false;
+            throw e;
         }
+    }
+
+    /**
+     * Импортирует список услуг.
+     * Метод выполняет импорт списка услуг, обновляя существующие услуги или добавляя новые.
+     * @param services список услуг для импорта.
+     * @throws SQLException если возникает ошибка при работе с базой данных.
+     */
+    public void importServices(List<AbstractService> services) throws SQLException {
+        serviceLogger.info("Вызван метод импорта услуг");
+        for (AbstractService service : services) {
+            try {
+                updateService(service);
+            } catch (TechnicalException e) {
+                addService(service);
+            }
+        }
+        serviceLogger.info("Услуги импортированы успешно");
     }
 
     /**
@@ -87,21 +105,37 @@ public class ServiceService extends AbstractFavorService {
     /**
      * Метод updateProvidedService обновляет информацию об оказанной услуге в репозитории оказанных услуг.
      * @param providedService Обновленная информация об оказанной услуге.
-     * @return {@code true}, если информация успешно добавлена, иначе {@code false}.
      * @throws SQLException если произошла ошибка SQL.
      */
-    public boolean updateProvidedService(ProvidedService providedService) throws SQLException {
+    public void updateProvidedService(ProvidedService providedService) throws SQLException {
         int providedServiceId = providedService.getId();
         providedServiceLogger.info("Вызван метод обновления оказанной услуги с ID {}", providedServiceId);
 
         try {
             providedServicesRepository.update(providedService);
             providedServiceLogger.info("Обновилась проведённая услуга с ID {}", providedServiceId);
-            return true;
         } catch (TechnicalException e) {
             providedServiceLogger.error("Не удалось обновить оказанную услугу с ID {}", providedServiceId);
-            return false;
+            throw e;
         }
+    }
+
+    /**
+     * Импортирует список проведенных услуг.
+     * Метод выполняет импорт списка проведенных услуг, обновляя существующие записи или добавляя новые.
+     * @param providedServices список проведенных услуг для импорта.
+     * @throws SQLException если возникает ошибка при работе с базой данных.
+     */
+    public void importProvidedServices(List<ProvidedService> providedServices) throws SQLException {
+        providedServiceLogger.info("Вызван метод импорта проведённых услуг");
+        for (ProvidedService providedService : providedServices) {
+            try {
+                updateProvidedService(providedService);
+            } catch (TechnicalException e) {
+                addProvidedService(providedService);
+            }
+        }
+        providedServiceLogger.info("Проведённые услуги импортированы успешно");
     }
 
     /**
@@ -141,6 +175,18 @@ public class ServiceService extends AbstractFavorService {
         service.setStatus(ServiceStatusTypes.RENDERED);
         serviceRepository.update(service);
         serviceLogger.info("Услуга с ID {} была оказана клиенту с ID {}", serviceId, clientId);
+    }
+
+    /**
+     * Метод проводит услугу для конкретного клиента.
+     * @param providedService Проведённая услуга.
+     * @throws NoEntityException Ошибка вылетает, если услуги нет в отеле.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws InvalidDataException если услуга была проведена ранее.
+     * @throws TechnicalException если не удалось обновить услугу.
+     */
+    public void provideService(ProvidedService providedService) throws NoEntityException, SQLException {
+        provideService(providedService.getClient(), providedService.getService());
     }
 
     /**
@@ -234,6 +280,15 @@ public class ServiceService extends AbstractFavorService {
     }
 
     /**
+     * Метод подсчитывает цену конкретной услуги.
+     * @param id уникальный идентификатор услуги.
+     * @return Стоимость разового оказания услуги.
+     */
+    public int getFavorPrice(int id) throws SQLException {
+        return getFavorPrice((AbstractFavor) getServiceById(id));
+    }
+
+    /**
      * Служебный метод предназначен для устранения дублирования кода. Метод фильтрует стрим от списка услуг по
      * содержанию конкретного клиента в списке.
      * @param client Клиент.
@@ -243,7 +298,7 @@ public class ServiceService extends AbstractFavorService {
     private Stream<AbstractService> streamClientServices(AbstractClient client) throws SQLException {
         return providedServicesRepository.getProvidedServices()
                 .stream()
-                .filter(service -> List.of(service.getClient()).contains(client)
+                .filter(service -> Objects.equals(service.getClient(), client)
                         && service.getService().getStatus() == ServiceStatusTypes.RENDERED)
                 .map(ProvidedService::getService);
     }

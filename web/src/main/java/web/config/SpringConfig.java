@@ -18,7 +18,7 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"repository", "service", "dao", "web"})
+@ComponentScan(basePackages = {"repository", "service", "dao", "web", "utils.file"})
 @PropertySource("classpath:config.properties")
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;

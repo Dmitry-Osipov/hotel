@@ -65,20 +65,32 @@ public class ClientService {
     /**
      * Метод обновляет данные по клиенту.
      * @param client Новые данные клиента, собранные в классе клиента.
-     * @return {@code true}, если удалось обновить данные, иначе {@code false}.
      * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если произошла ошибка обновления клиента.
      */
-    public boolean updateClient(AbstractClient client) throws SQLException {
+    public void updateClient(AbstractClient client) throws SQLException {
         int clientId = client.getId();
         logger.info("Вызван метод обновления клиента с ID {}", clientId);
         try {
             clientRepository.update(client);
             logger.info("Удалось обновить клиента с ID {}", clientId);
-            return true;
         } catch (TechnicalException e) {
             logger.error("Не удалось обновить клиента с ID {}", clientId);
-            return false;
+            throw e;
         }
+    }
+
+    // TODO: дока
+    public void importClients(List<AbstractClient> clients) throws SQLException {
+        logger.info("Вызван метод импорта клиентов");
+        for (AbstractClient client : clients) {
+            try {
+                updateClient(client);
+            } catch (TechnicalException e) {
+                addClient(client);
+            }
+        }
+        logger.info("Клиенты импортированы успешно");
     }
 
     /**

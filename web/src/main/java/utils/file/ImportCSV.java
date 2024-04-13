@@ -6,6 +6,7 @@ import dto.RoomDto;
 import dto.RoomReservationDto;
 import dto.ServiceDto;
 import essence.Identifiable;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -22,9 +23,8 @@ import java.util.List;
 /**
  * Утилитарный класс для импорта данных из CSV-файлов.
  */
+@UtilityClass
 public final class ImportCSV {
-    private ImportCSV() {
-    }
 
     /**
      * Парсит данные из CSV-файла в список сущностей DTO.
@@ -34,13 +34,12 @@ public final class ImportCSV {
      * @throws IOException Если происходит ошибка ввода-вывода при чтении CSV-файла.
      * @throws TechnicalException Если нет обработки для класса сущности DTO.
      */
-    public static <T extends Identifiable> List<T> parseEntityDtoFromCsv(MultipartFile file, Class<T> clazz)
+    public <T extends Identifiable> List<T> parseEntityDtoFromCsv(MultipartFile file, Class<T> clazz)
             throws IOException {
         try (
                 InputStream inputStream = file.getInputStream();
                 InputStreamReader reader = new InputStreamReader(inputStream);
-                CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT)
-        ){
+                CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT)) {
             List<T> entities = new ArrayList<>();
             boolean isFirstLine = true;
             for (CSVRecord csvRecord : parser) {

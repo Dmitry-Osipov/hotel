@@ -11,6 +11,8 @@ import essence.provided.ProvidedService;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.service.AbstractService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import service.ClientService;
 import service.RoomService;
 import service.ServiceService;
@@ -28,25 +30,28 @@ import java.util.List;
 /**
  * Утилитарный класс для экспорта дто-сущностей в формат CSV.
  */
+@Component
 public final class ExportCSV {
-    private ExportCSV() {
+    private final RoomService roomService;
+    private final ServiceService serviceService;
+    private final ClientService clientService;
+
+    @Autowired
+    public ExportCSV(RoomService roomService, ServiceService serviceService, ClientService clientService) {
+        this.roomService = roomService;
+        this.serviceService = serviceService;
+        this.clientService = clientService;
     }
 
     /**
      * Экспортирует список сущностей в массив байтов в формате CSV.
      * @param entities Список сущностей для экспорта.
-     * @param roomService Сервис комнат.
-     * @param clientService Сервис клиентов.
-     * @param serviceService Сервис услуг.
      * @return Массив байтов, представляющий CSV-данные экспортированных сущностей.
      * @throws IOException Если происходит ошибка ввода-вывода при чтении или записи CSV-файла.
      * @throws SQLException Если происходит ошибка доступа к базе данных при экспорте сущностей.
      * @throws TechnicalException Если нет обработки для класса предоставленных сущностей.
      */
-    public static <T extends Identifiable> byte[] exportEntitiesDtoDataToBytes(List<T> entities,
-                                                                               RoomService roomService,
-                                                                               ClientService clientService,
-                                                                               ServiceService serviceService)
+    public <T extends Identifiable> byte[] exportEntitiesDtoDataToBytes(List<T> entities)
             throws IOException, SQLException {
         String filePath;
         Path path;

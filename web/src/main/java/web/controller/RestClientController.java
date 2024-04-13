@@ -1,12 +1,11 @@
-package web;
+package web.controller;
 
 import dto.ClientDto;
-import essence.person.AbstractClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import service.ClientService;
-import service.RoomService;
-import service.ServiceService;
 import utils.DtoConverter;
 import utils.file.ImportCSV;
 import utils.file.ResponseEntityPreparer;
@@ -27,23 +24,21 @@ import utils.file.ResponseEntityPreparer;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Контроллер для работы с клиентами через REST API.
  */
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("${api.path}/clients")
+@Validated
 public class RestClientController {
     private final ClientService clientService;
-    private final RoomService roomService;
-    private final ServiceService serviceService;
+    private final ResponseEntityPreparer responseEntityPreparer;
 
     @Autowired
-    public RestClientController(ClientService clientService, RoomService roomService, ServiceService serviceService) {
+    public RestClientController(ClientService clientService, ResponseEntityPreparer responseEntityPreparer) {
         this.clientService = clientService;
-        this.roomService = roomService;
-        this.serviceService = serviceService;
+        this.responseEntityPreparer = responseEntityPreparer;
     }
 
     /**
@@ -53,10 +48,7 @@ public class RestClientController {
      */
     @GetMapping
     public ResponseEntity<List<ClientDto>> getAllClients() throws SQLException {
-        List<ClientDto> clients = clientService.getClients().stream()
-                .map(DtoConverter::convertClientToDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok().body(clients);
+        return ResponseEntity.ok().body(DtoConverter.listClientsToDtos(clientService.getClients()));
     }
 
     /**
@@ -67,51 +59,34 @@ public class RestClientController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ClientDto> getClientById(@PathVariable("id") int id) throws SQLException {
-        ClientDto dto = DtoConverter.convertClientToDto(clientService.getClientById(id));
-        return ResponseEntity.ok().body(dto);
+        return ResponseEntity.ok().body(DtoConverter.convertClientToDto(clientService.getClientById(id)));
     }
 
     /**
      * Добавляет нового клиента.
      * @param dto данные нового клиента.
-     * @param bindingResult результат валидации данных.
      * @return {@link ResponseEntity} с кодом 200 (OK) и добавленным клиентом в теле ответа, если данные корректны,
      * или кодом 400 (Bad Request) в случае некорректных данных.
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping
-    public ResponseEntity<ClientDto> addClient(@Valid @RequestBody ClientDto dto, BindingResult bindingResult)
+    public ResponseEntity<String> addClient(@Valid @RequestBody ClientDto dto)
             throws SQLException {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        AbstractClient client = DtoConverter.convertDtoToClient(dto);
-        clientService.addClient(client);
-        List<AbstractClient> clients = clientService.getClients();
-        return ResponseEntity.ok().body(DtoConverter.convertClientToDto(clients.get(clients.size() - 1)));
+        clientService.addClient(DtoConverter.convertDtoToClient(dto));
+        return ResponseEntity.ok().body("Client " + dto.getFio() + " added successfully");
     }
 
     /**
      * Обновляет информацию о клиенте.
      * @param dto данные обновляемого клиента.
-     * @param bindingResult результат валидации данных.
      * @return {@link ResponseEntity} с кодом 200 (OK) и обновленным клиентом в теле ответа, если данные корректны,
      * или кодом 400 (Bad Request) в случае некорректных данных.
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PutMapping
-    public ResponseEntity<ClientDto> updateClient(@Valid @RequestBody ClientDto dto, BindingResult bindingResult)
+    public ResponseEntity<ClientDto> updateClient(@Valid @RequestBody ClientDto dto)
             throws SQLException {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        boolean updated = clientService.updateClient(DtoConverter.convertDtoToClient(dto));
-        if (!updated) {
-            return ResponseEntity.badRequest().build();
-        }
-
+        clientService.updateClient(DtoConverter.convertDtoToClient(dto));
         return ResponseEntity.ok().body(dto);
     }
 
@@ -123,8 +98,7 @@ public class RestClientController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteClient(@PathVariable("id") int id) throws SQLException {
-        AbstractClient client = clientService.getClientById(id);
-        clientService.deleteClient(client);
+        clientService.deleteClient(clientService.getClientById(id));
         return ResponseEntity.ok().body("Deleted client with ID = " + id);
     }
 
@@ -135,8 +109,7 @@ public class RestClientController {
      */
     @GetMapping("/number-clients")
     public ResponseEntity<Integer> countClients() throws SQLException {
-        Integer count = clientService.countClients();
-        return ResponseEntity.ok().body(count);
+        return ResponseEntity.ok().body(clientService.countClients());
     }
 
     /**
@@ -147,11 +120,8 @@ public class RestClientController {
      */
     @GetMapping("/client-file")
     public ResponseEntity<Resource> exportClientsToCsv() throws IOException, SQLException {
-        List<ClientDto> clients = clientService.getClients().stream()
-                .map(DtoConverter::convertClientToDto)
-                .collect(Collectors.toList());
-        return ResponseEntityPreparer.prepareResponseEntity("clients.csv", clients, roomService,
-                serviceService, clientService);
+        return responseEntityPreparer.prepareResponseEntity("clients.csv",
+                DtoConverter.listClientsToDtos(clientService.getClients()));
     }
 
     /**
@@ -162,18 +132,10 @@ public class RestClientController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/client-file")
-    public ResponseEntity<String> importsClientsFromCsv(@RequestParam("file") MultipartFile file)
-            throws IOException, SQLException {
-        List<AbstractClient> clients = ImportCSV.parseEntityDtoFromCsv(file, ClientDto.class).stream()
-                .map(DtoConverter::convertDtoToClient)
-                .collect(Collectors.toList());
-        for (AbstractClient client : clients) {
-            boolean updated = clientService.updateClient(client);
-            if (!updated) {
-                clientService.addClient(client);
-            }
-        }
-
+    public ResponseEntity<String> importsClientsFromCsv(@RequestParam("file") MultipartFile file) throws IOException,
+            SQLException {
+        clientService.importClients(DtoConverter.listClientsFromDto(
+                ImportCSV.parseEntityDtoFromCsv(file, ClientDto.class)));
         return ResponseEntity.ok().body("Clients imported successfully");
     }
 }

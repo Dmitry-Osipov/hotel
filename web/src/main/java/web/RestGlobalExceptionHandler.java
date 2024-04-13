@@ -12,12 +12,24 @@ import utils.exceptions.TechnicalException;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.format.DateTimeParseException;
 
 /**
  * Глобальный обработчик исключений для обработки технических ошибок в приложении.
  */
 @RestControllerAdvice
 public class RestGlobalExceptionHandler {
+
+    /**
+     * Обработчик исключения DateTimeParseException.
+     * @param e объект исключения DateTimeParseException.
+     * @return ResponseEntity с кодом состояния 502 (Bad Gateway) и сообщением об ошибке.
+     */
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<String> handleDateTimeParseException(DateTimeParseException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body("There's been a time parse error. Please try again with pattern YYYY-MM-DD-hh-mm-ss");
+    }
 
     /**
      * Обработчик исключения TechnicalException.

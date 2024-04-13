@@ -9,6 +9,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.AccessDeniedException;
 import utils.exceptions.ErrorMessages;
+import utils.exceptions.TechnicalException;
 import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
@@ -41,10 +42,10 @@ public class ImportReservationDataAction implements IAction {
             String result;
             for (RoomReservation reservation : reservations) {
                 int id = reservation.getId();
-                boolean updated = roomService.updateReservation(reservation);
-                if (updated) {
+                try{
+                    roomService.updateReservation(reservation);
                     result = "Данные по резервации с ID " + id + " успешно обновлены";
-                } else {
+                } catch (TechnicalException e) {
                     roomService.addReservation(reservation);
                     result = "Резервация с ID " + id + " успешно добавлена";
                 }
