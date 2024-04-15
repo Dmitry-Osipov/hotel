@@ -17,7 +17,7 @@ import java.util.function.Function;
 /**
  * Класс-конфигуратор для компонентов, помеченных аннотацией @ConfigProperty.
  */
-public class PropertyFileConfigurator implements Config {
+public final class PropertyFileConfigurator implements Config {
     private final Map<Class<?>, Function<String, Object>> typeFunctionMap =
             new HashMap<>(Map.of(
                     String.class, s -> s,

@@ -3,8 +3,8 @@ package service;
 import essence.person.AbstractClient;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
-import essence.room.Room;
 import essence.room.RoomStatusTypes;
+import essence.service.AbstractFavor;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import repository.ClientRepository;
 import repository.RoomRepository;
 import repository.RoomReservationRepository;
+import utils.ListToArrayConverter;
 import utils.comparators.RoomCapacityComparator;
 import utils.comparators.RoomCheckOutTimeComparator;
 import utils.comparators.RoomNumberComparator;
@@ -26,6 +27,7 @@ import utils.exceptions.TechnicalException;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -43,7 +45,7 @@ public class RoomService extends AbstractFavorService {
     private final RoomReservationRepository reservationRepository;
     private final ClientRepository clientRepository;
     @Value("${enable_room_status_change}")
-    private boolean allowSetStatusRoom;
+    private String allowSetStatusRoom;
 
     @Autowired
     public RoomService(RoomRepository roomRepository, RoomReservationRepository reservationRepository,
@@ -51,6 +53,16 @@ public class RoomService extends AbstractFavorService {
         this.roomRepository = roomRepository;
         this.reservationRepository = reservationRepository;
         this.clientRepository = clientRepository;
+    }
+
+    /**
+     * Метод возвращает список всех комнат.
+     * @return Список всех комнат.
+     * @throws SQLException если произошла ошибка SQL.
+     */
+    public List<AbstractRoom> getRooms() throws SQLException {
+        roomLogger.info("Вызван метод получения списка всех комнат");
+        return roomRepository.getRooms();
     }
 
     /**
@@ -69,14 +81,14 @@ public class RoomService extends AbstractFavorService {
     /**
      * Метод обновляет данные по комнате.
      * @param room Новые данные комнаты, собранные в классе комнаты.
-     * @return {@code true}, если обновить удалось, иначе {@code false}.
      * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если не удалось обновить комнату
      */
-    public boolean updateRoom(AbstractRoom room) throws SQLException {
+    public void updateRoom(AbstractRoom room) throws SQLException {
         int roomId = room.getId();
         roomLogger.info("Вызван метод обновления комнаты с ID {}", roomId);
 
-        if (!allowSetStatusRoom) {
+        if (!Boolean.parseBoolean(allowSetStatusRoom)) {
             roomLogger.error("Не удалось обновить комнату с ID {} из-за невозможности изменения статуса комнаты",
                     roomId);
             throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
@@ -85,11 +97,56 @@ public class RoomService extends AbstractFavorService {
         try {
             roomRepository.update(room);
             roomLogger.info("Обновлена комната с ID {}", roomId);
-            return true;
         } catch (TechnicalException e) {
             roomLogger.error("Не удалось обновить комнату с ID {}", roomId);
-            return false;
+            throw e;
         }
+    }
+
+    /**
+     * Метод подсчитывает цену конкретного номера.
+     * @param id уникальный идентификатор номера.
+     * @return стоимость номера.
+     * @throws SQLException если произошла ошибка во время работы с БД.
+     */
+    public int getFavorPrice(int id) throws SQLException {
+        return getFavorPrice((AbstractFavor) getRoomById(id));
+    }
+
+    /**
+     * Импортирует список комнат.
+     * Метод выполняет импорт списка комнат, обновляя существующие комнаты или добавляя новые.
+     * @param rooms список комнат для импорта.
+     * @throws SQLException если возникает ошибка при работе с базой данных.
+     */
+    public void importRooms(List<AbstractRoom> rooms) throws SQLException {
+        roomLogger.info("Вызван метод импорта комнат");
+        for (AbstractRoom room : rooms) {
+            try {
+                updateRoom(room);
+            } catch (TechnicalException e) {
+                addRoom(room);
+            }
+        }
+        roomLogger.info("Комнаты импортированы успешно");
+    }
+
+    /**
+     * Импортирует список резерваций номеров.
+     * Метод выполняет импорт списка резерваций номеров, обновляя существующие резервации или добавляя новые.
+     * @param reservations список резерваций номеров для импорта.
+     * @throws SQLException если возникает ошибка при работе с базой данных.
+     */
+    public void importReservations(List<RoomReservation> reservations) throws SQLException {
+        reservationLogger.info("Вызван метод импорта резерваций");
+        for (RoomReservation reservation : reservations) {
+            try {
+                updateReservation(reservation);
+            } catch (TechnicalException e) {
+                addReservation(reservation);
+            }
+        }
+        reservationLogger.info("Резервации импортированы успешно");
     }
 
     /**
@@ -106,20 +163,19 @@ public class RoomService extends AbstractFavorService {
     /**
      * Метод обновляет информацию о резервации в репозитории резерваций.
      * @param reservation Обновленная информация о резервации.
-     * @return {@code true}, если информация успешно обновлена, иначе {@code false}.
      * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если не удалось обновить резервацию
      */
-    public boolean updateReservation(RoomReservation reservation) throws SQLException {
+    public void updateReservation(RoomReservation reservation) throws SQLException {
         int reservationId = reservation.getId();
         reservationLogger.info("Вызван метод обновления резервации с ID {}", reservationId);
 
         try {
             reservationRepository.update(reservation);
             reservationLogger.info("Обновлена резервация с ID {}", reservationId);
-            return true;
         } catch (TechnicalException e) {
             reservationLogger.error("Не удалось обновить резервацию с ID {}", reservationId);
-            return false;
+            throw e;
         }
     }
 
@@ -147,7 +203,7 @@ public class RoomService extends AbstractFavorService {
             throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
         }
 
-        if (!allowSetStatusRoom) {
+        if (!Boolean.parseBoolean(allowSetStatusRoom)) {
             roomLogger.error(failureMessage, roomId, clientsString);
             reservationLogger.error(failureMessage, roomId, clientsString);
             throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
@@ -174,6 +230,21 @@ public class RoomService extends AbstractFavorService {
             clientRepository.update(client);
         }
         roomLogger.info("В комнату с ID {} заселены следующие клиенты: {}", roomId, clientsString);
+    }
+
+    /**
+     * Метод заселяет клиентов в определённую комнату.
+     * @param reservation Резервация.
+     * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
+     * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "свободен").
+     * @throws AccessDeniedException Ошибка запрета изменения статуса комнаты.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если невозможно обновить клиента или комнату.
+     */
+    public void checkIn(RoomReservation reservation) throws SQLException {
+        AbstractClient[] clients = ListToArrayConverter.convertListToArray(
+                reservation.getClients(), AbstractClient.class);
+        checkIn(reservation.getRoom(), clients);
     }
 
     /**
@@ -220,7 +291,7 @@ public class RoomService extends AbstractFavorService {
             throw new InvalidDataException(ErrorMessages.INVALID_DATA.getMessage());
         }
 
-        if (!allowSetStatusRoom) {
+        if (!Boolean.parseBoolean(allowSetStatusRoom)) {
             roomLogger.error(failureMessage, roomId, clientsString);
             reservationLogger.error(failureMessage, roomId, clientsString);
             throw new AccessDeniedException(ErrorMessages.NOT_ALLOWED_CHANGE_ROOM_STATUS.getMessage());
@@ -241,6 +312,20 @@ public class RoomService extends AbstractFavorService {
             reservationLogger.info("Произошло выселение по резервации с ID {}", reservation.getId());
         }
         updateRoom(room);
+    }
+
+    /**
+     * Метод выселения из комнаты.
+     * @param reservation Резервация.
+     * @throws InvalidDataException Ошибка вылетает, если данные по комнате и клиентам не прошли проверку (клиентов
+     * больше вместимости комнаты или меньше 1/комнаты нет в отеле/статус комнаты не "занят").
+     * @throws utils.exceptions.AccessDeniedException Ошибка запрета изменения статуса комнаты.
+     * @throws SQLException если произошла ошибка SQL.
+     * @throws TechnicalException если невозможно обновить клиента или комнату.
+     */
+    public void evict(RoomReservation reservation) throws InvalidDataException, SQLException {
+        evict(reservation.getRoom(),
+                ListToArrayConverter.convertListToArray(reservation.getClients(), AbstractClient.class));
     }
 
     /**
@@ -359,7 +444,7 @@ public class RoomService extends AbstractFavorService {
      * @param room Комната.
      * @return Полная информация про комнату.
      */
-    public String getRoomInfo(Room room) {
+    public String getRoomInfo(AbstractRoom room) {
         roomLogger.info("Вызван метод получения информации по комнате с ID {}", room.getId());
         return room.toString();
     }
@@ -406,12 +491,21 @@ public class RoomService extends AbstractFavorService {
         roomLogger.info("Вызван метод получения свободных комнат, начиная с: {}", dateTime);
         List<AbstractRoom> rooms = roomRepository.getRooms()
                 .stream()
-                .filter(room -> room.getCheckOutTime() != null
-                        && room.getStatus() == RoomStatusTypes.AVAILABLE
-                        && room.getCheckOutTime().isAfter(dateTime))
+                .filter(room -> room.getCheckOutTime() == null || room.getCheckOutTime().isAfter(dateTime))
                 .toList();
         roomLogger.info("По времени {} получен следующий список свободных комнат: {}", dateTime, rooms);
         return rooms;
+    }
+
+    /**
+     * Метод формирует список свободных комнат с конкретного времени.
+     * @param dateTime Время.
+     * @return Список свободных комнат.
+     * @throws SQLException если произошла ошибка SQL.
+     */
+    public List<AbstractRoom> getAvailableRoomsByTime(String dateTime) throws SQLException {
+        return getAvailableRoomsByTime(LocalDateTime.parse(
+                dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")));
     }
 
     /**
@@ -422,6 +516,43 @@ public class RoomService extends AbstractFavorService {
     public List<RoomReservation> getReservations() throws SQLException {
         reservationLogger.info("Вызов метода получения списка резерваций");
         return reservationRepository.getReservations();
+    }
+
+    /**
+     * Получает комнату из репозитория по указанному идентификатору.
+     * @param roomId Уникальный идентификатор комнаты.
+     * @return Комната с указанным идентификатором.
+     * @throws SQLException Если возникает ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
+    public AbstractRoom getRoomById(int roomId) throws SQLException {
+        roomLogger.info("Вызван метод получения комнаты по ID {}", roomId);
+        try {
+            AbstractRoom room = roomRepository.getRoomById(roomId);
+            roomLogger.info("Удалось получить комнату по ID {}", roomId);
+            return room;
+        } catch (TechnicalException e) {
+            roomLogger.error("Не удалось получить комнату по ID {}", roomId);
+            throw e;
+        }
+    }
+
+    /**
+     * Удаляет комнату из базы данных.
+     * @param room Комната, которая должна быть удалена.
+     * @throws SQLException Если возникает ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
+    public void deleteRoom(AbstractRoom room) throws SQLException {
+        int roomId = room.getId();
+        roomLogger.info("Вызван метод удаления комнаты с ID {}", roomId);
+        try {
+            roomRepository.deleteRoom(room);
+            roomLogger.info("Удалось удалить комнату с ID {}", roomId);
+        } catch (TechnicalException e) {
+            roomLogger.error("Не удалось удалить комнату с ID {}", roomId);
+            throw e;
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.exceptions.TechnicalException;
 import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
@@ -42,10 +43,10 @@ public class ImportServiceDataAction implements IAction {
             String result;
             for (AbstractService service : services) {
                 int id = service.getId();
-                boolean updated = serviceService.updateService(service);
-                if (updated) {
+                try {
+                    serviceService.updateService(service);
                     result = "Данные по услуге с ID " + id + " успешно обновлены";
-                } else {
+                } catch (TechnicalException e) {
                     serviceService.addService(service);
                     result = "Услуга с ID " + id + " успешно добавлена";
                 }

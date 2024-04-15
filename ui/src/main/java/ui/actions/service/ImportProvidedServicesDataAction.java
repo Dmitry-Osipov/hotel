@@ -8,6 +8,7 @@ import service.ServiceService;
 import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.ErrorMessages;
+import utils.exceptions.TechnicalException;
 import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
@@ -41,10 +42,10 @@ public class ImportProvidedServicesDataAction implements IAction {
             String result;
             for (ProvidedService providedService : providedServices) {
                 int id = providedService.getId();
-                boolean updated = serviceService.updateProvidedService(providedService);
-                if (updated) {
+                try {
+                    serviceService.updateProvidedService(providedService);
                     result = "Данные по проведённой услуге с ID " + id + " успешно обновлены";
-                } else {
+                } catch (TechnicalException e) {
                     serviceService.addProvidedService(providedService);
                     result = "Проведённая услуга с ID " + id + " успешно добавлена";
                 }

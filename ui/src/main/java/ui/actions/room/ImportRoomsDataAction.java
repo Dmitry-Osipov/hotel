@@ -10,6 +10,7 @@ import utils.InputHandler;
 import utils.exceptions.AccessDeniedException;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.exceptions.TechnicalException;
 import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
@@ -42,10 +43,10 @@ public class ImportRoomsDataAction implements IAction {
             String result;
             for (AbstractRoom room : rooms) {
                 int id = room.getId();
-                boolean updated = roomService.updateRoom(room);
-                if (updated) {
+                try {
+                    roomService.updateRoom(room);
                     result = "Данные по комнате с ID " + id + " успешно обновлены";
-                } else {
+                } catch (TechnicalException e) {
                     roomService.addRoom(room);
                     result = "Комната с ID " + id + " успешно добавлена";
                 }

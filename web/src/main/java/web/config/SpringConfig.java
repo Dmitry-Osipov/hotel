@@ -5,16 +5,21 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
+/**
+ * Конфигурационный класс для Spring MVC.
+ */
 @Configuration
-@ComponentScan("web")
 @EnableWebMvc
+@ComponentScan(basePackages = {"repository", "service", "dao", "web", "utils.file"})
+@PropertySource("classpath:config.properties")
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
 
@@ -23,6 +28,10 @@ public class SpringConfig implements WebMvcConfigurer {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Создает и настраивает ресолвер шаблонов Thymeleaf.
+     * @return Ресолвер шаблонов
+     */
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -32,6 +41,10 @@ public class SpringConfig implements WebMvcConfigurer {
         return templateResolver;
     }
 
+    /**
+     * Создает и настраивает движок шаблонов Thymeleaf.
+     * @return Движок шаблонов
+     */
     @Bean
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
@@ -40,6 +53,10 @@ public class SpringConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
+    /**
+     * Конфигурирует резольвер представлений для использования Thymeleaf.
+     * @param registry объект для регистрации резольвера представлений
+     */
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();

@@ -9,6 +9,7 @@ import ui.actions.IAction;
 import utils.InputHandler;
 import utils.exceptions.EntityContainedException;
 import utils.exceptions.ErrorMessages;
+import utils.exceptions.TechnicalException;
 import utils.file.DataPath;
 import utils.file.csv.ImportCSV;
 
@@ -42,10 +43,10 @@ public class ImportClientsDataAction implements IAction {
             String result;
             for (AbstractClient client : clients) {
                 int id = client.getId();
-                boolean updated = clientService.updateClient(client);
-                if (updated) {
+                try {
+                    clientService.updateClient(client);
                     result = "Данные по клиенту с ID " + id + " успешно обновлены";
-                } else {
+                } catch (TechnicalException e) {
                     clientService.addClient(client);
                     result = "Клиент с ID " + id + " успешно добавлен";
                 }

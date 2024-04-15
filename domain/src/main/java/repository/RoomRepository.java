@@ -52,4 +52,25 @@ public class RoomRepository {
     public void update(AbstractRoom room) throws SQLException {
         dao.update(room);
     }
+
+    /**
+     * Получает комнату по ее уникальному идентификатору.
+     * @param id Уникальный идентификатор комнаты.
+     * @return Комната с указанным ID.
+     * @throws SQLException Если происходит ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
+    public AbstractRoom getRoomById(int id) throws SQLException {
+        return dao.getOne(id, Room.class);
+    }
+
+    /**
+     * Удаляет комнату из репозитория.
+     * @param room Комната, которая должна быть удалена.
+     * @throws SQLException Если происходит ошибка доступа к базе данных.
+     * @throws TechnicalException Если возникает техническая ошибка при выполнении операции.
+     */
+    public void deleteRoom(AbstractRoom room) throws SQLException {
+        dao.delete(room);
+    }
 }

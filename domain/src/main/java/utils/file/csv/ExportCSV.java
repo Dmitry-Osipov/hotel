@@ -31,8 +31,7 @@ public final class ExportCSV {
     public static void exportRoomsData(String fileName, List<AbstractRoom> rooms) throws IOException {
         logger.info("Вызов метода экспорта данных в CSV файл {} списка комнат {}", fileName, rooms);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
-            writer.writeNext(new String[]{"ID", "Номер", "Вместительность", "Цена", "Статус", "Количество звёзд",
-                    "Время въезда", "Время выезда"});
+            writer.writeNext(CsvHeaderArrays.ROOMS.getHeaders());
 
             for (AbstractRoom room : rooms) {
                 String[] data = {
@@ -64,7 +63,7 @@ public final class ExportCSV {
     public static void exportServicesData(String fileName, List<AbstractService> services) throws IOException {
         logger.info("Вызов метода экспорта данных в CSV файл {} списка услуг {}", fileName, services);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
-            writer.writeNext(new String[]{"ID", "Название", "Цена", "Статус", "Время оказания"});
+            writer.writeNext(CsvHeaderArrays.SERVICES.getHeaders());
             for (AbstractService service : services) {
                 String[] data = {
                         String.valueOf(service.getId()),
@@ -92,7 +91,7 @@ public final class ExportCSV {
     public static void exportClientsData(String fileName, List<AbstractClient> clients) throws IOException {
         logger.info("Вызов метода экспорта данных в CSV файл {} списка клиентов {}", fileName, clients);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
-            writer.writeNext(new String[]{"ID", "ФИО", "Номер телефона", "Время заезда", "Время выезда"});
+            writer.writeNext(CsvHeaderArrays.CLIENTS.getHeaders());
             for (AbstractClient client : clients) {
                 String[] data = {
                         String.valueOf(client.getId()),
@@ -120,7 +119,7 @@ public final class ExportCSV {
     public static void exportReservationsData(String fileName, List<RoomReservation> reservations) throws IOException {
         logger.info("Вызов метода экспорта данных в CSV файл {} списка резерваций {}", fileName, reservations);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
-            writer.writeNext(new String[] {"ID", "Комната", "Время заезда", "Время выезда", "Список клиентов"});
+            writer.writeNext(CsvHeaderArrays.RESERVATIONS.getHeaders());
             for (RoomReservation reservation : reservations) {
                 String[] data = {
                         String.valueOf(reservation.getId()),
@@ -149,7 +148,7 @@ public final class ExportCSV {
             throws IOException {
         logger.info("Вызов метода экспорта данных в CSV файл {} списка оказанных услуг {}", fileName, providedServices);
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"))) {
-            writer.writeNext(new String[] {"ID", "Список клиентов", "Услуга", "Время оказания"});
+            writer.writeNext(CsvHeaderArrays.PROVIDED_SERVICES.getHeaders());
             for (ProvidedService providedService : providedServices) {
                 String[] data = {
                         String.valueOf(providedService.getId()),

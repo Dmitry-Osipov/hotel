@@ -13,6 +13,12 @@ import java.time.LocalDateTime;
 @JsonSubTypes({@JsonSubTypes.Type(value = Service.class, name = "Service")})
 public interface AbstractService extends Identifiable {
     /**
+     * Метод установки ID.
+     * @param id ID.
+     */
+    void setId(int id);
+
+    /**
      * Метод устанавливает новый статус исполнения услуги.
      * @param status Новый статус.
      */

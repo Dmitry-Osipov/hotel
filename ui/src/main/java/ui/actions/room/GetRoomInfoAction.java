@@ -1,7 +1,6 @@
 package ui.actions.room;
 
 import essence.room.AbstractRoom;
-import essence.room.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import service.RoomService;
@@ -32,7 +31,7 @@ public class GetRoomInfoAction implements IAction {
     public void execute() {
         try {
             AbstractRoom room = InputHandler.getRoomByInput(roomService);
-            System.out.println("\nПолная информация о комнате - " + roomService.getRoomInfo((Room) room));
+            System.out.println("\nПолная информация о комнате - " + roomService.getRoomInfo(room));
         } catch (NoEntityException e) {
             System.out.println("\n" + e.getMessage());
         } catch (SQLException e) {
