@@ -4,7 +4,6 @@ import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import utils.exceptions.AccessDeniedException;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
@@ -17,7 +16,7 @@ import java.time.format.DateTimeParseException;
 /**
  * Глобальный обработчик исключений для обработки технических ошибок в приложении.
  */
-@RestControllerAdvice
+//@RestControllerAdvice
 public class RestGlobalExceptionHandler {
 
     /**
