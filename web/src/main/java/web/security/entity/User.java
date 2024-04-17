@@ -20,6 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Сущность, представляющая пользователя.
+ */
 @Entity
 @Builder
 @Getter
@@ -45,26 +48,46 @@ public class User implements UserDetails {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    /**
+     * Получение роли пользователя в виде коллекции GrantedAuthority.
+     * @return Роли пользователя.
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    /**
+     * Проверка, истек ли срок действия учетной записи пользователя.
+     * @return Всегда возвращает {@code true}, так как срок действия учетной записи не учитывается.
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * Проверка, заблокирована ли учетная запись пользователя.
+     * @return Всегда возвращает {@code true}, так как учетная запись пользователя не блокируется.
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * Проверка, истек ли срок действия учетных данных пользователя.
+     * @return Всегда возвращает {@code true}, так как срок действия учетных данных не учитывается.
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * Проверка, активирована ли учетная запись пользователя.
+     * @return Всегда возвращает {@code true}, так как учетная запись пользователя всегда активна.
+     */
     @Override
     public boolean isEnabled() {
         return true;

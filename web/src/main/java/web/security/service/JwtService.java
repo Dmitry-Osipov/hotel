@@ -16,10 +16,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Сервис для работы с JWT.
+ */
 @Service
 public class JwtService {
-    @Value("${token.singing.key}")
-    private String jwtSingingKey;
+    @Value("${token.signing.key}")
+    private String jwtSigningKey;
 
     /**
      * Извлечение имени пользователя из токена
@@ -116,7 +119,7 @@ public class JwtService {
      * @return ключ
      */
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSingingKey);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

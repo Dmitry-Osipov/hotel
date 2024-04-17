@@ -1,7 +1,5 @@
 package web.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,24 +10,34 @@ import web.security.dto.SignInRequest;
 import web.security.dto.SignUpRequest;
 import web.security.service.AuthenticationService;
 
+/**
+ * Контроллер для обработки запросов аутентификации через REST API.
+ */
 @RestController
-@RequestMapping("/auth")
-@Tag(name = "Authentication")
-public class AuthController {
+@RequestMapping("${api.path}/auth")
+public class RestAuthController {
     private final AuthenticationService authenticationService;
 
     @Autowired
-    public AuthController(AuthenticationService authenticationService) {
+    public RestAuthController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
 
-    @Operation(summary = "User registration")
+    /**
+     * Метод для регистрации нового пользователя.
+     * @param request данные запроса на регистрацию
+     * @return объект с JWT-токеном для успешной регистрации
+     */
     @PostMapping("/sign-up")
     public JwtAuthenticationResponse signUp(@RequestBody SignUpRequest request) {
         return authenticationService.signUp(request);
     }
 
-    @Operation(summary = "User Authorization")
+    /**
+     * Метод для входа пользователя в систему.
+     * @param request данные запроса на вход
+     * @return объект с JWT-токеном для успешного входа
+     */
     @PostMapping("/sign-in")
     public JwtAuthenticationResponse signIn(@RequestBody SignInRequest request) {
         return authenticationService.signIn(request);

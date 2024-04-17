@@ -12,6 +12,9 @@ import web.security.dto.SignUpRequest;
 import web.security.entity.Role;
 import web.security.entity.User;
 
+/**
+ * Сервис для аутентификации и регистрации пользователей.
+ */
 @Service
 public class AuthenticationService {
     private final UserService userService;
@@ -40,7 +43,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_USER)
                 .build();
-        userService.save(user);
+        userService.create(user);
         return new JwtAuthenticationResponse(jwtService.generateToken(user));
     }
 
@@ -54,7 +57,6 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         UserDetails user = userService.userDetailsService().loadUserByUsername(request.getUsername());
-        String jwt = jwtService.generateToken(user);
-        return new JwtAuthenticationResponse(jwt);
+        return new JwtAuthenticationResponse(jwtService.generateToken(user));
     }
 }

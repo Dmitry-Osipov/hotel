@@ -1,14 +1,17 @@
 package web.security.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import utils.exceptions.EntityContainedException;
 import web.security.entity.Role;
 import web.security.entity.User;
 import web.security.repository.UserRepository;
 
+/**
+ * Сервис для управления пользователями.
+ */
 @Service
 public class UserService {
     private final UserRepository repository;
@@ -32,13 +35,11 @@ public class UserService {
      */
     public User create(User user) {
         if (repository.existsByUsername(user.getUsername())) {
-            // TODO: заменить на своё исключение
-            throw new RuntimeException("Username already exists");
+            throw new EntityContainedException("Username already exists");
         }
 
         if (repository.existsByEmail(user.getEmail())) {
-            // TODO: заменить на своё исключение
-            throw new RuntimeException("Email already exists");
+            throw new EntityContainedException("Email already exists");
         }
 
         return save(user);
@@ -64,21 +65,11 @@ public class UserService {
     }
 
     /**
-     * Получение текущего пользователя
-     * @return текущий пользователь
+     * Выдача прав администратора пользователю
+     * @param username имя пользователя
      */
-    public User getCurrentUser() {
-        return getByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-    }
-
-    /**
-     * Выдача прав администратора текущему пользователю
-     * <p>
-     * Нужен для демонстрации
-     */
-    @Deprecated
-    public void getAdmin() {
-        User user = getCurrentUser();
+    public void setAdminRole(String username) {
+        User user = getByUsername(username);
         user.setRole(Role.ROLE_ADMIN);
         save(user);
     }

@@ -19,6 +19,9 @@ import web.security.service.UserService;
 
 import java.io.IOException;
 
+/**
+ * Фильтр для аутентификации пользователей по JWT токену.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
@@ -32,6 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userService = userService;
     }
 
+    /**
+     * Фильтрует запросы и аутентифицирует пользователей по JWT токену.
+     * @param request HTTP запрос
+     * @param response HTTP ответ
+     * @param filterChain цепочка фильтров
+     * @throws ServletException если возникает ошибка при обработке запроса
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {

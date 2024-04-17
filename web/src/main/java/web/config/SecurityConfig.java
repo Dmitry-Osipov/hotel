@@ -22,19 +22,30 @@ import web.security.service.UserService;
 
 import java.util.List;
 
+/**
+ * Конфигурационный класс для настройки безопасности приложения. Этот класс определяет настройки безопасности, такие
+ * как фильтры, правила доступа к конечным точкам, провайдер аутентификации и другие. Он также содержит бины для
+ * создания аутентификационного провайдера, кодировщика паролей и менеджера аутентификации.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserService userService;
 
     @Autowired
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter, UserService userService) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserService userService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userService = userService;
     }
 
+    /**
+     * Настройка цепочки фильтров безопасности.
+     * @param http объект HttpSecurity
+     * @return цепочка фильтров безопасности
+     * @throws Exception если произошла ошибка во время конфигурации
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -51,8 +62,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request
                         // Можно указать конкретный путь, * - 1 уровень вложенности, ** - любое количество уровней
                         // вложенности
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api/docs/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/endpoint", "/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -62,11 +72,19 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    /**
+     * Создает и возвращает объект PasswordEncoder для кодирования паролей.
+     * @return объект PasswordEncoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Создает и возвращает провайдер аутентификации для сервиса пользователей.
+     * @return провайдер аутентификации
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -75,6 +93,12 @@ public class SecurityConfiguration {
         return authProvider;
     }
 
+    /**
+     * Создает и возвращает менеджер аутентификации.
+     * @param config конфигурация аутентификации
+     * @return менеджер аутентификации
+     * @throws Exception если произошла ошибка во время создания менеджера аутентификации
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
