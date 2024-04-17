@@ -135,13 +135,6 @@
             <version>1.9.0</version>
         </dependency>
 
-<!--        TODO: удалить-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.commons</groupId>-->
-<!--            <artifactId>commons-lang3</artifactId>-->
-<!--            <version>3.14.0</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>

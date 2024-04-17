@@ -80,16 +80,12 @@ public class SpringConfig implements WebMvcConfigurer {
      * @return {@link DataSource} объект, представляющий источник данных для подключения к базе данных.
      */
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource() throws PropertyVetoException {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
-        try {
-            dataSource.setDriverClass("org.postgresql.Driver");
-            dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/hotel");
-            dataSource.setUser("hotel_user");
-            dataSource.setPassword("R7hB2fK9sL6e");
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
-        }
+        dataSource.setDriverClass("org.postgresql.Driver");
+        dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/hotel");
+        dataSource.setUser("hotel_user");
+        dataSource.setPassword("R7hB2fK9sL6e");
 
         return dataSource;
     }
@@ -99,7 +95,7 @@ public class SpringConfig implements WebMvcConfigurer {
      * @return менеджер сущностей JPA
      */
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws PropertyVetoException {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
         em.setPackagesToScan("essence", "web.security.entity");
