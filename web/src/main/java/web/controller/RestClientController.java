@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +71,7 @@ public class RestClientController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addClient(@Valid @RequestBody ClientDto dto)
             throws SQLException {
         clientService.addClient(DtoConverter.convertDtoToClient(dto));
@@ -84,6 +86,7 @@ public class RestClientController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClientDto> updateClient(@Valid @RequestBody ClientDto dto)
             throws SQLException {
         clientService.updateClient(DtoConverter.convertDtoToClient(dto));
@@ -97,6 +100,7 @@ public class RestClientController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteClient(@PathVariable("id") int id) throws SQLException {
         clientService.deleteClient(clientService.getClientById(id));
         return ResponseEntity.ok().body("Deleted client with ID = " + id);
@@ -132,6 +136,7 @@ public class RestClientController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/client-file")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> importsClientsFromCsv(@RequestParam("file") MultipartFile file) throws IOException,
             SQLException {
         clientService.importClients(DtoConverter.listClientsFromDto(

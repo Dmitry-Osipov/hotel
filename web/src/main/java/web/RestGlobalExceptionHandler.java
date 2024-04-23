@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import utils.exceptions.AccessDeniedException;
+import utils.exceptions.EntityContainedException;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.NoEntityException;
 import utils.exceptions.TechnicalException;
@@ -19,6 +20,17 @@ import java.time.format.DateTimeParseException;
  */
 @RestControllerAdvice
 public class RestGlobalExceptionHandler {
+
+    /**
+     * Обработчик исключения EntityContainedException.
+     * @param e объект исключения EntityContainedException.
+     * @return ResponseEntity с кодом состояния 502 (Bad Gateway) и сообщением об ошибке.
+     */
+    @ExceptionHandler(EntityContainedException.class)
+    public ResponseEntity<String> handleEntityContainedException(EntityContainedException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(e.getMessage() + ". Please try again");
+    }
 
     /**
      * Обработчик исключения DateTimeParseException.

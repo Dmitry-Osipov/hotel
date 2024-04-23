@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,6 +75,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addService(@Valid @RequestBody ServiceDto dto) throws SQLException {
         serviceService.addService(DtoConverter.convertDtoToService(dto));
         return ResponseEntity.ok().body("Service " + dto.getName() + " added successfully");
@@ -87,6 +89,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ServiceDto> updateService(@Valid @RequestBody ServiceDto dto) throws SQLException {
         serviceService.updateService(DtoConverter.convertDtoToService(dto));
         return ResponseEntity.ok().body(dto);
@@ -99,6 +102,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteService(@PathVariable("id") int id) throws SQLException {
         serviceService.deleteService(serviceService.getServiceById(id));
         return ResponseEntity.ok().body("Deleted service with ID = " + id);
@@ -124,6 +128,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/service-file")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> importServicesFromCsv(@RequestParam("file") MultipartFile file) throws IOException,
             SQLException {
         serviceService.importServices(DtoConverter.listServicesFromDtos(
@@ -162,6 +167,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/provided-file")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> importProvidedServicesFromCsv(@RequestParam("file") MultipartFile file)
             throws IOException, SQLException {
         serviceService.importProvidedServices(DtoConverter.listProvidedServicesFromDtos(
@@ -177,6 +183,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/provided-service")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> provideService(@Valid @RequestBody ProvidedServiceDto dto) throws SQLException {
         serviceService.provideService(DtoConverter.convertDtoToProvidedService(dto, serviceService, clientService));
         return ResponseEntity.ok().body("Service provided successfully");
@@ -189,6 +196,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @GetMapping("/client-services-by-price/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ServiceDto>> getClientServicesByPrice(@PathVariable("id") int id) throws SQLException {
         return ResponseEntity.ok().body(DtoConverter.listServicesToDtos(
                 serviceService.getClientServicesByPrice(clientService.getClientById(id))));
@@ -201,6 +209,7 @@ public class RestServiceController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @GetMapping("/client-services-by-time/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ServiceDto>> getClientServicesByTime(@PathVariable("id") int id) throws SQLException {
         return ResponseEntity.ok().body(DtoConverter.listServicesToDtos(
                 serviceService.getClientServicesByTime(clientService.getClientById(id))));

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,6 +79,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addRoom(@Valid @RequestBody RoomDto dto)
             throws SQLException {
         roomService.addRoom(DtoConverter.convertDtoToRoom(dto));
@@ -92,6 +94,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoomDto> updateRoom(@Valid @RequestBody RoomDto dto) throws SQLException {
         roomService.updateRoom(DtoConverter.convertDtoToRoom(dto));
         return ResponseEntity.ok().body(dto);
@@ -104,6 +107,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteRoom(@PathVariable("id") int id) throws SQLException {
         roomService.deleteRoom(roomService.getRoomById(id));
         return ResponseEntity.ok().body("Deleted room with ID = " + id);
@@ -129,6 +133,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/room-file")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> importRoomsFromCsv(@RequestParam("file") MultipartFile file) throws IOException,
             SQLException {
         roomService.importRooms(DtoConverter.listRoomsFromDtos(ImportCSV.parseEntityDtoFromCsv(file, RoomDto.class)));
@@ -166,6 +171,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/reservation-file")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> importRoomReservationsFromCsv(@RequestParam("file") MultipartFile file)
             throws IOException, SQLException {
         roomService.importReservations(DtoConverter.listReservationsFromDtos(
@@ -181,6 +187,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/room-stars")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoomDto> addStars(@Valid @RequestBody RoomDto dto) throws SQLException {
         AbstractRoom room = roomService.getRoomById(dto.getId());
         roomService.addStarsToRoom(room, dto.getStars() - room.getStars());
@@ -195,6 +202,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PostMapping("/check-in")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> checkIn(@Valid @RequestBody RoomReservationDto dto) throws SQLException {
         roomService.checkIn(DtoConverter.convertDtoToRoomReservation(dto, roomService, clientService));
         return ResponseEntity.ok().body("Room checked in successfully");
@@ -208,6 +216,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @PutMapping("/eviction")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoomReservationDto> evict(@Valid @RequestBody RoomReservationDto dto) throws SQLException {
         roomService.evict(DtoConverter.convertDtoToRoomReservation(dto, roomService, clientService));
         return ResponseEntity.ok().body(dto);
@@ -301,6 +310,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @GetMapping("/client-rooms-by-numbers/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RoomDto>> getClientRoomsByNumbers(@PathVariable("id") int id) throws SQLException {
         return ResponseEntity.ok()
                 .body(DtoConverter.listRoomsToDtos(roomService.getClientRoomsByNumbers(clientService.getClientById(id))));
@@ -313,6 +323,7 @@ public class RestRoomController {
      * @throws SQLException если возникает ошибка при выполнении запроса к базе данных.
      */
     @GetMapping("/client-rooms-by-check-out-time/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RoomDto>> getClientRoomsByCheckOutTime(@PathVariable("id") int id) throws SQLException {
         return ResponseEntity.ok()
                 .body(DtoConverter.listRoomsToDtos(
