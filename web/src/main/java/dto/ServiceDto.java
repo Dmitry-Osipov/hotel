@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс, представляющий информацию об услуге.
@@ -25,4 +26,22 @@ public class ServiceDto implements Identifiable {
     @NotBlank(message = "Status is required field")
     private String status;
     private LocalDateTime serviceTime;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return getId() == ((ServiceDto) obj).getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

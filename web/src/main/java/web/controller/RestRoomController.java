@@ -34,7 +34,8 @@ import java.util.List;
  * Контроллер для работы с комнатами через REST API.
  */
 @RestController
-@RequestMapping("${api.path}/rooms")
+//@RequestMapping("${api.path}/rooms")
+@RequestMapping("api/rooms")  // TODO: для тестов, потом удалить
 @Validated
 public class RestRoomController {
     private final RoomService roomService;

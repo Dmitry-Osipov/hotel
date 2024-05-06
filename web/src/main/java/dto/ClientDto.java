@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс, представляющий сущность клиента с информацией о клиенте.
@@ -24,4 +25,22 @@ public class ClientDto implements Identifiable {
     private String phoneNumber;
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return id == ((ClientDto) obj).id;
+    }
 }

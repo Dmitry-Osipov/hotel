@@ -80,7 +80,12 @@ public class ClientService {
         }
     }
 
-    // TODO: дока
+    /**
+     * Импортирует список клиентов.
+     * Метод выполняет импорт списка клиентов, обновляя существующих клиентов или добавляя новые.
+     * @param clients список клиентов для импорта.
+     * @throws SQLException если возникает ошибка при работе с базой данных.
+     */
     public void importClients(List<AbstractClient> clients) throws SQLException {
         logger.info("Вызван метод импорта клиентов");
         for (AbstractClient client : clients) {

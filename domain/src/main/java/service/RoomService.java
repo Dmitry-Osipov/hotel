@@ -242,9 +242,8 @@ public class RoomService extends AbstractFavorService {
      * @throws TechnicalException если невозможно обновить клиента или комнату.
      */
     public void checkIn(RoomReservation reservation) throws SQLException {
-        AbstractClient[] clients = ListToArrayConverter.convertListToArray(
-                reservation.getClients(), AbstractClient.class);
-        checkIn(reservation.getRoom(), clients);
+        checkIn(reservation.getRoom(),
+                ListToArrayConverter.convertListToArray(reservation.getClients(), AbstractClient.class));
     }
 
     /**
@@ -305,8 +304,7 @@ public class RoomService extends AbstractFavorService {
 
         room.setStatus(RoomStatusTypes.AVAILABLE);
         room.setCheckOutTime(now);
-        roomLogger.info("Произошло выселение из комнаты с ID {} следующих клиентов: {}",
-                roomId, clientsString);
+        roomLogger.info("Произошло выселение из комнаты с ID {} следующих клиентов: {}", roomId, clientsString);
         for (RoomReservation reservation : getReservationByRoom(room).toList()) {
             reservation.setCheckOutTime(now);
             reservationLogger.info("Произошло выселение по резервации с ID {}", reservation.getId());

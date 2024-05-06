@@ -72,8 +72,7 @@ public class RestClientController {
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> addClient(@Valid @RequestBody ClientDto dto)
-            throws SQLException {
+    public ResponseEntity<String> addClient(@Valid @RequestBody ClientDto dto) throws SQLException {
         clientService.addClient(DtoConverter.convertDtoToClient(dto));
         return ResponseEntity.ok().body("Client " + dto.getFio() + " added successfully");
     }
@@ -87,8 +86,7 @@ public class RestClientController {
      */
     @PutMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientDto> updateClient(@Valid @RequestBody ClientDto dto)
-            throws SQLException {
+    public ResponseEntity<ClientDto> updateClient(@Valid @RequestBody ClientDto dto) throws SQLException {
         clientService.updateClient(DtoConverter.convertDtoToClient(dto));
         return ResponseEntity.ok().body(dto);
     }
