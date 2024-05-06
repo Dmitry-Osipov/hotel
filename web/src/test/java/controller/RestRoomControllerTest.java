@@ -8,15 +8,10 @@ import dto.RoomDto;
 import dto.RoomReservationDto;
 import essence.person.AbstractClient;
 import essence.person.Client;
-import essence.provided.ProvidedService;
 import essence.reservation.RoomReservation;
 import essence.room.AbstractRoom;
 import essence.room.Room;
 import essence.room.RoomStatusTypes;
-import essence.service.AbstractService;
-import essence.service.Service;
-import essence.service.ServiceNames;
-import essence.service.ServiceStatusTypes;
 import jakarta.servlet.ServletException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -37,12 +32,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import service.ClientService;
 import service.RoomService;
 import utils.DtoConverter;
+import utils.comparators.RoomCapacityComparator;
+import utils.comparators.RoomCheckOutTimeComparator;
+import utils.comparators.RoomNumberComparator;
+import utils.comparators.RoomPriceComparator;
 import utils.exceptions.InvalidDataException;
 import utils.exceptions.TechnicalException;
 import utils.file.ResponseEntityPreparer;
 import web.controller.RestRoomController;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,9 +73,7 @@ class RestRoomControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private List<AbstractClient> clients;
     private List<AbstractRoom> rooms;
-    private List<AbstractService> services;
     private List<RoomReservation> reservations;
-    private List<ProvidedService> providedServices;
     private MockMvc sut;
     @Autowired
     private ClientService clientService;
@@ -122,34 +121,6 @@ class RestRoomControllerTest {
                 List.of(clients.get(2)));
         reservations = new ArrayList<>(List.of(reservation1, reservation2));
 
-        AbstractService service1 = new Service(1, ServiceNames.CONFERENCE, 2000);
-        service1.setStatus(ServiceStatusTypes.RENDERED);
-        service1.setServiceTime(LocalDateTime.of(2024, 2, 18, 13, 17, 27));
-        AbstractService service2 = new Service(2, ServiceNames.BREAKFAST, 1500);
-        AbstractService service3 = new Service(3, ServiceNames.EXCURSION, 20000);
-        AbstractService service4 = new Service(4, ServiceNames.MINIBAR, 5000);
-        service4.setStatus(ServiceStatusTypes.RENDERED);
-        service4.setServiceTime(LocalDateTime.of(2024, 1, 25,  22, 0, 37));
-        AbstractService service5 = new Service(5, ServiceNames.PARKING, 3000);
-        service5.setStatus(ServiceStatusTypes.RENDERED);
-        service5.setServiceTime(LocalDateTime.of(2024, 3, 5, 19, 2, 47));
-        services = new ArrayList<>(List.of(service1, service2, service3, service4, service5));
-
-        ProvidedService providedService1 = new ProvidedService(1, service1,
-                LocalDateTime.of(2024, 1, 25, 22, 0, 37),
-                new Client(1, "Osipov D. R.", "+7(902)902-98-11"));
-        ProvidedService providedService2 = new ProvidedService(2, service4,
-                LocalDateTime.of(2024, 1, 25, 22, 0, 37),
-                new Client(3, "Belyakova I. S.", "+7(953)180-00-61"));
-        ProvidedService providedService3 = new ProvidedService(3, service1,
-                LocalDateTime.of(2024, 2, 18, 13, 17, 27),
-                new Client(1, "Osipov D. R.", "+7(902)902-98-11"));
-        ProvidedService providedService4 = new ProvidedService(4, service5,
-                LocalDateTime.of(2024, 3, 5, 19, 2, 47),
-                new Client(3, "Belyakova I. S.", "+7(953)180-00-61"));
-        providedServices = new ArrayList<>(List.of(
-                providedService1, providedService2, providedService3, providedService4));
-
         sut = MockMvcBuilders.standaloneSetup(
                 new RestRoomController(roomService, clientService, responsePreparer)).build();
         MockitoAnnotations.openMocks(this);
@@ -159,9 +130,7 @@ class RestRoomControllerTest {
     public void tearDown() {
         clients = null;
         rooms = null;
-        services = null;
         reservations = null;
-        providedServices = null;
         sut = null;
     }
 
@@ -483,6 +452,7 @@ class RestRoomControllerTest {
     @SneakyThrows
     void evictDoesNotThrowException() {
         RoomReservationDto dto = DtoConverter.convertRoomReservationToDto(reservations.getFirst());
+        String expected = objectMapper.writeValueAsString(dto);
         String jsonResponse = sut.perform(put("/api/rooms/eviction")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -490,10 +460,262 @@ class RestRoomControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        RoomReservationDto actual = objectMapper.readValue(jsonResponse, RoomReservationDto.class);
 
-        assertEquals(dto, actual);
+        assertEquals(expected, jsonResponse);
 
         verify(roomService, times(1)).evict(any());
+    }
+
+    @Test
+    @SneakyThrows
+    void evictThrowsServletException() {
+        RoomReservationDto dto = DtoConverter.convertRoomReservationToDto(reservations.getFirst());
+        doThrow(TechnicalException.class).when(roomService).evict(any());
+
+        assertThrows(ServletException.class, () -> sut.perform(put("/api/rooms/eviction")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isInternalServerError()));
+
+        verify(roomService, times(1)).evict(any());
+    }
+
+    @Test
+    @SneakyThrows
+    void getRoomsByStarsDoesNotThrowException() {
+        List<AbstractRoom> expected = rooms.stream()
+                .sorted()
+                .toList();
+        when(roomService.roomsByStars()).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/rooms-by-stars"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).roomsByStars();
+    }
+
+    @Test
+    @SneakyThrows
+    void getRoomsByPriceDoesNotThrowException() {
+        List<AbstractRoom> expected = rooms.stream()
+                .sorted(new RoomPriceComparator())
+                .toList();
+        when(roomService.roomsByPrice()).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/rooms-by-price"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).roomsByPrice();
+    }
+
+    @Test
+    @SneakyThrows
+    void getRoomsByCapacityDoesNotThrowException() {
+        List<AbstractRoom> expected = rooms.stream()
+                .sorted(new RoomCapacityComparator())
+                .toList();
+        when(roomService.roomsByCapacity()).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/rooms-by-capacity"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).roomsByCapacity();
+    }
+
+    @Test
+    @SneakyThrows
+    void getAvailableRoomsByStarsDoesNotThrowException() {
+        List<AbstractRoom> expected = rooms.stream()
+                .filter(o -> o.getStatus() == RoomStatusTypes.AVAILABLE)
+                .sorted()
+                .toList();
+        when(roomService.availableRoomsByStars()).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/available-rooms-by-stars"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).availableRoomsByStars();
+    }
+
+    @Test
+    @SneakyThrows
+    void getAvailableRoomsByPriceDoesNotThrowException() {
+        List<AbstractRoom> expected = rooms.stream()
+                .filter(o -> o.getStatus() == RoomStatusTypes.AVAILABLE)
+                .sorted()
+                .toList();
+        when(roomService.availableRoomsByPrice()).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/available-rooms-by-price"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).availableRoomsByPrice();
+    }
+
+    @Test
+    @SneakyThrows
+    void getAvailableRoomsByCapacityDoesNotThrowException() {
+        List<AbstractRoom> expected = rooms.stream()
+                .filter(o -> o.getStatus() == RoomStatusTypes.AVAILABLE)
+                .sorted()
+                .toList();
+        when(roomService.availableRoomsByCapacity()).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/available-rooms-by-capacity"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).availableRoomsByCapacity();
+    }
+
+    @Test
+    @SneakyThrows
+    void countAvailableRoomsDoesNotThrowException() {
+        int expected = rooms.stream()
+                .filter(o -> o.getStatus() == RoomStatusTypes.AVAILABLE)
+                .sorted()
+                .toList().size();
+        when(roomService.countAvailableRooms()).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/number-available-rooms"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).countAvailableRooms();
+    }
+
+    @Test
+    @SneakyThrows
+    void getClientRoomsByNumberDoesNotThrowException() {
+        int id = 1;
+        AbstractClient client = clients.get(id - 1);
+        List<AbstractRoom> expected = reservations
+                .stream()
+                .filter(reservation -> reservation.getClients().contains(client))
+                .sorted(new RoomNumberComparator())
+                .map(RoomReservation::getRoom)
+                .toList();
+        when(clientService.getClientById(id)).thenReturn(client);
+        when(roomService.getClientRoomsByNumbers(client)).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/client-rooms-by-numbers/{id}", id))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(clientService, times(1)).getClientById(anyInt());
+        verify(roomService, times(1)).getClientRoomsByNumbers(any());
+    }
+
+    @Test
+    @SneakyThrows
+    void getClientRoomsByNumberThrowsServletException() {
+        int id = 0;
+        doThrow(TechnicalException.class).when(roomService).getClientRoomsByNumbers(any());
+
+        assertThrows(ServletException.class,
+                () -> sut.perform(get("/api/rooms/client-rooms-by-numbers/{id}", id))
+                        .andExpect(status().isNotFound()));
+
+        verify(roomService, times(1)).getClientRoomsByNumbers(any());
+    }
+
+    @Test
+    @SneakyThrows
+    void getClientRoomsByCheckOutTimeDoesNotThrowException() {
+        int id = 1;
+        AbstractClient client = clients.get(id - 1);
+        List<AbstractRoom> expected = reservations
+                .stream()
+                .filter(reservation -> reservation.getClients().contains(client))
+                .sorted(new RoomCheckOutTimeComparator())
+                .map(RoomReservation::getRoom)
+                .toList();
+        when(clientService.getClientById(id)).thenReturn(client);
+        when(roomService.getClientRoomsByCheckOutTime(client)).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/client-rooms-by-check-out-time/{id}", id))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(clientService, times(1)).getClientById(anyInt());
+        verify(roomService, times(1)).getClientRoomsByCheckOutTime(any());
+    }
+
+    @Test
+    @SneakyThrows
+    void getClientRoomsByCheckOutTimeThrowsServletException() {
+        int id = 0;
+        doThrow(TechnicalException.class).when(roomService).getClientRoomsByCheckOutTime(any());
+
+        assertThrows(ServletException.class,
+                () -> sut.perform(get("/api/rooms/client-rooms-by-check-out-time/{id}", id))
+                        .andExpect(status().isNotFound()));
+
+        verify(roomService, times(1)).getClientRoomsByCheckOutTime(any());
+    }
+
+    @Test
+    @SneakyThrows
+    void getAvailableRoomsByTimeDoesNotThrowException() {
+        String time = "2024-05-06-12-00-00";
+        List<AbstractRoom> expected = rooms
+                .stream()
+                .filter(room -> room.getCheckOutTime() == null || room.getCheckOutTime().isAfter(
+                        LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"))))
+                .toList();
+        when(roomService.getAvailableRoomsByTime(time)).thenReturn(expected);
+        String jsonResponse = sut.perform(get("/api/rooms/available-rooms-by-time/{time}", time))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(expected), jsonResponse);
+
+        verify(roomService, times(1)).getAvailableRoomsByTime(anyString());
+    }
+
+    @Test
+    @SneakyThrows
+    void getAvailableRoomsByTimeThrowsServletException() {
+        doThrow(DateTimeParseException.class).when(roomService).getAvailableRoomsByTime(anyString());
+
+        assertThrows(ServletException.class,
+                () -> sut.perform(get("/api/rooms/available-rooms-by-time/{time}", LocalDateTime.now()))
+                        .andExpect(status().isInternalServerError()));
+
+        verify(roomService, times(1)).getAvailableRoomsByTime(anyString());
     }
 }

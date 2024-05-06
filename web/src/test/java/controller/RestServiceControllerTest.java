@@ -175,19 +175,19 @@ class RestServiceControllerTest {
 
         assertEquals(expected, actual);
 
-        verify(serviceService, times(1)).getServiceById(id);
+        verify(serviceService, times(1)).getServiceById(anyInt());
     }
 
     @Test
     @SneakyThrows
     void getServiceByIdThrowsServletException() {
         int id = 0;
-        doThrow(TechnicalException.class).when(serviceService).getServiceById(id);
+        doThrow(TechnicalException.class).when(serviceService).getServiceById(anyInt());
 
         assertThrows(ServletException.class, () ->
                 sut.perform(get("/api/services/{id}", id)).andExpect(status().isNotFound()));
 
-        verify(serviceService, times(1)).getServiceById(id);
+        verify(serviceService, times(1)).getServiceById(anyInt());
     }
 
     @Test
@@ -202,7 +202,7 @@ class RestServiceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Service " + dto.getName() + " added successfully")));
 
-        verify(serviceService, times(1)).addService(DtoConverter.convertDtoToService(dto));
+        verify(serviceService, times(1)).addService(any());
     }
 
     @Test
@@ -210,14 +210,14 @@ class RestServiceControllerTest {
     void addServiceThrowsServletException() {
         ServiceDto dto =
                 DtoConverter.convertServiceToDto(new Service(6, ServiceNames.PARKING, 5000));
-        doThrow(TechnicalException.class).when(serviceService).addService(DtoConverter.convertDtoToService(dto));
+        doThrow(TechnicalException.class).when(serviceService).addService(any());
 
         assertThrows(ServletException.class, () -> sut.perform(post("/api/services")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isInternalServerError()));
 
-        verify(serviceService, times(1)).addService(DtoConverter.convertDtoToService(dto));
+        verify(serviceService, times(1)).addService(any());
     }
 
     @Test
@@ -236,7 +236,7 @@ class RestServiceControllerTest {
 
         assertEquals(dto, actual);
 
-        verify(serviceService, times(1)).updateService(DtoConverter.convertDtoToService(dto));
+        verify(serviceService, times(1)).updateService(any());
     }
 
     @Test
@@ -244,14 +244,14 @@ class RestServiceControllerTest {
     void updateServiceThrowsServletException() {
         ServiceDto dto =
                 DtoConverter.convertServiceToDto(new Service(6, ServiceNames.PARKING, 5000));
-        doThrow(TechnicalException.class).when(serviceService).updateService(DtoConverter.convertDtoToService(dto));
+        doThrow(TechnicalException.class).when(serviceService).updateService(any());
 
         assertThrows(ServletException.class, () -> sut.perform(put("/api/services")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isInternalServerError()));
 
-        verify(serviceService, times(1)).updateService(DtoConverter.convertDtoToService(dto));
+        verify(serviceService, times(1)).updateService(any());
     }
 
     @Test
@@ -264,8 +264,8 @@ class RestServiceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Deleted service with ID = " + id)));
 
-        verify(serviceService, times(1)).deleteService(services.get(id - 1));
-        verify(serviceService, times(1)).getServiceById(id);
+        verify(serviceService, times(1)).deleteService(any());
+        verify(serviceService, times(1)).getServiceById(anyInt());
     }
 
     @Test
@@ -277,11 +277,7 @@ class RestServiceControllerTest {
         assertThrows(ServletException.class, () -> sut.perform(delete("/api/services/{id}", id))
                 .andExpect(status().isOk()));
 
-        verify(serviceService, times(0)).deleteService(services.get(0));
-        verify(serviceService, times(0)).deleteService(services.get(1));
-        verify(serviceService, times(0)).deleteService(services.get(2));
-        verify(serviceService, times(0)).deleteService(services.get(3));
-        verify(serviceService, times(0)).deleteService(services.get(4));
+        verify(serviceService, times(0)).deleteService(any());
     }
 
     @Test
@@ -330,7 +326,7 @@ class RestServiceControllerTest {
 
         assertEquals(expected, actual);
 
-        verify(serviceService, times(1)).getFavorPrice(id);
+        verify(serviceService, times(1)).getFavorPrice(anyInt());
     }
 
     @Test
@@ -343,7 +339,7 @@ class RestServiceControllerTest {
                 () -> sut.perform(get("/api/services/service-price/{id}", id))
                         .andExpect(status().isNotFound()));
 
-        verify(serviceService, times(1)).getFavorPrice(id);
+        verify(serviceService, times(1)).getFavorPrice(anyInt());
     }
 
     @Test

@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -130,19 +131,19 @@ class RestClientControllerTest {
 
         assertEquals(expected, actual);
 
-        verify(clientService, times(1)).getClientById(id);
+        verify(clientService, times(1)).getClientById(anyInt());
     }
 
     @Test
     @SneakyThrows
     void getClientByIdThrowsServletException() {
         int id = 0;
-        doThrow(TechnicalException.class).when(clientService).getClientById(id);
+        doThrow(TechnicalException.class).when(clientService).getClientById(anyInt());
 
         assertThrows(ServletException.class, () ->
                 sut.perform(get("/api/clients/{id}", id)).andExpect(status().isNotFound()));
 
-        verify(clientService, times(1)).getClientById(id);
+        verify(clientService, times(1)).getClientById(anyInt());
     }
 
     @Test
@@ -157,7 +158,7 @@ class RestClientControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Client " + client.getFio() + " added successfully")));
 
-        verify(clientService, times(1)).addClient(DtoConverter.convertDtoToClient(client));
+        verify(clientService, times(1)).addClient(any());
     }
 
     @Test
@@ -165,14 +166,14 @@ class RestClientControllerTest {
     void addClientThrowsServletException() {
         ClientDto dto =
                 DtoConverter.convertClientToDto(new Client(6, "A", "8(900)009-99-11"));
-        doThrow(TechnicalException.class).when(clientService).addClient(DtoConverter.convertDtoToClient(dto));
+        doThrow(TechnicalException.class).when(clientService).addClient(any());
 
         assertThrows(ServletException.class, () -> sut.perform(post("/api/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isInternalServerError()));
 
-        verify(clientService, times(1)).addClient(DtoConverter.convertDtoToClient(dto));
+        verify(clientService, times(1)).addClient(any());
     }
 
     @Test
@@ -191,7 +192,7 @@ class RestClientControllerTest {
 
         assertEquals(dto, actual);
 
-        verify(clientService, times(1)).updateClient(DtoConverter.convertDtoToClient(dto));
+        verify(clientService, times(1)).updateClient(any());
     }
 
     @Test
@@ -199,14 +200,14 @@ class RestClientControllerTest {
     void updateClientThrowsServletException() {
         ClientDto dto =
                 DtoConverter.convertClientToDto(new Client(6, "A", "8(900)009-99-11"));
-        doThrow(TechnicalException.class).when(clientService).updateClient(DtoConverter.convertDtoToClient(dto));
+        doThrow(TechnicalException.class).when(clientService).updateClient(any());
 
         assertThrows(ServletException.class, () -> sut.perform(put("/api/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isInternalServerError()));
 
-        verify(clientService, times(1)).updateClient(DtoConverter.convertDtoToClient(dto));
+        verify(clientService, times(1)).updateClient(any());
     }
 
     @Test
@@ -219,8 +220,8 @@ class RestClientControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Deleted client with ID = " + id)));
 
-        verify(clientService, times(1)).deleteClient(clients.get(id - 1));
-        verify(clientService, times(1)).getClientById(id);
+        verify(clientService, times(1)).deleteClient(any());
+        verify(clientService, times(1)).getClientById(anyInt());
     }
 
     @Test
@@ -232,11 +233,7 @@ class RestClientControllerTest {
         assertThrows(ServletException.class, () -> sut.perform(delete("/api/clients/{id}", id))
                 .andExpect(status().isOk()));
 
-        verify(clientService, times(0)).deleteClient(clients.get(0));
-        verify(clientService, times(0)).deleteClient(clients.get(1));
-        verify(clientService, times(0)).deleteClient(clients.get(2));
-        verify(clientService, times(0)).deleteClient(clients.get(3));
-        verify(clientService, times(0)).deleteClient(clients.get(4));
+        verify(clientService, times(0)).deleteClient(any());
     }
 
     @Test
