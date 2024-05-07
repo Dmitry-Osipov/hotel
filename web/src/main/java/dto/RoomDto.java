@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс, представляющий информацию о номере гостиницы.
@@ -34,4 +35,22 @@ public class RoomDto implements Identifiable {
     private int stars;
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return getId() == ((RoomDto) obj).getId();
+    }
 }
